@@ -4,10 +4,10 @@ import { useNavigate } from "react-router";
 import { CheckCircle, Target, Eye, Heart, Award, Users, TrendingUp, ArrowRight } from "lucide-react";
 
 const TEAM = [
-  { name: "Dr. Adebayo Mensah", role: "Founder & Lead Instructor", bio: "15+ years in HMO operations. Former Director at Hygeia HMO. NHIS certified trainer.", avatar: "AM", color: "bg-green-700" },
+  { name: "Dr. Adebayo Mensah", role: "Founder & Lead Instructor", bio: "15+ years in HMO operations. Former Director at Hygeia HMO. Certified Health Insurance Professional.", avatar: "AM", color: "bg-green-700" },
   { name: "Mrs. Ngozi Uchenna", role: "Head of Curriculum", bio: "Ex-Claims Director with Avon HMO. Specialist in healthcare policy and compliance.", avatar: "NU", color: "bg-blue-700" },
-  { name: "Mr. Emeka Okafor", role: "Provider Relations Expert", bio: "12 years managing provider networks across Nigeria. Certified Health Insurance Professional.", avatar: "EO", color: "bg-purple-700" },
-  { name: "Barrister Funke Adeyemi", role: "Legal & Compliance Advisor", bio: "Healthcare law specialist. Advises multiple HMOs on NAICOM and NHIS regulatory matters.", avatar: "FA", color: "bg-amber-700" },
+  { name: "Mr. Emeka Okafor", role: "Provider Relations Expert", bio: "12 years managing provider networks across West Africa. Certified Health Insurance Professional.", avatar: "EO", color: "bg-purple-700" },
+  { name: "Barrister Funke Adeyemi", role: "Legal & Compliance Advisor", bio: "Healthcare law specialist. Advises multiple HMOs on international healthcare regulatory matters.", avatar: "FA", color: "bg-amber-700" },
 ];
 
 const VALUES = [

@@ -4,13 +4,13 @@ import { MobileCarousel } from "@/app/components/MobileCarousel";
 import {
   ArrowRight, Play, CheckCircle, Star, Users, BookOpen,
   Award, Clock, Shield, HeartPulse, FileText, BarChart2,
-  Layers, Briefcase, TrendingUp, ChevronRight, Quote,
+  Layers, Briefcase, TrendingUp, ChevronRight, Quote, Globe,
 } from "lucide-react";
 
 /* ── Data ─────────────────────────────────────────────────── */
 const PARTNERS = [
-  "HYGEIA HMO", "AIICO Multishield", "Tangerine Health",
-  "AVON HMO", "Reliance HMO", "Clearline HMO",
+  "UnitedHealth Group", "Anthem Inc.", "Cigna Healthcare",
+  "Aetna", "Humana", "Kaiser Permanente",
 ];
 
 const COURSES = [
@@ -86,15 +86,15 @@ const JOURNEY = [
 
 const TESTIMONIALS = [
   {
-    name: "Adaeze Okonkwo", role: "Claims Officer, Hygeia HMO", avatar: "AO", rating: 5,
+    name: "Sarah Johnson", role: "Claims Officer, UnitedHealth", avatar: "SJ", rating: 5,
     text: "Kalaro gave me the practical knowledge I needed to excel in my role. The instructors are seasoned professionals who truly understand the global HMO landscape.",
   },
   {
-    name: "Chukwuemeka Eze", role: "Provider Relations Manager", avatar: "CE", rating: 5,
+    name: "Michael Chen", role: "Provider Relations Manager", avatar: "MC", rating: 5,
     text: "I went from knowing nothing about HMO operations to landing a manager role in just 6 months. The curriculum is comprehensive, current, and career-focused.",
   },
   {
-    name: "Fatima Bello", role: "Health Insurance Analyst", avatar: "FB", rating: 5,
+    name: "Emily Rodriguez", role: "Health Insurance Analyst", avatar: "ER", rating: 5,
     text: "The flexibility of online learning combined with expert mentorship made all the difference. I highly recommend Kalaro to anyone in healthcare administration.",
   },
 ];
@@ -234,7 +234,7 @@ export default function Home() {
               </button>
             </div>
             <div className="flex flex-wrap gap-5 text-sm text-gray-400 border-t border-white/10 pt-8">
-              {["NHIS-Aligned Curriculum", "Industry Certified", "Job Placement Support", "Flexible Learning for All", "Trusted by Learners Worldwide"].map((t) => (
+              {["Globally Recognized Certificates", "Industry Certified", "Job Placement Support", "Flexible Learning for All", "Trusted by Learners Worldwide"].map((t) => (
                 <span key={t} className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-400 shrink-0" /> {t}
                 </span>
@@ -249,7 +249,9 @@ export default function Home() {
                 alt="Healthcare professional with tablet"
                 className="w-full h-[500px] object-cover object-top rounded-2xl relative z-10"
               />
-              <div className="absolute -left-8 top-[30%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+              
+              {/* Stats overlay - top left */}
+              <div className="absolute -left-8 top-[15%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
                   <Users className="w-5 h-5 text-green-700" />
                 </div>
@@ -258,13 +260,61 @@ export default function Home() {
                   <div className="text-[11px] text-gray-500 mt-0.5">Students Enrolled<br />Worldwide</div>
                 </div>
               </div>
-              <div className="absolute -right-6 bottom-[28%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3">
+
+              {/* Countries reached - top right */}
+              <div className="absolute -right-6 top-[8%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                  <Globe className="w-5 h-5 text-green-700" />
+                </div>
+                <div>
+                  <div className="text-lg font-extrabold text-gray-900 leading-none">20+</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Countries<br />Reached</div>
+                </div>
+              </div>
+
+              {/* Expert instructors - middle left */}
+              <div className="absolute -left-8 top-[38%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                  <Award className="w-5 h-5 text-green-700" />
+                </div>
+                <div>
+                  <div className="text-lg font-extrabold text-gray-900 leading-none">50+</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Expert<br />Instructors</div>
+                </div>
+              </div>
+
+              {/* Courses & CPD Programs - middle right */}
+              <div className="absolute -right-6 top-[35%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                  <BookOpen className="w-5 h-5 text-green-700" />
+                </div>
+                <div>
+                  <div className="text-lg font-extrabold text-gray-900 leading-none">100+</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Courses & CPD<br />Programs</div>
+                </div>
+              </div>
+
+              {/* AI + EMR Simulation Lab - bottom left */}
+              <div className="absolute -left-8 bottom-[22%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                  <Layers className="w-5 h-5 text-green-700" />
+                </div>
+                <div>
+                  <div className="text-lg font-extrabold text-gray-900 leading-none">AI + EMR</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Simulation<br />Lab</div>
+                </div>
+              </div>
+
+              {/* Rating - bottom right */}
+              <div className="absolute -right-6 bottom-[20%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3">
                 <div className="flex items-center gap-1 mb-1">
                   {[1,2,3,4,5].map((i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
                 </div>
                 <div className="text-sm font-extrabold text-gray-900">4.9 / 5 Rating</div>
                 <div className="text-[11px] text-gray-500">From 500+ reviews</div>
               </div>
+
+              {/* Industry Certified badge - bottom center */}
               <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 z-20 bg-green-600 rounded-2xl shadow-xl px-5 py-3 text-white flex items-center gap-3">
                 <Award className="w-8 h-8 text-green-200" />
                 <div>
@@ -523,12 +573,12 @@ export default function Home() {
                 Access exclusive HMO job listings from top healthcare organisations worldwide. Our graduates get priority placement, career coaching, and direct introductions to hiring managers.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-8">
-                {[
-                  { v: "200+", l: "Job Placements" },
-                  { v: "50+", l: "Partner Employers" },
-                  { v: "85%", l: "Hired Within 3 Months" },
-                  { v: "₦180K+", l: "Avg. Starting Salary" },
-                ].map((s, i) => (
+{[
+  { v: "200+", l: "Job Placements" },
+  { v: "50+", l: "Partner Employers" },
+  { v: "85%", l: "Hired Within 3 Months" },
+  { v: "$45K+", l: "Avg. Starting Salary" },
+].map((s, i) => (
                   <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4">
                     <div className="text-2xl font-extrabold text-green-400">{s.v}</div>
                     <div className="text-xs text-gray-400 mt-1">{s.l}</div>

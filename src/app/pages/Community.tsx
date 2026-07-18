@@ -18,23 +18,23 @@ const FEATURES = [
 
 const UPCOMING_EVENTS = [
   { date: "Jul 25, 2025", day: "Fri", title: "HMO Claims Masterclass: Reducing Rejection Rates by 40%", type: "Webinar", speaker: "Mrs. Ngozi Uchenna", spots: "48 spots left" },
-  { date: "Aug 5, 2025", day: "Tue", title: "NHIS 2025 Regulatory Updates — What Every HMO Professional Must Know", type: "Live Session", speaker: "Barrister Funke Adeyemi", spots: "32 spots left" },
+  { date: "Aug 5, 2025", day: "Tue", title: "Global Healthcare Regulatory Updates — What Every HMO Professional Must Know", type: "Live Session", speaker: "Barrister Funke Adeyemi", spots: "32 spots left" },
   { date: "Aug 20, 2025", day: "Wed", title: "Career Night: Meet HMO Hiring Managers Live", type: "Networking", speaker: "Multiple Speakers", spots: "75 spots left" },
 ];
 
 const MEMBERS = [
-  { name: "Adaeze O.", role: "Claims Officer, Hygeia HMO", avatar: "AO", color: "bg-green-700" },
-  { name: "Chuka E.", role: "Provider Relations Mgr", avatar: "CE", color: "bg-blue-700" },
-  { name: "Fatima B.", role: "Health Insurance Analyst", avatar: "FB", color: "bg-purple-700" },
-  { name: "Tunde A.", role: "HMO Finance Officer", avatar: "TA", color: "bg-amber-700" },
-  { name: "Ngozi U.", role: "Compliance Manager", avatar: "NU", color: "bg-rose-700" },
-  { name: "Emeka O.", role: "Network Manager", avatar: "EO", color: "bg-teal-700" },
+  { name: "Sarah J.", role: "Claims Officer, UnitedHealth", avatar: "SJ", color: "bg-green-700" },
+  { name: "Michael C.", role: "Provider Relations Mgr", avatar: "MC", color: "bg-blue-700" },
+  { name: "Emily R.", role: "Health Insurance Analyst", avatar: "ER", color: "bg-purple-700" },
+  { name: "David T.", role: "HMO Finance Officer", avatar: "DT", color: "bg-amber-700" },
+  { name: "Lisa N.", role: "Compliance Manager", avatar: "LN", color: "bg-rose-700" },
+  { name: "James O.", role: "Network Manager", avatar: "JO", color: "bg-teal-700" },
 ];
 
 const TESTIMONIALS = [
-  { name: "Adaeze Okonkwo", role: "Claims Officer", avatar: "AO", text: "The community has been as valuable as the course itself. I found my current job through the Kalaro job board within 2 weeks of graduating." },
-  { name: "Chukwuemeka Eze", role: "Provider Relations Manager", avatar: "CE", text: "The mentorship programme connected me with a seasoned professional who helped me navigate my career transition into HMO management." },
-  { name: "Fatima Bello", role: "Health Insurance Analyst", avatar: "FB", text: "Monthly webinars keep me updated on industry changes. It feels like having a professional association membership included in the course fee." },
+  { name: "Sarah Johnson", role: "Claims Officer", avatar: "SJ", text: "The community has been as valuable as the course itself. I found my current job through the Kalaro job board within 2 weeks of graduating." },
+  { name: "Michael Chen", role: "Provider Relations Manager", avatar: "MC", text: "The mentorship programme connected me with a seasoned professional who helped me navigate my career transition into HMO management." },
+  { name: "Emily Rodriguez", role: "Health Insurance Analyst", avatar: "ER", text: "Monthly webinars keep me updated on industry changes. It feels like having a professional association membership included in the course fee." },
 ];
 
 function FeatureCard({ f }: { f: typeof FEATURES[0] }) {
