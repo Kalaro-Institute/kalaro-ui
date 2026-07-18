@@ -10,7 +10,7 @@ const UPCOMING = [
   {
     date: "Jul 25, 2025",
     day: "Fri",
-    time: "3:00 PM WAT",
+    time: "3:00 PM EST",
     title: "HMO Claims Masterclass: Reducing Rejection Rates by 40%",
     instructor: "Mrs. Ngozi Uchenna",
     role: "Head of Curriculum, Kalaro Institute",
@@ -24,7 +24,7 @@ const UPCOMING = [
   {
     date: "Aug 5, 2025",
     day: "Tue",
-    time: "11:00 AM WAT",
+    time: "11:00 AM EST",
     title: "NHIS 2025 Regulatory Updates — What Every HMO Professional Must Know",
     instructor: "Barrister Funke Adeyemi",
     role: "Legal & Compliance Advisor",
@@ -38,7 +38,7 @@ const UPCOMING = [
   {
     date: "Aug 12, 2025",
     day: "Tue",
-    time: "2:00 PM WAT",
+    time: "2:00 PM EST",
     title: "Provider Network Management: Contracting, Capitation & KPIs",
     instructor: "Mr. Emeka Okafor",
     role: "Provider Relations Expert",
@@ -52,7 +52,7 @@ const UPCOMING = [
   {
     date: "Aug 20, 2025",
     day: "Wed",
-    time: "5:00 PM WAT",
+    time: "5:00 PM EST",
     title: "Career Night: Meet HMO Hiring Managers Live",
     instructor: "Multiple Speakers",
     role: "HR Directors from Top HMOs",
@@ -66,7 +66,7 @@ const UPCOMING = [
   {
     date: "Sep 3, 2025",
     day: "Wed",
-    time: "10:00 AM WAT",
+    time: "10:00 AM EST",
     title: "HMO Financial Modelling: Capitation Budgets & Reserve Analysis",
     instructor: "Mr. Tunde Afolabi",
     role: "HMO Finance Specialist",
@@ -80,7 +80,7 @@ const UPCOMING = [
   {
     date: "Sep 10, 2025",
     day: "Wed",
-    time: "3:00 PM WAT",
+    time: "3:00 PM EST",
     title: "Delivering Exceptional Member Experience in Managed Care",
     instructor: "Mrs. Blessing Okonkwo",
     role: "Customer Experience Trainer",
@@ -103,7 +103,7 @@ const PAST = [
     img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400&q=80",
   },
   {
-    title: "Understanding Pre-Authorisation in Nigerian HMOs",
+    title: "Understanding Pre-Authorisation in Global HMOs",
     instructor: "Mrs. Ngozi Uchenna",
     date: "Jun 28, 2025",
     duration: "75 mins",
@@ -149,7 +149,7 @@ export default function LiveClasses() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Live Classes & Webinars</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed mb-8">
-            Real-time learning with Nigeria's foremost HMO professionals. Join live, ask questions, and get recorded replays — all included with your Kalaro enrolment.
+            Real-time learning with the world's foremost HMO professionals. Join live, ask questions, and get recorded replays — all included with your Kalaro enrolment.
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             {[

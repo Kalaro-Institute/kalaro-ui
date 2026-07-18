@@ -10,7 +10,7 @@ import {
 const PERKS = [
   { icon: <BookOpen className="w-4 h-4" />, text: "Access to 50+ HMO courses" },
   { icon: <Award className="w-4 h-4" />, text: "Industry-recognised certificates" },
-  { icon: <Users className="w-4 h-4" />, text: "Join Nigeria's HMO professional community" },
+  { icon: <Users className="w-4 h-4" />, text: "Join the global HMO professional community" },
   { icon: <CheckCircle className="w-4 h-4" />, text: "Exclusive job board access" },
   { icon: <CheckCircle className="w-4 h-4" />, text: "Free webinars & live sessions" },
   { icon: <CheckCircle className="w-4 h-4" />, text: "Career support & CV coaching" },
@@ -161,7 +161,7 @@ export default function SignUp() {
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">Phone Number *</label>
                     <div className="relative">
                       <Phone className="w-4 h-4 text-gray-300 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input required type="tel" placeholder="+234 800 000 0000" value={form.phone}
+                      <input required type="tel" placeholder="+1 (555) 123-4567" value={form.phone}
                         onChange={(e) => update("phone", e.target.value)}
                         className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm outline-none focus:border-green-500 transition-colors" />
                     </div>

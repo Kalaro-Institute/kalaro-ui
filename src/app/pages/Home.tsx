@@ -67,7 +67,7 @@ const STATS = [
 ];
 
 const BENEFITS = [
-  "NHIS-aligned curriculum built for Nigerian healthcare",
+  "Globally-aligned curriculum for healthcare systems worldwide",
   "Practical, scenario-based learning modules",
   "Expert instructors with active HMO experience",
   "Flexible self-paced online learning",
@@ -87,7 +87,7 @@ const JOURNEY = [
 const TESTIMONIALS = [
   {
     name: "Adaeze Okonkwo", role: "Claims Officer, Hygeia HMO", avatar: "AO", rating: 5,
-    text: "Kalaro gave me the practical knowledge I needed to excel in my role. The instructors are seasoned professionals who truly understand the Nigerian HMO landscape.",
+    text: "Kalaro gave me the practical knowledge I needed to excel in my role. The instructors are seasoned professionals who truly understand the global HMO landscape.",
   },
   {
     name: "Chukwuemeka Eze", role: "Provider Relations Manager", avatar: "CE", rating: 5,
@@ -102,13 +102,13 @@ const TESTIMONIALS = [
 const BLOG_POSTS = [
   {
     category: "Industry Insight",
-    title: "Understanding Nigeria's NHIS Framework: What Every HMO Professional Must Know",
+    title: "Understanding Global Health Insurance Frameworks: What Every HMO Professional Must Know",
     date: "June 12, 2025", readTime: "5 min read",
     img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400&q=80",
   },
   {
     category: "Career Tips",
-    title: "Top 7 Skills That Will Get You Hired at Any HMO in Nigeria Right Now",
+    title: "Top 7 Skills That Will Get You Hired at Any HMO Worldwide Right Now",
     date: "May 28, 2025", readTime: "4 min read",
     img: "https://images.unsplash.com/photo-1762341117487-dbc411bcf574?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400&q=80",
   },
@@ -212,14 +212,15 @@ export default function Home() {
           <div className="text-white">
             <div className="inline-flex items-center gap-2 bg-green-900/60 border border-green-700/40 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full mb-7">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
-              Nigeria's #1 HMO Training Platform
+              Global Healthcare Education & Career Platform
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.12] mb-6">
-              Master HMO <span className="text-green-400">Operations.</span><br />
-              Build a Career<br />That Matters.
+              Learn. Practice.<br />
+              <span className="text-green-400">Get Certified.</span><br />
+              Get Hired. Go Global.
             </h1>
             <p className="text-gray-300 text-base sm:text-lg max-w-lg mb-8 leading-relaxed">
-              Join thousands of healthcare professionals transforming their careers through Nigeria's most comprehensive HMO training programmes. Learn from experts. Get certified. Get hired.
+              Advance your career with world-class training in HMO Operations, Hospital Administration, Medical Virtual Assistance, AI for Healthcare, and more. Gain hands-on experience with our EMR & HMO Simulation Lab, earn globally recognized certificates, access career support, and connect to opportunities worldwide.
             </p>
             <div className="flex flex-wrap gap-4 mb-10">
               <button onClick={() => navigate("/courses")} className="bg-green-500 hover:bg-green-400 active:scale-95 text-white font-bold px-8 py-3.5 rounded-full transition-all flex items-center gap-2 shadow-lg shadow-green-900/40 text-sm">
@@ -233,7 +234,7 @@ export default function Home() {
               </button>
             </div>
             <div className="flex flex-wrap gap-5 text-sm text-gray-400 border-t border-white/10 pt-8">
-              {["NHIS-Aligned Curriculum", "Industry Certified", "Job Placement Support"].map((t) => (
+              {["NHIS-Aligned Curriculum", "Industry Certified", "Job Placement Support", "Flexible Learning for All", "Trusted by Learners Worldwide"].map((t) => (
                 <span key={t} className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-400 shrink-0" /> {t}
                 </span>
@@ -254,7 +255,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="text-lg font-extrabold text-gray-900 leading-none">500+</div>
-                  <div className="text-[11px] text-gray-500 mt-0.5">Students Enrolled</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Students Enrolled<br />Worldwide</div>
                 </div>
               </div>
               <div className="absolute -right-6 bottom-[28%] z-20 bg-white rounded-2xl shadow-2xl px-4 py-3">
@@ -268,7 +269,7 @@ export default function Home() {
                 <Award className="w-8 h-8 text-green-200" />
                 <div>
                   <div className="font-bold text-sm">Industry Certified</div>
-                  <div className="text-xs text-green-200">Recognised Nationwide</div>
+                  <div className="text-xs text-green-200">Recognised Worldwide</div>
                 </div>
               </div>
             </div>
@@ -285,7 +286,7 @@ export default function Home() {
       <section className="py-10 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-7">
-            Trusted by graduates working at Nigeria's leading HMOs
+            Trusted by graduates working at leading HMOs worldwide
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-14">
             {PARTNERS.map((name) => (
@@ -303,7 +304,7 @@ export default function Home() {
               <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Our Curriculum</p>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900">Explore Our Top Courses</h2>
               <p className="text-gray-500 mt-3 max-w-xl text-sm leading-relaxed">
-                Every programme is built around real HMO workflows, NHIS regulatory standards, and the operational challenges faced daily in Nigerian managed care.
+                Every programme is built around real HMO workflows, international regulatory standards, and the operational challenges faced daily in managed care.
               </p>
             </div>
             <button onClick={() => navigate("/courses")} className="hidden sm:flex items-center gap-2 text-green-700 font-bold text-sm border-2 border-green-700 px-5 py-2.5 rounded-full hover:bg-green-50 transition-colors shrink-0">
@@ -384,7 +385,7 @@ export default function Home() {
               <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2 leading-tight">Quality Education.</h2>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-green-700 mb-6 leading-tight">Practical Impact.</h2>
               <p className="text-gray-500 mb-8 leading-relaxed text-sm">
-                We don't teach theory in isolation. Every module is built around real HMO workflows, regulatory frameworks, and operational challenges faced daily in the Nigerian healthcare system.
+                We don't teach theory in isolation. Every module is built around real HMO workflows, regulatory frameworks, and operational challenges faced daily in healthcare systems worldwide.
               </p>
               <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3 mb-10">
                 {BENEFITS.map((b, i) => (
@@ -519,7 +520,7 @@ export default function Home() {
               <p className="text-green-400 font-semibold text-xs uppercase tracking-widest mb-3">Career Corner</p>
               <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight">Explore Jobs.<br />Grow Your Career.</h2>
               <p className="text-gray-400 mb-8 leading-relaxed text-sm max-w-lg">
-                Access exclusive HMO job listings from Nigeria's top healthcare organisations. Our graduates get priority placement, career coaching, and direct introductions to hiring managers.
+                Access exclusive HMO job listings from top healthcare organisations worldwide. Our graduates get priority placement, career coaching, and direct introductions to hiring managers.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-8">
                 {[

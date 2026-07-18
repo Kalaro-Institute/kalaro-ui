@@ -32,36 +32,36 @@ const FAQS = [
   },
 ];
 
-const CONTACT_OPTIONS = [
-  {
-    icon: <Phone className="w-6 h-6" />,
-    title: "Call Us",
-    detail: "+234 800 000 0000",
-    sub: "Mon–Fri, 8am – 6pm WAT",
-    color: "bg-green-50 text-green-700",
-  },
-  {
-    icon: <Mail className="w-6 h-6" />,
-    title: "Email Us",
-    detail: "info@kalaroinstitute.com",
-    sub: "We respond within 24 hours",
-    color: "bg-blue-50 text-blue-700",
-  },
-  {
-    icon: <MessageSquare className="w-6 h-6" />,
-    title: "WhatsApp",
-    detail: "+234 800 000 0000",
-    sub: "Quick responses on WhatsApp",
-    color: "bg-emerald-50 text-emerald-700",
-  },
-  {
-    icon: <MapPin className="w-6 h-6" />,
-    title: "Visit Us",
-    detail: "Plot 14, Abuja Business District",
-    sub: "FCT, Nigeria",
-    color: "bg-purple-50 text-purple-700",
-  },
-];
+  const CONTACT_OPTIONS = [
+    {
+      icon: <Phone className="w-6 h-6" />,
+      title: "Call Us",
+      detail: "+1 (555) 123-4567",
+      sub: "Mon–Fri, 8am – 6pm EST",
+      color: "bg-green-50 text-green-700",
+    },
+    {
+      icon: <Mail className="w-6 h-6" />,
+      title: "Email Us",
+      detail: "info@kalaroinstitute.com",
+      sub: "We respond within 24 hours",
+      color: "bg-blue-50 text-blue-700",
+    },
+    {
+      icon: <MessageSquare className="w-6 h-6" />,
+      title: "WhatsApp",
+      detail: "+1 (555) 123-4567",
+      sub: "Quick responses on WhatsApp",
+      color: "bg-emerald-50 text-emerald-700",
+    },
+    {
+      icon: <MapPin className="w-6 h-6" />,
+      title: "Visit Us",
+      detail: "Global Headquarters",
+      sub: "Online Learning Platform",
+      color: "bg-purple-50 text-purple-700",
+    },
+  ];
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -149,9 +149,9 @@ export default function Contact() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1.5">Phone Number</label>
-                        <input
-                          type="tel"
-                          placeholder="+234 800 000 0000"
+                       <input
+                           type="tel"
+                           placeholder="+1 (555) 123-4567"
                           value={form.phone}
                           onChange={(e) => setForm({ ...form, phone: e.target.value })}
                           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 transition-colors"
@@ -241,7 +241,7 @@ export default function Contact() {
                 <div className="bg-green-700 text-white rounded-2xl p-5">
                   <Headphones className="w-7 h-7 mb-3 text-green-300" />
                   <p className="font-bold text-sm mb-1">Live Support</p>
-                  <p className="text-green-200 text-xs">Mon–Fri, 8am–6pm WAT</p>
+                  <p className="text-green-200 text-xs">Mon–Fri, 8am–6pm EST</p>
                 </div>
                 <div className="bg-[#071a08] text-white rounded-2xl p-5">
                   <BookOpen className="w-7 h-7 mb-3 text-green-400" />
@@ -259,7 +259,7 @@ export default function Contact() {
         <div className="absolute inset-0 flex items-center justify-center bg-[#f7faf7]">
           <div className="text-center">
             <MapPin className="w-12 h-12 text-green-600 mx-auto mb-2" />
-            <p className="font-bold text-gray-700">Plot 14, Abuja Business District, FCT, Nigeria</p>
+                   <p className="font-bold text-gray-700">Global Headquarters - Online Learning Platform</p>
             <p className="text-sm text-gray-400 mt-1">Open in Google Maps</p>
           </div>
         </div>

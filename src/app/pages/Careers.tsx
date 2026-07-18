@@ -9,21 +9,21 @@ import {
 const JOB_CATEGORIES = ["All", "Claims", "Provider Relations", "Customer Service", "Finance", "Compliance", "Management"];
 
 const JOBS = [
-  { title: "Claims Processing Officer", company: "Hygeia HMO", location: "Lagos, Nigeria", type: "Full-time", category: "Claims", salary: "₦120,000 – ₦160,000/mo", posted: "2 days ago", logo: "HY", logoColor: "bg-blue-600", tags: ["Entry Level", "On-site"], desc: "Process and adjudicate member claims in line with NHIS guidelines. Review medical reports and ensure timely reimbursement to providers." },
-  { title: "Provider Relations Executive", company: "Reliance HMO", location: "Abuja, FCT", type: "Full-time", category: "Provider Relations", salary: "₦150,000 – ₦200,000/mo", posted: "3 days ago", logo: "RH", logoColor: "bg-green-700", tags: ["Mid Level", "Hybrid"], desc: "Manage relationships with healthcare providers across the FCT network. Negotiate contracts and monitor service quality metrics." },
-  { title: "Health Insurance Customer Care Rep", company: "AIICO Multishield", location: "Lagos, Nigeria", type: "Full-time", category: "Customer Service", salary: "₦80,000 – ₦110,000/mo", posted: "1 day ago", logo: "AI", logoColor: "bg-purple-700", tags: ["Entry Level", "On-site"], desc: "Handle member enquiries, complaints, and service requests. Ensure prompt resolution and high member satisfaction scores." },
-  { title: "HMO Finance & Accounts Officer", company: "Avon HMO", location: "Port Harcourt, Rivers", type: "Full-time", category: "Finance", salary: "₦130,000 – ₦170,000/mo", posted: "5 days ago", logo: "AV", logoColor: "bg-amber-700", tags: ["Mid Level", "On-site"], desc: "Manage capitation payments, provider reconciliations, and monthly financial reports. Support internal and external audit activities." },
-  { title: "Compliance & Regulatory Affairs Manager", company: "Clearline HMO", location: "Lagos, Nigeria", type: "Full-time", category: "Compliance", salary: "₦220,000 – ₦300,000/mo", posted: "1 week ago", logo: "CL", logoColor: "bg-teal-700", tags: ["Senior Level", "On-site"], desc: "Oversee NHIS and NAICOM compliance, lead audit readiness, and develop internal policy frameworks." },
-  { title: "HMO Operations Manager", company: "Tangerine Health", location: "Lagos, Nigeria", type: "Full-time", category: "Management", salary: "₦280,000 – ₦380,000/mo", posted: "4 days ago", logo: "TH", logoColor: "bg-orange-600", tags: ["Senior Level", "Hybrid"], desc: "Lead day-to-day HMO operations including enrolment, claims, provider management and team performance. Report to the COO." },
-  { title: "Utilisation Management Nurse", company: "Hygeia HMO", location: "Remote", type: "Full-time", category: "Claims", salary: "₦140,000 – ₦180,000/mo", posted: "3 days ago", logo: "HY", logoColor: "bg-blue-600", tags: ["Mid Level", "Remote"], desc: "Review pre-authorisation requests and manage concurrent review of inpatient stays. Collaborate with clinical teams." },
-  { title: "Network Adequacy Analyst", company: "Reliance HMO", location: "Abuja, FCT", type: "Contract", category: "Provider Relations", salary: "₦90,000 – ₦130,000/mo", posted: "6 days ago", logo: "RH", logoColor: "bg-green-700", tags: ["Entry Level", "Hybrid"], desc: "Analyse provider network coverage gaps and support recruitment of new facilities. Produce geographic mapping and adequacy reports." },
+  { title: "Claims Processing Officer", company: "Hygeia HMO", location: "Lagos, Nigeria", type: "Full-time", category: "Claims", salary: "$1,200 – $1,600/mo", posted: "2 days ago", logo: "HY", logoColor: "bg-blue-600", tags: ["Entry Level", "On-site"], desc: "Process and adjudicate member claims in line with international guidelines. Review medical reports and ensure timely reimbursement to providers." },
+  { title: "Provider Relations Executive", company: "Reliance HMO", location: "Abuja, FCT", type: "Full-time", category: "Provider Relations", salary: "$1,500 – $2,000/mo", posted: "3 days ago", logo: "RH", logoColor: "bg-green-700", tags: ["Mid Level", "Hybrid"], desc: "Manage relationships with healthcare providers across the network. Negotiate contracts and monitor service quality metrics." },
+  { title: "Health Insurance Customer Care Rep", company: "AIICO Multishield", location: "Lagos, Nigeria", type: "Full-time", category: "Customer Service", salary: "$800 – $1,100/mo", posted: "1 day ago", logo: "AI", logoColor: "bg-purple-700", tags: ["Entry Level", "On-site"], desc: "Handle member enquiries, complaints, and service requests. Ensure prompt resolution and high member satisfaction scores." },
+  { title: "HMO Finance & Accounts Officer", company: "Avon HMO", location: "Port Harcourt, Rivers", type: "Full-time", category: "Finance", salary: "$1,300 – $1,700/mo", posted: "5 days ago", logo: "AV", logoColor: "bg-amber-700", tags: ["Mid Level", "On-site"], desc: "Manage capitation payments, provider reconciliations, and monthly financial reports. Support internal and external audit activities." },
+  { title: "Compliance & Regulatory Affairs Manager", company: "Clearline HMO", location: "Lagos, Nigeria", type: "Full-time", category: "Compliance", salary: "$2,200 – $3,000/mo", posted: "1 week ago", logo: "CL", logoColor: "bg-teal-700", tags: ["Senior Level", "On-site"], desc: "Oversee healthcare compliance, lead audit readiness, and develop internal policy frameworks." },
+  { title: "HMO Operations Manager", company: "Tangerine Health", location: "Lagos, Nigeria", type: "Full-time", category: "Management", salary: "$2,800 – $3,800/mo", posted: "4 days ago", logo: "TH", logoColor: "bg-orange-600", tags: ["Senior Level", "Hybrid"], desc: "Lead day-to-day HMO operations including enrolment, claims, provider management and team performance. Report to the COO." },
+  { title: "Utilisation Management Nurse", company: "Hygeia HMO", location: "Remote", type: "Full-time", category: "Claims", salary: "$1,400 – $1,800/mo", posted: "3 days ago", logo: "HY", logoColor: "bg-blue-600", tags: ["Mid Level", "Remote"], desc: "Review pre-authorisation requests and manage concurrent review of inpatient stays. Collaborate with clinical teams." },
+  { title: "Network Adequacy Analyst", company: "Reliance HMO", location: "Remote", type: "Contract", category: "Provider Relations", salary: "$900 – $1,300/mo", posted: "6 days ago", logo: "RH", logoColor: "bg-green-700", tags: ["Entry Level", "Hybrid"], desc: "Analyse provider network coverage gaps and support recruitment of new facilities. Produce geographic mapping and adequacy reports." },
 ];
 
 const STATS = [
   { value: "200+", label: "Successful Placements", icon: <CheckCircle className="w-5 h-5" /> },
   { value: "50+", label: "Partner Employers", icon: <Building2 className="w-5 h-5" /> },
   { value: "85%", label: "Hired Within 3 Months", icon: <TrendingUp className="w-5 h-5" /> },
-  { value: "₦180K+", label: "Avg. Starting Salary", icon: <Star className="w-5 h-5" /> },
+  { value: "$180K+", label: "Avg. Starting Salary", icon: <Star className="w-5 h-5" /> },
 ];
 
 const EMPLOYERS = ["HYGEIA HMO", "AIICO Multishield", "Reliance HMO", "Avon HMO", "Tangerine Health", "Clearline HMO", "Nonsuch HMO", "WellCare HMO"];
@@ -82,8 +82,8 @@ export default function Careers() {
         <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-white">
             <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Career Corner</p>
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Explore Jobs.<br />Grow Your HMO Career.</h1>
-            <p className="text-gray-300 text-sm leading-relaxed mb-8 max-w-lg">Exclusive HMO job listings from Nigeria's top healthcare organisations — visible only to Kalaro graduates and community members.</p>
+             <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Explore Jobs.<br />Grow Your HMO Career.</h1>
+             <p className="text-gray-300 text-sm leading-relaxed mb-8 max-w-lg">Exclusive HMO job listings from top healthcare organisations worldwide — visible only to Kalaro graduates and community members.</p>
             <div className="flex flex-wrap gap-3">
               <button onClick={() => navigate("/signup")} className="bg-green-500 hover:bg-green-400 text-white font-bold px-7 py-3.5 rounded-full text-sm flex items-center gap-2 transition-all">
                 Join to Access Jobs <ArrowRight className="w-4 h-4" />
@@ -189,7 +189,7 @@ export default function Careers() {
             <MobileCarousel cardWidth="w-[78vw]">
               {[
                 { icon: <Users className="w-6 h-6" />, title: "CV Review & Coaching", desc: "Our career advisors review your CV and coach you to present yourself powerfully to HMO hiring managers.", color: "bg-green-700" },
-                { icon: <Building2 className="w-6 h-6" />, title: "Employer Introductions", desc: "Direct warm introductions to HR contacts at our 50+ partner HMOs across Nigeria — no cold applications.", color: "bg-blue-700" },
+                { icon: <Building2 className="w-6 h-6" />, title: "Employer Introductions", desc: "Direct warm introductions to HR contacts at our 50+ partner HMOs worldwide — no cold applications.", color: "bg-blue-700" },
                 { icon: <TrendingUp className="w-6 h-6" />, title: "Interview Preparation", desc: "Mock interviews, common HMO interview questions, and feedback sessions to maximise your success rate.", color: "bg-purple-700" },
               ].map((s, i) => (
                 <div key={i} className="bg-[#f7faf7] rounded-2xl p-7 border border-gray-100 h-full flex flex-col">
@@ -203,7 +203,7 @@ export default function Careers() {
           <div className="hidden sm:grid grid-cols-3 gap-6">
             {[
               { icon: <Users className="w-6 h-6" />, title: "CV Review & Coaching", desc: "Our career advisors review your CV and coach you to present yourself powerfully to HMO hiring managers.", color: "bg-green-700" },
-              { icon: <Building2 className="w-6 h-6" />, title: "Employer Introductions", desc: "Direct warm introductions to HR contacts at our 50+ partner HMOs across Nigeria — no cold applications.", color: "bg-blue-700" },
+              { icon: <Building2 className="w-6 h-6" />, title: "Employer Introductions", desc: "Direct warm introductions to HR contacts at our 50+ partner HMOs worldwide — no cold applications.", color: "bg-blue-700" },
               { icon: <TrendingUp className="w-6 h-6" />, title: "Interview Preparation", desc: "Mock interviews, common HMO interview questions, and feedback sessions to maximise your success rate.", color: "bg-purple-700" },
             ].map((s, i) => (
               <div key={i} className="bg-[#f7faf7] rounded-2xl p-7 border border-gray-100 hover:shadow-md transition-shadow">

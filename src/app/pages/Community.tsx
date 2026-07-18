@@ -10,7 +10,7 @@ import {
 const FEATURES = [
   { icon: <MessageSquare className="w-6 h-6" />, title: "Discussion Forums", desc: "Ask questions, share insights, and connect with peers and instructors across all HMO operations topics.", color: "bg-blue-50 text-blue-700" },
   { icon: <Briefcase className="w-6 h-6" />, title: "Job Board", desc: "Exclusive HMO job listings posted daily by our partner employers — visible only to Kalaro community members.", color: "bg-green-50 text-green-700" },
-  { icon: <Globe className="w-6 h-6" />, title: "Alumni Network", desc: "500+ graduates across Nigeria's top HMOs. Connect, collaborate, and open doors for each other.", color: "bg-purple-50 text-purple-700" },
+  { icon: <Globe className="w-6 h-6" />, title: "Alumni Network", desc: "500+ graduates across leading HMOs worldwide. Connect, collaborate, and open doors for each other.", color: "bg-purple-50 text-purple-700" },
   { icon: <Calendar className="w-6 h-6" />, title: "Live Events & Webinars", desc: "Monthly industry webinars, live Q&A sessions with HMO executives, and virtual networking events.", color: "bg-amber-50 text-amber-700" },
   { icon: <Library className="w-6 h-6" />, title: "Resource Library", desc: "Exclusive access to templates, policy documents, case studies, and industry reports curated by our experts.", color: "bg-rose-50 text-rose-700" },
   { icon: <Award className="w-6 h-6" />, title: "Mentorship Programme", desc: "Get matched with a senior HMO professional who will guide your career growth for 3 months.", color: "bg-teal-50 text-teal-700" },
@@ -89,7 +89,7 @@ export default function Community() {
         <div className="absolute inset-0 bg-[#071a08]/90" />
         <div className="relative max-w-7xl mx-auto px-6 text-center text-white">
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Community</p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Nigeria's HMO Professional Hub</h1>
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Global HMO Professional Hub</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed mb-10">
             More than a course platform — Kalaro is a community of ambitious HMO professionals helping each other grow, connect, and get hired.
           </p>
@@ -231,9 +231,9 @@ export default function Community() {
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Our Members</p>
             <h2 className="text-3xl font-extrabold text-gray-900">Community Members</h2>
-            <p className="text-gray-500 mt-3 text-sm max-w-lg mx-auto">
-              Professionals from across Nigeria's HMO industry, all connected through Kalaro.
-            </p>
+             <p className="text-gray-500 mt-3 text-sm max-w-lg mx-auto">
+               Professionals from across the global HMO industry, all connected through Kalaro.
+             </p>
           </div>
 
           {/* Mobile carousel */}
@@ -247,7 +247,7 @@ export default function Community() {
             {MEMBERS.map((m, i) => <MemberCard key={i} m={m} />)}
           </div>
 
-          <p className="text-center text-sm text-gray-400 mt-6">+ 490 more members nationwide</p>
+          <p className="text-center text-sm text-gray-400 mt-6">+ 490 more members worldwide</p>
         </div>
       </section>
 
@@ -263,7 +263,7 @@ export default function Community() {
         <div className="relative max-w-3xl mx-auto px-6 text-center text-white">
           <h2 className="text-3xl font-extrabold mb-4">Join the Community Today</h2>
           <p className="text-gray-300 text-sm mb-8 leading-relaxed">
-            Enrol in any Kalaro course and automatically become a lifetime member of Nigeria's premier HMO professional network.
+            Enrol in any Kalaro course and automatically become a lifetime member of the world's premier HMO professional network.
           </p>
           <button
             onClick={() => navigate("/courses")}

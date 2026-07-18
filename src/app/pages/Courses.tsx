@@ -13,17 +13,17 @@ const ALL_COURSES = [
   {
     title: "Introduction to HMO Operations",
     category: "Beginner", duration: "6 Weeks", students: "1,240", rating: 4.9,
-    lessons: 24, price: "₦35,000",
+    lessons: 24, price: "$350",
     img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-emerald-100 text-emerald-700",
     desc: "Get a solid foundation in how Health Maintenance Organisations work, from enrolment to benefit administration and regulatory compliance.",
-    highlights: ["HMO structure & governance", "Enrolment processes", "Member services", "NHIS fundamentals"],
+    highlights: ["HMO structure & governance", "Enrolment processes", "Member services", "Healthcare fundamentals"],
     instructor: "Dr. Adebayo Mensah",
   },
   {
     title: "HMO Claims Management",
     category: "Intermediate", duration: "8 Weeks", students: "980", rating: 4.8,
-    lessons: 32, price: "₦45,000",
+    lessons: 32, price: "$450",
     img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-blue-100 text-blue-700",
     desc: "Master the end-to-end claims processing workflow — from submission and adjudication to fraud detection and appeals management.",
@@ -33,7 +33,7 @@ const ALL_COURSES = [
   {
     title: "Provider Relations & Network Management",
     category: "Intermediate", duration: "6 Weeks", students: "760", rating: 4.7,
-    lessons: 20, price: "₦40,000",
+    lessons: 20, price: "$400",
     img: "https://images.unsplash.com/photo-1739285388427-d6f85d12a8fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-purple-100 text-purple-700",
     desc: "Learn how to build, manage and negotiate with provider networks. Understand capitation models and performance monitoring.",
@@ -43,17 +43,17 @@ const ALL_COURSES = [
   {
     title: "Health Insurance Fundamentals",
     category: "Beginner", duration: "4 Weeks", students: "1,540", rating: 4.9,
-    lessons: 16, price: "₦25,000",
+    lessons: 16, price: "$250",
     img: "https://images.unsplash.com/photo-1513258496099-48168024aec0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-amber-100 text-amber-700",
-    desc: "Understand the principles of health insurance — risk pooling, premium calculation, benefit design, and the Nigerian regulatory landscape.",
-    highlights: ["Insurance principles", "Risk management", "Premium design", "NAICOM regulations"],
+    desc: "Understand the principles of health insurance — risk pooling, premium calculation, benefit design, and international regulatory frameworks.",
+    highlights: ["Insurance principles", "Risk management", "Premium design", "Regulatory compliance"],
     instructor: "Dr. Aisha Musa",
   },
   {
     title: "HMO Financial Management",
     category: "Advanced", duration: "10 Weeks", students: "540", rating: 4.8,
-    lessons: 40, price: "₦60,000",
+    lessons: 40, price: "$600",
     img: "https://images.unsplash.com/photo-1762341117487-dbc411bcf574?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-red-100 text-red-700",
     desc: "Advanced financial operations for HMO professionals — budgeting, actuarial basics, reserve management, and financial reporting.",
@@ -63,17 +63,17 @@ const ALL_COURSES = [
   {
     title: "Healthcare Compliance & Regulation",
     category: "Advanced", duration: "8 Weeks", students: "430", rating: 4.6,
-    lessons: 28, price: "₦50,000",
+    lessons: 28, price: "$500",
     img: "https://images.unsplash.com/photo-1663549662588-a3c62ff48a3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-teal-100 text-teal-700",
-    desc: "Navigate the complex regulatory environment governing HMOs in Nigeria — NHIS, NAICOM, state health agencies, and data protection laws.",
-    highlights: ["NHIS regulations", "NAICOM compliance", "Data protection (NDPR)", "Audit readiness"],
+    desc: "Navigate the complex regulatory environment governing HMOs globally — international healthcare regulations, data protection laws, and compliance standards.",
+    highlights: ["International regulations", "Healthcare compliance", "Data protection", "Audit readiness"],
     instructor: "Barrister Funke Adeyemi",
   },
   {
     title: "HMO Customer Service Excellence",
     category: "Beginner", duration: "3 Weeks", students: "890", rating: 4.7,
-    lessons: 12, price: "₦20,000",
+    lessons: 12, price: "$200",
     img: "https://images.unsplash.com/photo-1758691462878-6edc3d3da1be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-pink-100 text-pink-700",
     desc: "Deliver exceptional member experiences. Learn complaint handling, service quality standards, and communication best practices in managed care.",
@@ -83,7 +83,7 @@ const ALL_COURSES = [
   {
     title: "Utilization Management & Care Coordination",
     category: "Advanced", duration: "8 Weeks", students: "320", rating: 4.8,
-    lessons: 30, price: "₦55,000",
+    lessons: 30, price: "$550",
     img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
     badgeColor: "bg-indigo-100 text-indigo-700",
     desc: "Master utilisation review, pre-authorisation, and care management strategies that balance quality outcomes with cost efficiency.",
@@ -158,7 +158,7 @@ export default function Courses() {
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Our Curriculum</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">All Courses</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed">
-            Every programme is designed with real HMO workflows in mind — practical, current, and aligned with Nigeria's NHIS standards.
+            Every programme is designed with real HMO workflows in mind — practical, current, and aligned with international healthcare standards.
           </p>
         </div>
       </section>

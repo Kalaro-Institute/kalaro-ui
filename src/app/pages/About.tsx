@@ -13,17 +13,17 @@ const TEAM = [
 const VALUES = [
   { icon: <Target className="w-6 h-6" />, title: "Practical Focus", desc: "Every lesson is grounded in real HMO operational scenarios, not just theory." },
   { icon: <Award className="w-6 h-6" />, title: "Excellence", desc: "We hold ourselves and our students to the highest professional standards." },
-  { icon: <Heart className="w-6 h-6" />, title: "Impact", desc: "Better-trained HMO professionals mean better healthcare outcomes for Nigerians." },
+  { icon: <Heart className="w-6 h-6" />, title: "Impact", desc: "Better-trained HMO professionals mean better healthcare outcomes for communities worldwide." },
   { icon: <Users className="w-6 h-6" />, title: "Community", desc: "Our alumni network creates lasting professional connections across the industry." },
 ];
 
 const MILESTONES = [
-  { year: "2019", event: "Kalaro Institute founded in Abuja, FCT" },
+  { year: "2019", event: "Kalaro Institute founded" },
   { year: "2020", event: "First cohort of 40 students — 100% employment rate" },
   { year: "2021", event: "Online platform launched; enrolled 200+ students" },
-  { year: "2022", event: "Partnered with 10+ leading Nigerian HMOs for job placement" },
+  { year: "2022", event: "Partnered with 10+ leading HMOs globally for job placement" },
   { year: "2023", event: "500+ graduates; expanded curriculum to 8 specialist courses" },
-  { year: "2025", event: "Recognised as Nigeria's #1 HMO training institute" },
+  { year: "2025", event: "Recognised as a leading global HMO training institute" },
 ];
 
 function TeamCard({ member }: { member: typeof TEAM[0] }) {
@@ -64,9 +64,9 @@ export default function About() {
         <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-white">
             <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">About Us</p>
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Training Nigeria's Next Generation of HMO Leaders</h1>
+            <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Training the Next Generation of Global HMO Leaders</h1>
             <p className="text-gray-300 text-sm leading-relaxed mb-7">
-              Kalaro Institute of HMO Operations was founded with a single mission: to close the skills gap in Nigeria's managed healthcare sector by providing world-class, practical training that translates directly into career results.
+              Kalaro Institute of HMO Operations was founded with a single mission: to close the skills gap in the global healthcare sector by providing world-class, practical training that translates directly into career results.
             </p>
             <div className="flex flex-wrap gap-6 text-sm">
               {[{ v: "500+", l: "Graduates" }, { v: "5+", l: "Years Training" }, { v: "50+", l: "HMO Partners" }].map((s, i) => (
@@ -94,12 +94,12 @@ export default function About() {
             <div className="bg-green-50 border border-green-100 rounded-2xl p-8">
               <div className="w-12 h-12 bg-green-700 rounded-xl flex items-center justify-center text-white mb-5"><Target className="w-6 h-6" /></div>
               <h3 className="text-xl font-extrabold text-gray-900 mb-3">Our Mission</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">To equip healthcare professionals across Nigeria with the specialised knowledge, practical skills, and professional network needed to excel in HMO operations and advance Nigeria's managed care sector.</p>
+              <p className="text-gray-600 text-sm leading-relaxed">To equip healthcare professionals worldwide with the specialised knowledge, practical skills, and professional network needed to excel in HMO operations and advance global managed care.</p>
             </div>
             <div className="bg-[#071a08] rounded-2xl p-8 text-white">
               <div className="w-12 h-12 bg-green-700 rounded-xl flex items-center justify-center mb-5"><Eye className="w-6 h-6" /></div>
               <h3 className="text-xl font-extrabold mb-3">Our Vision</h3>
-              <p className="text-green-200 text-sm leading-relaxed">To become Africa's leading institute for managed care education — producing a generation of HMO professionals who drive quality, efficiency, and access in healthcare across the continent.</p>
+              <p className="text-green-200 text-sm leading-relaxed">To become the world's leading institute for managed care education — producing a generation of HMO professionals who drive quality, efficiency, and access in healthcare globally.</p>
             </div>
           </div>
 
@@ -186,7 +186,7 @@ export default function About() {
         <div className="absolute inset-0 bg-[#1b5e20]/92" />
         <div className="relative max-w-3xl mx-auto px-6 text-center text-white">
           <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">Join the Kalaro Community</h2>
-          <p className="text-green-200 text-sm mb-7">Become part of Nigeria's most connected HMO professional network.</p>
+          <p className="text-green-200 text-sm mb-7">Become part of the world's most connected HMO professional network.</p>
           <button onClick={() => navigate("/courses")} className="bg-white text-green-800 font-bold px-8 py-3.5 rounded-full hover:bg-green-50 transition-colors text-sm">
             Browse Courses
           </button>

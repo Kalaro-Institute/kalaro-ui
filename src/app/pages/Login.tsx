@@ -34,7 +34,7 @@ export default function Login() {
           </div>
           <h2 className="text-3xl font-extrabold mb-3 leading-tight">Welcome Back to Kalaro</h2>
           <p className="text-gray-400 text-sm leading-relaxed mb-10">
-            Log back in to continue your HMO learning journey, access your courses, and connect with Nigeria's leading managed care community.
+            Log back in to continue your HMO learning journey, access your courses, and connect with the world's leading managed care community.
           </p>
           <div className="space-y-3 mb-10">
             {BENEFITS.map((b, i) => (
