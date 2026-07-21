@@ -143,7 +143,7 @@ export default function LiveClasses() {
       <section className="bg-[#071a08] py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "radial-gradient(circle at 20% 60%, #4caf50 0%, transparent 50%)" }} />
-        <div className="relative max-w-7xl mx-auto px-6 text-center text-white">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-bold px-4 py-1.5 rounded-full mb-5">
             <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" /> LIVE Sessions Available
           </div>
@@ -169,7 +169,7 @@ export default function LiveClasses() {
 
       {/* Why live classes */}
       <section className="py-14 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {FEATURES.map((f, i) => (
               <div key={i} className="flex items-start gap-4 p-5 bg-[#f7faf7] rounded-2xl border border-gray-100">
@@ -186,7 +186,7 @@ export default function LiveClasses() {
 
       {/* Upcoming sessions */}
       <section className="py-20 bg-[#f7faf7]">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Schedule</p>
@@ -243,7 +243,7 @@ export default function LiveClasses() {
 
       {/* Past recordings */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">On-Demand</p>

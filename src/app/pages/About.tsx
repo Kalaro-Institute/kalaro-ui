@@ -61,7 +61,7 @@ export default function About() {
         }}
       >
         <div className="absolute inset-0 bg-[#071a08]/88" />
-        <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-white">
             <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">About Us</p>
             <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Training the Next Generation of Global HMO Leaders</h1>
@@ -89,7 +89,7 @@ export default function About() {
 
       {/* Mission & Vision */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="bg-green-50 border border-green-100 rounded-2xl p-8">
               <div className="w-12 h-12 bg-green-700 rounded-xl flex items-center justify-center text-white mb-5"><Target className="w-6 h-6" /></div>
@@ -131,7 +131,7 @@ export default function About() {
         }}
       >
         <div className="absolute inset-0 bg-white/95" />
-        <div className="relative max-w-7xl mx-auto px-6">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">The Experts</p>
             <h2 className="text-3xl font-extrabold text-gray-900">Meet Our Instructors</h2>
@@ -153,7 +153,7 @@ export default function About() {
 
       {/* Timeline */}
       <section className="py-20 bg-white">
-        <div className="max-w-3xl mx-auto px-6">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Our Story</p>
             <h2 className="text-3xl font-extrabold text-gray-900">Our Journey So Far</h2>
@@ -184,7 +184,7 @@ export default function About() {
         }}
       >
         <div className="absolute inset-0 bg-[#1b5e20]/92" />
-        <div className="relative max-w-3xl mx-auto px-6 text-center text-white">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center text-white">
           <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">Join the Kalaro Community</h2>
           <p className="text-green-200 text-sm mb-7">Become part of the world's most connected HMO professional network.</p>
           <button onClick={() => navigate("/courses")} className="bg-white text-green-800 font-bold px-8 py-3.5 rounded-full hover:bg-green-50 transition-colors text-sm">

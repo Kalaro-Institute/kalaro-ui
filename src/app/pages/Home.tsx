@@ -226,12 +226,6 @@ export default function Home() {
               <button onClick={() => navigate("/courses")} className="bg-green-500 hover:bg-green-400 active:scale-95 text-white font-bold px-8 py-3.5 rounded-full transition-all flex items-center gap-2 shadow-lg shadow-green-900/40 text-sm">
                 Explore Courses <ArrowRight className="w-4 h-4" />
               </button>
-              <button className="flex items-center gap-3 text-white font-medium text-sm group">
-                <span className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-colors shrink-0">
-                  <Play className="w-4 h-4 fill-white ml-0.5" />
-                </span>
-                Watch How It Works
-              </button>
             </div>
             <div className="flex flex-wrap gap-5 text-sm text-gray-400 border-t border-white/10 pt-8">
               {["Globally Recognized Certificates", "Industry Certified", "Job Placement Support", "Flexible Learning for All", "Trusted by Learners Worldwide"].map((t) => (
@@ -325,16 +319,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-            <path d="M0 60L1440 60L1440 20C1080 60 360 0 0 20L0 60Z" fill="white" />
-          </svg>
-        </div>
       </section>
 
       {/* ── TRUSTED BY ────────────────────────────────────────── */}
       <section className="py-10 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-7">
             Trusted by graduates working at leading HMOs worldwide
           </p>
@@ -397,7 +386,7 @@ export default function Home() {
       >
         {/* Dark green overlay */}
         <div className="absolute inset-0 bg-[#1b5e20]/90" />
-        <div className="relative max-w-7xl mx-auto px-6">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-center text-white">
             {STATS.map((s, i) => (
               <div key={i} className="flex flex-col items-center gap-2">

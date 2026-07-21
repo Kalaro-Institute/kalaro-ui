@@ -18,11 +18,70 @@ const NAV = [
     label: "Courses",
     to: "/courses",
     dropdown: [
-      { icon: <BookOpen className="w-4 h-4" />, label: "All Courses", to: "/courses", desc: "Browse the full curriculum" },
-      { icon: <Star className="w-4 h-4" />, label: "Beginner Programmes", to: "/courses?level=Beginner", desc: "Start from scratch" },
-      { icon: <GraduationCap className="w-4 h-4" />, label: "Intermediate Programmes", to: "/courses?level=Intermediate", desc: "Build on your foundation" },
-      { icon: <Briefcase className="w-4 h-4" />, label: "Advanced Programmes", to: "/courses?level=Advanced", desc: "Specialist & leadership tracks" },
-      { icon: <Play className="w-4 h-4" />, label: "Live Classes", to: "/live-classes", desc: "Join real-time sessions" },
+      { 
+        icon: <BookOpen className="w-4 h-4" />, 
+        label: "Health Insurance & HMO Operations", 
+        to: "/courses?category=hmo-operations", 
+        desc: "Core Program",
+        subItems: [
+          { label: "Patient Verification & Pre-Authorization", to: "/courses?category=patient-verification" },
+          { label: "Claims Preparation & Submission", to: "/courses?category=claims-prep" },
+          { label: "Billing & Reconciliation", to: "/courses?category=billing" },
+          { label: "Utilization Review", to: "/courses?category=utilization-review" },
+          { label: "Provider Relationship Management", to: "/courses?category=provider-relations" },
+        ]
+      },
+      { 
+        icon: <Star className="w-4 h-4" />, 
+        label: "Hospital Administration", 
+        to: "/courses?category=hospital-admin", 
+        desc: "Popular",
+        subItems: [
+          { label: "Front Desk Operations", to: "/courses?category=front-desk" },
+          { label: "Patient Coordination & Scheduling", to: "/courses?category=patient-coordination" },
+          { label: "Medical Documentation", to: "/courses?category=medical-documentation" },
+          { label: "Healthcare Communication Systems", to: "/courses?category=healthcare-communication" },
+          { label: "Administrative Workflow", to: "/courses?category=admin-workflow" },
+        ]
+      },
+      { 
+        icon: <GraduationCap className="w-4 h-4" />, 
+        label: "Billing, Claims & Reconciliation", 
+        to: "/courses?category=billing-claims", 
+        desc: "High Demand",
+        subItems: [
+          { label: "Claims Preparation & Submission", to: "/courses?category=claims-prep" },
+          { label: "Tariff Understanding", to: "/courses?category=tariff" },
+          { label: "Reconciliation Techniques", to: "/courses?category=reconciliation" },
+          { label: "Revenue Cycle Basics", to: "/courses?category=revenue-cycle" },
+          { label: "Claims Dispute Resolution", to: "/courses?category=claims-dispute" },
+        ]
+      },
+      { 
+        icon: <Briefcase className="w-4 h-4" />, 
+        label: "Medical Virtual Assistant", 
+        to: "/courses?category=virtual-assistant", 
+        desc: "Remote Work",
+        subItems: [
+          { label: "Appointment & Calendar Management", to: "/courses?category=appointment-management" },
+          { label: "Professional Communication", to: "/courses?category=professional-communication" },
+          { label: "Email & Admin Support", to: "/courses?category=email-admin" },
+          { label: "Portfolio Creation", to: "/courses?category=portfolio-creation" },
+          { label: "Remote Healthcare Support", to: "/courses?category=remote-support" },
+        ]
+      },
+      { 
+        icon: <Play className="w-4 h-4" />, 
+        label: "EMR / EHR Training", 
+        to: "/courses?category=emr-ehr", 
+        desc: "Digital Skills",
+        subItems: [
+          { label: "Digital Patient Documentation", to: "/courses?category=digital-documentation" },
+          { label: "Healthcare Data Management", to: "/courses?category=data-management" },
+          { label: "Electronic Records Workflow", to: "/courses?category=records-workflow" },
+          { label: "Data Protection & Confidentiality", to: "/courses?category=data-protection" },
+        ]
+      },
     ],
   },
   {
@@ -40,30 +99,47 @@ const NAV = [
   { label: "Contact", to: "/contact" },
 ];
 
-type DropdownItem = { icon: JSX.Element; label: string; to: string; desc: string };
+type DropdownItem = { icon: JSX.Element; label: string; to: string; desc: string; subItems?: { label: string; to: string }[] };
 type NavItem = { label: string; to?: string; dropdown?: DropdownItem[] };
 
 function DropdownMenu({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50 animate-in">
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[700px] bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in">
       {/* Arrow */}
       <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100" />
-      {items.map((item, i) => (
-        <Link
-          key={i}
-          to={item.to}
-          onClick={onClose}
-          className="flex items-start gap-3 px-4 py-3 hover:bg-green-50 transition-colors group mx-1 rounded-xl"
-        >
-          <div className="w-8 h-8 bg-green-100 text-green-700 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-700 group-hover:text-white transition-colors mt-0.5">
-            {item.icon}
+      <div className="grid grid-cols-2 gap-x-6 gap-y-1 px-4">
+        {items.map((item, i) => (
+          <div key={i} className="flex flex-col">
+            <Link
+              to={item.to}
+              onClick={onClose}
+              className="flex items-start gap-3 px-3 py-2 hover:bg-green-50 transition-colors group rounded-xl"
+            >
+              <div className="w-8 h-8 bg-green-100 text-green-700 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-700 group-hover:text-white transition-colors mt-0.5">
+                {item.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-800 group-hover:text-green-700 leading-tight">{item.label}</p>
+                <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{item.desc}</p>
+              </div>
+            </Link>
+            {item.subItems && (
+              <div className="ml-11 mt-1 space-y-1">
+                {item.subItems.map((sub, j) => (
+                  <Link
+                    key={j}
+                    to={sub.to}
+                    onClick={onClose}
+                    className="block text-xs text-gray-600 hover:text-green-700 px-3 py-1 hover:bg-green-50 rounded-lg transition-colors"
+                  >
+                    {sub.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-800 group-hover:text-green-700 leading-tight">{item.label}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
-          </div>
-        </Link>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -84,6 +160,15 @@ export default function Layout() {
     }
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Close dropdown on scroll
+  useEffect(() => {
+    function handler() {
+      setOpenDropdown(null);
+    }
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
   }, []);
 
   return (

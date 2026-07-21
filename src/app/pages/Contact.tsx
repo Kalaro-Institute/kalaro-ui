@@ -81,7 +81,7 @@ export default function Contact() {
       <section className="bg-[#071a08] py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "radial-gradient(circle at 30% 60%, #4caf50 0%, transparent 50%)" }} />
-        <div className="relative max-w-7xl mx-auto px-6 text-center text-white">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Get In Touch</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">We're Here to Help</h1>
           <p className="text-gray-300 max-w-xl mx-auto text-sm leading-relaxed">
@@ -92,7 +92,7 @@ export default function Contact() {
 
       {/* Contact options */}
       <section className="py-14 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CONTACT_OPTIONS.map((opt, i) => (
               <div key={i} className="flex items-start gap-4 bg-[#f7faf7] rounded-2xl p-5 border border-gray-100">
@@ -112,7 +112,7 @@ export default function Contact() {
 
       {/* Form + FAQs */}
       <section className="py-20 bg-[#f7faf7]">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Form */}
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sm:p-10">
