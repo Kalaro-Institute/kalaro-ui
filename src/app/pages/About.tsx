@@ -1,7 +1,7 @@
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
 import { useNavigate } from "react-router";
-import { CheckCircle, Target, Eye, Heart, Award, Users, TrendingUp, ArrowRight } from "lucide-react";
+import { Target, Eye, Heart, Award, Users,  } from "lucide-react";
 
 const TEAM = [
   { name: "Dr. Adebayo Mensah", role: "Founder & Lead Instructor", bio: "15+ years in HMO operations. Former Director at Hygeia HMO. Certified Health Insurance Professional.", avatar: "AM", color: "bg-green-700" },

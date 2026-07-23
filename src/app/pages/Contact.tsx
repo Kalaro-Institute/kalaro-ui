@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import {
-  Phone, Mail, MapPin, Clock, Send, CheckCircle,
+  Phone, Mail, MapPin, Send, CheckCircle,
   MessageSquare, Headphones, BookOpen,
 } from "lucide-react";
 

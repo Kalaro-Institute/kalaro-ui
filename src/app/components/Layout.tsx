@@ -6,8 +6,8 @@ import {
   Menu, X, Phone, Mail, MapPin, Facebook, Twitter,
   Instagram, Linkedin, Youtube, ChevronDown,
   BookOpen, FileText, Video, HelpCircle, Library,
-  Briefcase, Users, Globe, Star, Play, GraduationCap,
-  UserPlus, LogIn, ArrowRight, Rss,
+  Briefcase, Star, Play, GraduationCap,
+  UserPlus, LogIn, Rss,
 } from "lucide-react";
 
 /* ── Nav structure ─────────────────────────────────────────── */
@@ -41,7 +41,7 @@ const NAV = [
 ];
 
 type DropdownItem = { icon: JSX.Element; label: string; to: string; desc: string };
-type NavItem = { label: string; to?: string; dropdown?: DropdownItem[] };
+
 
 function DropdownMenu({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
   return (

@@ -4,7 +4,7 @@ import { MobileCarousel } from "@/app/components/MobileCarousel";
 import { useNavigate } from "react-router";
 import {
   Star, Clock, Users, BookOpen, ArrowRight, Search,
-  CheckCircle, Shield, HeartPulse, FileText, BarChart2, Layers,
+  CheckCircle, 
 } from "lucide-react";
 
 const CATEGORIES = ["All", "Beginner", "Intermediate", "Advanced"];

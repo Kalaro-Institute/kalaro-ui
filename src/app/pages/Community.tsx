@@ -1,10 +1,9 @@
-import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
 import { useNavigate } from "react-router";
 import {
-  Users, MessageSquare, Briefcase, Star, ArrowRight,
-  Globe, BookOpen, Calendar, Award, ChevronRight,
-  Video, Library, HelpCircle, Quote,
+   MessageSquare, Briefcase, ArrowRight,
+  Globe, Calendar, Award, ChevronRight,
+   Library,  Quote,
 } from "lucide-react";
 
 const FEATURES = [

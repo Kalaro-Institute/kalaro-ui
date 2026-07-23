@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import {
-  Video, Calendar, Clock, Users, ArrowRight, Play,
+   Clock, Users, ArrowRight, Play,
   CheckCircle, Mic, MonitorPlay, Star, Bell, Lock,
 } from "lucide-react";
 

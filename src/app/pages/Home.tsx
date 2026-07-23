@@ -3,7 +3,7 @@ import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
 import {
   ArrowRight, Play, CheckCircle, Star, Users, BookOpen,
-  Award, Clock, Shield, HeartPulse, FileText, BarChart2,
+  Award, Clock,
   Layers, Briefcase, TrendingUp, ChevronRight, Quote, Globe,
 } from "lucide-react";
 
