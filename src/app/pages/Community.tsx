@@ -86,7 +86,7 @@ export default function Community() {
         }}
       >
         <div className="absolute inset-0 bg-[#071a08]/90" />
-        <div className="relative max-w-7xl mx-auto px-6 text-center text-white">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Community</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Global HMO Professional Hub</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed mb-10">
@@ -110,7 +110,7 @@ export default function Community() {
 
       {/* Features */}
       <section className="py-20 bg-[#f7faf7]">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">What You Get</p>
             <h2 className="text-3xl font-extrabold text-gray-900">Everything in One Community</h2>
@@ -131,7 +131,7 @@ export default function Community() {
 
       {/* Upcoming Events */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <div>
               <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Events</p>
@@ -205,7 +205,7 @@ export default function Community() {
         }}
       >
         <div className="absolute inset-0 bg-[#071a08]/90" />
-        <div className="relative max-w-7xl mx-auto px-6">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-400 font-semibold text-xs uppercase tracking-widest mb-2">Member Voices</p>
             <h2 className="text-3xl font-extrabold text-white">What Members Are Saying</h2>
@@ -226,7 +226,7 @@ export default function Community() {
 
       {/* Member spotlight */}
       <section className="py-20 bg-[#f7faf7]">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Our Members</p>
             <h2 className="text-3xl font-extrabold text-gray-900">Community Members</h2>
@@ -259,7 +259,7 @@ export default function Community() {
         }}
       >
         <div className="absolute inset-0 bg-[#071a08]/92" />
-        <div className="relative max-w-3xl mx-auto px-6 text-center text-white">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center text-white">
           <h2 className="text-3xl font-extrabold mb-4">Join the Community Today</h2>
           <p className="text-gray-300 text-sm mb-8 leading-relaxed">
             Enrol in any Kalaro course and automatically become a lifetime member of the world's premier HMO professional network.

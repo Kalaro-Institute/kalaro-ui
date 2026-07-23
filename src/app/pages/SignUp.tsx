@@ -97,7 +97,7 @@ export default function SignUp() {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-start justify-center p-6 sm:p-10 overflow-y-auto">
+      <div className="flex-1 flex items-start justify-center p-4 sm:p-10 overflow-y-auto">
         <div className="w-full max-w-lg py-8">
           {/* Mobile logo */}
           <div className="lg:hidden mb-8 flex justify-center">

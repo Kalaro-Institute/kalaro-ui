@@ -79,7 +79,7 @@ export default function Careers() {
         }}
       >
         <div className="absolute inset-0 bg-[#071a08]/90" />
-        <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-white">
             <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Career Corner</p>
              <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Explore Jobs.<br />Grow Your HMO Career.</h1>
@@ -120,7 +120,7 @@ export default function Careers() {
 
       {/* Employer strip */}
       <section className="py-8 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">Our hiring partners</p>
           <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-12">
             {EMPLOYERS.map((e) => <span key={e} className="text-gray-400 font-bold text-xs tracking-wide hover:text-green-700 transition-colors">{e}</span>)}
@@ -178,7 +178,7 @@ export default function Careers() {
 
       {/* Career support */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Career Support</p>
             <h2 className="text-3xl font-extrabold text-gray-900">We Don't Just Train You. We Place You.</h2>
@@ -225,7 +225,7 @@ export default function Careers() {
         }}
       >
         <div className="absolute inset-0 bg-[#1b5e20]/92" />
-        <div className="relative max-w-3xl mx-auto px-6 text-center text-white">
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center text-white">
           <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">Ready to Land Your HMO Role?</h2>
           <p className="text-green-200 text-sm mb-7">Enrol in a Kalaro course and unlock full access to our job board and career support services.</p>
           <button onClick={() => navigate("/courses")} className="bg-white text-green-800 font-bold px-8 py-3.5 rounded-full hover:bg-green-50 transition-colors text-sm">
