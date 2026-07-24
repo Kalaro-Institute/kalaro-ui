@@ -486,7 +486,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS — with background image ──────────────── */}
+      {/* ── TESTIMONIALS — with background image ─────────────── */}
       <section
         className="py-20 relative overflow-hidden"
         style={{
