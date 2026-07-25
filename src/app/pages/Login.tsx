@@ -6,6 +6,7 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
+  ArrowLeft,
   Mail,
   Lock,
   CheckCircle,
@@ -196,6 +197,15 @@ export default function Login() {
               className="h-14 w-auto object-contain"
             />
           </div>
+
+          {/* Back to Home Button */}
+          <button
+            onClick={() => navigate("/")}
+            className="mb-6 flex items-center gap-2 text-sm text-gray-600 hover:text-green-700 transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-semibold">Back to Home</span>
+          </button>
 
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sm:p-10">
             <h2 className="text-2xl font-extrabold text-gray-900 mb-1">

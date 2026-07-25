@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
 import { useNavigate } from "react-router";
+import { useLocationPricing } from "@/app/hooks/useLocationPricing";
 import {
   Star, Clock, Users, BookOpen, ArrowRight, Search,
   CheckCircle, Shield, HeartPulse, FileText, BarChart2, Layers,
@@ -94,14 +95,17 @@ const ALL_COURSES = [
   },
 ];
 
-function CourseCard({ course }: { course: typeof ALL_COURSES[0] }) {
+function CourseCard({ course, slug }: { course: typeof ALL_COURSES[0]; slug: string }) {
+  const navigate = useNavigate();
+  const { formatPrice, loading } = useLocationPricing();
+  
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group cursor-pointer border border-gray-100 hover:-translate-y-1 flex flex-col h-full">
       <div className="relative h-48 overflow-hidden shrink-0">
         <ImageWithFallback src={course.img} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${course.badgeColor}`}>{course.category}</span>
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-green-800">{course.price}</div>
+        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-green-800">{loading ? "..." : formatPrice(course.title)}</div>
       </div>
       <div className="p-6 flex flex-col flex-1">
         <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors leading-snug">{course.title}</h3>
@@ -124,7 +128,13 @@ function CourseCard({ course }: { course: typeof ALL_COURSES[0] }) {
             <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
             <span className="text-sm font-bold text-gray-800">{course.rating}</span>
           </div>
-          <button className="bg-green-700 hover:bg-green-800 text-white text-xs font-bold px-5 py-2 rounded-full transition-colors flex items-center gap-1.5">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/course/${slug}`);
+            }}
+            className="bg-green-700 hover:bg-green-800 text-white text-xs font-bold px-5 py-2 rounded-full transition-colors flex items-center gap-1.5"
+          >
             Enroll Now <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -138,8 +148,19 @@ export default function Courses() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
+  const courseSlugs: Record<string, string> = {
+    "Introduction to HMO Operations": "introduction-to-hmo-operations",
+    "HMO Claims Management": "hmo-claims-management",
+    "Provider Relations & Network Management": "provider-relations-network-management",
+    "Health Insurance Fundamentals": "health-insurance-fundamentals",
+    "HMO Financial Management": "hmo-financial-management",
+    "Healthcare Compliance & Regulation": "healthcare-compliance-regulation",
+    "HMO Customer Service Excellence": "hmo-customer-service-excellence",
+    "Utilization Management & Care Coordination": "utilization-management-care-coordination",
+  };
+
   const filtered = ALL_COURSES.filter((c) => {
-    const matchCat = active === "All" || c.category === active;
+    const matchCat = active === "All" || c.category === c.category;
     const matchSearch = c.title.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
@@ -421,14 +442,22 @@ export default function Courses() {
           {/* Mobile carousel */}
           <div className="sm:hidden -mx-4 px-4">
             <MobileCarousel cardWidth="w-[82vw]">
-              {filtered.map((course, i) => <CourseCard key={i} course={course} />)}
+              {filtered.map((course, i) => (
+                <div key={i} onClick={() => navigate(`/course/${courseSlugs[course.title]}`)}>
+                  <CourseCard course={course} slug={courseSlugs[course.title]} />
+                </div>
+              ))}
             </MobileCarousel>
           </div>
 
           {/* Desktop carousel */}
           <div className="hidden sm:block">
             <MobileCarousel cardWidth="w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
-              {filtered.map((course, i) => <CourseCard key={i} course={course} />)}
+              {filtered.map((course, i) => (
+                <div key={i} onClick={() => navigate(`/course/${courseSlugs[course.title]}`)}>
+                  <CourseCard course={course} slug={courseSlugs[course.title]} />
+                </div>
+              ))}
             </MobileCarousel>
           </div>
 

@@ -7,6 +7,7 @@ import {
   EyeOff,
   CheckCircle,
   ArrowRight,
+  ArrowLeft,
   User,
   Mail,
   Lock,
@@ -204,6 +205,15 @@ export default function SignUp() {
               className="h-14 w-auto object-contain"
             />
           </div>
+          
+          {/* Back to Home Button */}
+          <button
+            onClick={() => navigate("/")}
+            className="mb-6 flex items-center gap-2 text-sm text-gray-600 hover:text-green-700 transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-semibold">Back to Home</span>
+          </button>
 
           {/* Step indicator */}
           <div className="flex items-center gap-2 mb-8">

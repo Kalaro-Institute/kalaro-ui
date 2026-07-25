@@ -21,14 +21,14 @@ const NAV = [
       { 
         icon: <BookOpen className="w-4 h-4" />, 
         label: "Health Insurance & HMO Operations", 
-        to: "/courses?category=hmo-operations", 
+        to: "/category/patient-verification", 
         desc: "Core Program",
         subItems: [
-          { label: "Patient Verification & Pre-Authorization", to: "/courses?category=patient-verification" },
-          { label: "Claims Preparation & Submission", to: "/courses?category=claims-prep" },
-          { label: "Billing & Reconciliation", to: "/courses?category=billing" },
-          { label: "Utilization Review", to: "/courses?category=utilization-review" },
-          { label: "Provider Relationship Management", to: "/courses?category=provider-relations" },
+          { label: "Patient Verification & Pre-Authorization", to: "/category/patient-verification" },
+          { label: "Claims Preparation & Submission", to: "/category/claims-prep" },
+          { label: "Billing & Reconciliation", to: "/category/billing" },
+          { label: "Utilization Review", to: "/category/utilization-review" },
+          { label: "Provider Relationship Management", to: "/category/provider-relations" },
         ]
       },
       { 

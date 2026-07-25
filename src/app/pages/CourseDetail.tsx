@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import {
-  ArrowLeft, Star, Clock, Users, BookOpen, CheckCircle,
+  ArrowLeft, ArrowRight, Star, Clock, Users, BookOpen, CheckCircle,
   Play, Award, Share2, Bookmark, ChevronRight, Globe,
   Shield, HeartPulse, FileText, BarChart2, Layers,
   Stethoscope, GraduationCap, Briefcase, RefreshCw, Monitor, Building2,
