@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import logo from "@/imports/logo.jpeg";
@@ -20,6 +20,7 @@ import { googleLogin } from "@/lib/auth.api";
 import type { ApiError } from "@/lib/api-client";
 import type { UserRole } from "@/lib/auth.types";
 
+
 const BENEFITS = [
   {
     icon: <BookOpen className="w-4 h-4" />,
@@ -39,7 +40,7 @@ function dashboardPath(role: UserRole): string {
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, user } = useAuth();
+  const { login, user, isLoading } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,6 +50,13 @@ export default function Login() {
   const wasJustVerified = (location.state as { verified?: boolean } | null)
     ?.verified;
   const [error, setError] = useState<string | null>(null);
+  const wasPasswordReset = (
+    location.state as { passwordReset?: boolean } | null
+  )?.passwordReset;
+
+  const wasInviteAccepted = (
+    location.state as { inviteAccepted?: boolean } | null
+  )?.inviteAccepted;
 
   const from = (location.state as { from?: { pathname: string } } | null)?.from
     ?.pathname;
@@ -128,10 +136,13 @@ export default function Login() {
     }
   };
 
-  if (user) {
-    redirectAfterLogin(user.role);
-    return null;
-  }
+  useEffect(() => {
+    const arrivedFromFlow =
+      wasJustVerified || wasPasswordReset || wasInviteAccepted;
+    if (user && !isLoading && !arrivedFromFlow) {
+      navigate(from ?? dashboardPath(user.role), { replace: true });
+    }
+  }, [user, isLoading, wasJustVerified, wasPasswordReset, wasInviteAccepted]);
 
   return (
     <div className="min-h-screen bg-[#f7faf7] font-[Poppins,sans-serif] flex">
@@ -219,6 +230,25 @@ export default function Login() {
               <div className="mb-5 flex items-start gap-2.5 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
                 <span className="shrink-0 mt-0.5">✓</span>
                 <span>Email verified. You can now log in.</span>
+              </div>
+            )}
+
+            {wasInviteAccepted && (
+              <div className="mb-5 flex items-start gap-2.5 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
+                <span className="shrink-0 mt-0.5">✓</span>
+                <span>
+                  Account activated. Log in to access your instructor dashboard.
+                </span>
+              </div>
+            )}
+
+            {wasPasswordReset && (
+              <div className="mb-5 flex items-start gap-2.5 bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-xl">
+                <span className="shrink-0 mt-0.5">✓</span>
+                <span>
+                  Password reset successfully. You can now log in with your new
+                  password.
+                </span>
               </div>
             )}
 

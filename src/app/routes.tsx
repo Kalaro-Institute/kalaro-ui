@@ -18,6 +18,13 @@ import StudentOverview from "./pages/dashboard/student/Overview";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminOverview from "./pages/dashboard/admin/Overview";
 import AdminUsers from "./pages/dashboard/admin/Users";
+import InstructorLayout from "./layouts/InstructorLayout";
+import InstructorOverview from "./pages/dashboard/instructor/Overview";
+import InstructorCourses from "./pages/dashboard/instructor/Courses";
+import CourseBuilder from "./pages/dashboard/instructor/CourseBuilder";
+import BrowseCourses from "./pages/dashboard/student/Browse";
+import ForgotPassword from "./pages/ForgotPassword";
+import AcceptInvite from "./pages/AcceptInvite";
 
 function ResourcePage({ title }: { title: string }) {
   return (
@@ -79,14 +86,8 @@ export const router = createBrowserRouter([
   { path: "/login", Component: Login },
   { path: "/signup", Component: SignUp },
   { path: "/verify-email", Component: VerifyEmail },
-  {
-    path: "/forgot-password",
-    Component: () => <DashboardStub label="Forgot password" />,
-  },
-  {
-    path: "/invite/accept",
-    Component: () => <DashboardStub label="Invite acceptance" />,
-  },
+  { path: "/forgot-password", Component: ForgotPassword },
+  { path: "/accept-invite", Component: AcceptInvite },
 
   {
     path: "/dashboard/student",
@@ -100,10 +101,7 @@ export const router = createBrowserRouter([
             path: "courses",
             Component: () => <DashboardStub label="My courses" />,
           },
-          {
-            path: "browse",
-            Component: () => <DashboardStub label="Browse courses" />,
-          },
+          { path: "browse", Component: BrowseCourses },
           {
             path: "live-classes",
             Component: () => <DashboardStub label="Live classes" />,
@@ -134,8 +132,26 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute allowedRoles={["instructor"]} />,
     children: [
       {
-        index: true,
-        Component: () => <DashboardStub label="Instructor overview" />,
+        Component: InstructorLayout,
+        children: [
+          { index: true, Component: InstructorOverview },
+          { path: "courses", Component: InstructorCourses },
+
+          { path: "courses/new", Component: CourseBuilder },
+          { path: "courses/:courseId/edit", Component: CourseBuilder },
+          {
+            path: "students",
+            Component: () => <DashboardStub label="Students" />,
+          },
+          {
+            path: "live-classes",
+            Component: () => <DashboardStub label="Live classes" />,
+          },
+          {
+            path: "grading",
+            Component: () => <DashboardStub label="Grading" />,
+          },
+        ],
       },
     ],
   },

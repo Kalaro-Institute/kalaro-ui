@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/lib/api-client";
+import { CourseCard } from "@/app/components/Coursecard";
+import type { CourseCardData } from "@/app/components/Coursecard";
 
 interface Course {
   id: number;
@@ -110,7 +112,6 @@ export default function StudentOverview() {
               See all <ArrowRight className="w-3 h-3" />
             </button>
           </div>
-
           {isLoading ? (
             <div className="flex items-center justify-center py-16 text-gray-400">
               <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -122,52 +123,9 @@ export default function StudentOverview() {
               <p className="text-sm">No courses available yet.</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {courses.slice(0, 4).map((course) => (
-                <div
-                  key={course.id}
-                  className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 group cursor-pointer hover:border-[#1b5e20]/20 transition-colors"
-                  onClick={() => navigate(`/dashboard/student/browse`)}
-                >
-                  <div className="w-14 h-14 rounded-lg bg-[#e8f5e9] shrink-0 overflow-hidden">
-                    {course.cover_image ? (
-                      <img
-                        src={course.cover_image}
-                        alt={course.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <BookOpen className="w-6 h-6 text-[#1b5e20]" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-[#1a2332] truncate mb-1 group-hover:text-[#1b5e20] transition-colors">
-                      {course.title}
-                    </p>
-                    <p className="text-xs text-gray-400 line-clamp-1 mb-2">
-                      {course.summary}
-                    </p>
-                    <ProgressBar value={0} />
-                  </div>
-
-                  <div className="shrink-0 text-right">
-                    <p className="text-sm font-bold text-[#1a2332]">
-                      {course.currency} {Number(course.price).toLocaleString()}
-                    </p>
-                    <span
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full mt-1 inline-block ${
-                        course.status === "published"
-                          ? "bg-[#e8f5e9] text-[#1b5e20]"
-                          : "bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {course.status}
-                    </span>
-                  </div>
-                </div>
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
           )}

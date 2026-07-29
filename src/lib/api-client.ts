@@ -176,3 +176,60 @@ export async function apiRequest<T>(
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
+
+export async function apiUpload<T>(
+  path: string,
+  formData: FormData,
+): Promise<T> {
+  const headers: Record<string, string> = {};
+  const token = getAccessToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+
+  if (res.status === 401) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      const retry = await fetch(`${BASE_URL}${path}`, {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+      if (!retry.ok) {
+        let errorBody: unknown = null;
+        try {
+          errorBody = await retry.json();
+        } catch {
+          /* empty */
+        }
+        const { message, fieldErrors } = parseError(errorBody);
+        throw { status: retry.status, message, fieldErrors } as ApiError;
+      }
+      return retry.json() as Promise<T>;
+    } else {
+      clearAccessToken();
+      clearRefreshToken();
+      window.location.href = "/login";
+      throw { status: 401, message: "Session expired." } as ApiError;
+    }
+  }
+
+  if (!res.ok) {
+    let errorBody: unknown = null;
+    try {
+      errorBody = await res.json();
+    } catch {
+      /* empty */
+    }
+    const { message, fieldErrors } = parseError(errorBody);
+    throw { status: res.status, message, fieldErrors } as ApiError;
+  }
+
+  if (res.status === 204) return undefined as T;
+  return res.json() as Promise<T>;
+}
