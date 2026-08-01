@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/lib/api-client";
-import { CourseCard } from "@/app/components/Coursecard";
-import type { CourseCardData } from "@/app/components/Coursecard";
+import { CourseCard } from "@/app/components/CourseCard";
+import type { CourseCardData } from "@/app/components/CourseCard";
 
 interface Course {
   id: number;

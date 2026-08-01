@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Search, BookOpen, Loader2, AlertCircle } from "lucide-react";
 import { apiRequest } from "@/lib/api-client";
-import { CourseCard } from "@/app/components/Coursecard";
-import type { CourseCardData } from "@/app/components/Coursecard";
+import { CourseCard } from "@/app/components/CourseCard";
+import type { CourseCardData } from "@/app/components/CourseCard";
 import { toast } from "sonner";
 
 export default function BrowseCourses() {
