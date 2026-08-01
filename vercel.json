@@ -1,8 +1,5 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
-  ],
-  "env": {
-    "VITE_API_BASE_URL": "http://172.236.12.180:8000/api/v1"
-  }
+  ]
 }
