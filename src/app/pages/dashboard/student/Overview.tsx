@@ -5,7 +5,6 @@ import {
   BarChart2,
   ClipboardList,
   Award,
-  Clock,
   Video,
   ArrowRight,
   Loader2,
@@ -14,59 +13,17 @@ import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/lib/api-client";
 import { CourseCard } from "@/app/components/CourseCard";
 import type { CourseCardData } from "@/app/components/CourseCard";
-
-interface Course {
-  id: number;
-  title: string;
-  slug: string;
-  summary: string;
-  price: number;
-  currency: string;
-  status: string;
-  cover_image: string;
-}
-
-function MetricCard({
-  icon: Icon,
-  value,
-  label,
-}: {
-  icon: React.ElementType;
-  value: string | number;
-  label: string;
-}) {
-  return (
-    <div className="bg-white border border-gray-100 rounded-xl p-4">
-      <div className="w-8 h-8 rounded-lg bg-[#e8f5e9] flex items-center justify-center mb-3">
-        <Icon className="w-4 h-4 text-[#1b5e20]" />
-      </div>
-      <div className="text-2xl font-bold text-[#1a2332] leading-none mb-1">
-        {value}
-      </div>
-      <div className="text-xs text-gray-500">{label}</div>
-    </div>
-  );
-}
-
-function ProgressBar({ value }: { value: number }) {
-  return (
-    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-      <div
-        className="h-full bg-[#1b5e20] rounded-full transition-all"
-        style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
-      />
-    </div>
-  );
-}
+import { CourseDetailModal } from "@/app/components/CourseDetailModal";
 
 export default function StudentOverview() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [courses, setCourses] = useState<CourseCardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
-    apiRequest<Course[]>("/catalog/courses")
+    apiRequest<CourseCardData[]>("/catalog/courses")
       .then(setCourses)
       .catch(() => setCourses([]))
       .finally(() => setIsLoading(false));
@@ -87,15 +44,27 @@ export default function StudentOverview() {
         </p>
       </div>
 
+      {/* Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        <MetricCard
-          icon={BookOpen}
-          value={courses.length}
-          label="Available courses"
-        />
-        <MetricCard icon={BarChart2} value="—" label="Avg progress" />
-        <MetricCard icon={ClipboardList} value="—" label="Due this week" />
-        <MetricCard icon={Award} value="—" label="Certificates" />
+        {[
+          { icon: BookOpen, value: courses.length, label: "Available courses" },
+          { icon: BarChart2, value: "—", label: "Avg progress" },
+          { icon: ClipboardList, value: "—", label: "Due this week" },
+          { icon: Award, value: "—", label: "Certificates" },
+        ].map((m) => (
+          <div
+            key={m.label}
+            className="bg-white border border-gray-100 rounded-xl p-4"
+          >
+            <div className="w-8 h-8 rounded-lg bg-[#e8f5e9] flex items-center justify-center mb-3">
+              <m.icon className="w-4 h-4 text-[#1b5e20]" />
+            </div>
+            <div className="text-2xl font-bold text-[#1a2332] leading-none mb-1">
+              {m.value}
+            </div>
+            <div className="text-xs text-gray-500">{m.label}</div>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5">
@@ -112,6 +81,7 @@ export default function StudentOverview() {
               See all <ArrowRight className="w-3 h-3" />
             </button>
           </div>
+
           {isLoading ? (
             <div className="flex items-center justify-center py-16 text-gray-400">
               <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -125,12 +95,17 @@ export default function StudentOverview() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {courses.slice(0, 4).map((course) => (
-                <CourseCard key={course.id} course={course} />
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  onClick={() => setSelectedSlug(course.slug)}
+                />
               ))}
             </div>
           )}
         </div>
 
+        {/* Right panel */}
         <div className="space-y-5">
           <div>
             <h2 className="text-sm font-semibold text-[#1a2332] mb-3">
@@ -180,14 +155,14 @@ export default function StudentOverview() {
                   to: "/dashboard/student/browse",
                 },
                 {
+                  label: "My courses",
+                  icon: BookOpen,
+                  to: "/dashboard/student/courses",
+                },
+                {
                   label: "Live classes",
                   icon: Video,
                   to: "/dashboard/student/live-classes",
-                },
-                {
-                  label: "Assessments",
-                  icon: ClipboardList,
-                  to: "/dashboard/student/assessments",
                 },
                 {
                   label: "Certificates",
@@ -212,6 +187,21 @@ export default function StudentOverview() {
           </div>
         </div>
       </div>
+
+      {/* Course detail modal */}
+      {selectedSlug && (
+        <CourseDetailModal
+          slug={selectedSlug}
+          onClose={() => setSelectedSlug(null)}
+          locked
+          onEnrolled={() => {
+            setSelectedSlug(null);
+            apiRequest<CourseCardData[]>("/catalog/courses")
+              .then(setCourses)
+              .catch(() => {});
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -25,6 +25,10 @@ import CourseBuilder from "./pages/dashboard/instructor/CourseBuilder";
 import BrowseCourses from "./pages/dashboard/student/Browse";
 import ForgotPassword from "./pages/ForgotPassword";
 import AcceptInvite from "./pages/AcceptInvite";
+import AdminPayments from "./pages/dashboard/admin/Payment";
+import PaystackCallback from "./pages/PaystackCallback";
+import MyCourses from "./pages/dashboard/student/MyCourses";
+import CoursePlayer from "./pages/dashboard/student/CoursePlayer";
 
 function ResourcePage({ title }: { title: string }) {
   return (
@@ -88,19 +92,19 @@ export const router = createBrowserRouter([
   { path: "/verify-email", Component: VerifyEmail },
   { path: "/forgot-password", Component: ForgotPassword },
   { path: "/accept-invite", Component: AcceptInvite },
+  { path: "/payment/callback", Component: PaystackCallback },
 
   {
     path: "/dashboard/student",
     element: <ProtectedRoute allowedRoles={["student"]} />,
+
     children: [
+      { path: "courses/:courseSlug/learn", Component: CoursePlayer },
       {
         Component: StudentLayout,
         children: [
           { index: true, Component: StudentOverview },
-          {
-            path: "courses",
-            Component: () => <DashboardStub label="My courses" />,
-          },
+          { path: "courses", Component: MyCourses },
           { path: "browse", Component: BrowseCourses },
           {
             path: "live-classes",
@@ -169,10 +173,7 @@ export const router = createBrowserRouter([
             path: "courses",
             Component: () => <DashboardStub label="Admin courses" />,
           },
-          {
-            path: "payments",
-            Component: () => <DashboardStub label="Payments" />,
-          },
+          { path: "payments", Component: AdminPayments },
           {
             path: "certificates",
             Component: () => <DashboardStub label="Certificates" />,

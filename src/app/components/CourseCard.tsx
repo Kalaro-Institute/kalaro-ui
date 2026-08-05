@@ -1,9 +1,5 @@
-import { useNavigate } from "react-router";
-import { BookOpen, Clock, ArrowRight, Loader2 } from "lucide-react";
-import { useState } from "react";
-import { apiRequest } from "@/lib/api-client";
-import type { ApiError } from "@/lib/api-client";
-import { toast } from "sonner";
+import { BookOpen, Clock, ArrowRight } from "lucide-react";
+
 
 export interface CourseCardData {
   id: number;
@@ -20,51 +16,19 @@ export interface CourseCardData {
 
 interface Props {
   course: CourseCardData;
-  // Pass progress (0-100) if the student is enrolled
   progress?: number;
   isEnrolled?: boolean;
-  onEnrolled?: () => void;
+  onClick?: () => void;
 }
 
-export function CourseCard({
-  course,
-  progress,
-  isEnrolled,
-  onEnrolled,
-}: Props) {
-  const navigate = useNavigate();
-  const [isEnrolling, setIsEnrolling] = useState(false);
-
-  const handleEnroll = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEnrolling(true);
-    try {
-      await apiRequest(`/catalog/courses/${course.id}/enroll`, {
-        method: "POST",
-      });
-      toast.success(`Enrolled in "${course.title}".`);
-      onEnrolled?.();
-    } catch (err) {
-      const apiErr = err as ApiError;
-      toast.error(apiErr.message ?? "Enrollment failed. Please try again.");
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
-
-  const handleCardClick = () => {
-    if (isEnrolled) {
-      navigate(`/dashboard/student/courses/${course.id}`);
-    }
-  };
-
+export function CourseCard({ course, progress, isEnrolled, onClick }: Props) {
   return (
     <div
-      onClick={handleCardClick}
+      onClick={onClick}
       className={`bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col transition-all ${
-        isEnrolled
+        onClick
           ? "cursor-pointer hover:border-[#1b5e20]/30 hover:shadow-md"
-          : "hover:shadow-sm"
+          : ""
       }`}
     >
       {/* Cover image */}
@@ -73,19 +37,21 @@ export function CourseCard({
           <img
             src={course.cover_image}
             alt={course.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <BookOpen className="w-10 h-10 text-[#1b5e20]/30" />
           </div>
         )}
+
         {/* Price badge */}
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-[#1a2332] text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
           {Number(course.price) === 0
             ? "Free"
             : `${course.currency} ${Number(course.price).toLocaleString()}`}
         </div>
+
         {/* Enrolled badge */}
         {isEnrolled && (
           <div className="absolute top-3 left-3 bg-[#1b5e20] text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
@@ -129,32 +95,25 @@ export function CourseCard({
           </div>
         )}
 
-        {/* Action button */}
-        {isEnrolled ? (
-          <button
-            onClick={handleCardClick}
-            className="w-full bg-[#1b5e20] text-white text-xs font-bold py-2.5 rounded-xl hover:bg-[#145218] transition-colors flex items-center justify-center gap-1.5"
-          >
-            {(progress ?? 0) > 0 ? "Continue" : "Start learning"}
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        ) : (
-          <button
-            onClick={handleEnroll}
-            disabled={isEnrolling}
-            className="w-full bg-[#1b5e20] text-white text-xs font-bold py-2.5 rounded-xl hover:bg-[#145218] disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-1.5"
-          >
-            {isEnrolling ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Enrolling...
-              </>
-            ) : (
-              <>
-                Enrol now <ArrowRight className="w-3.5 h-3.5" />
-              </>
-            )}
-          </button>
-        )}
+        {/* CTA */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
+          className="w-full bg-[#1b5e20] text-white text-xs font-bold py-2.5 rounded-xl hover:bg-[#145218] transition-colors flex items-center justify-center gap-1.5"
+        >
+          {isEnrolled ? (
+            <>
+              {(progress ?? 0) > 0 ? "Continue" : "Start learning"}{" "}
+              <ArrowRight className="w-3.5 h-3.5" />
+            </>
+          ) : (
+            <>
+              View course <ArrowRight className="w-3.5 h-3.5" />
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

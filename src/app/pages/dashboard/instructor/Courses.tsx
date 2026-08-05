@@ -20,6 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { CourseDetailModal } from "@/app/components/CourseDetailModal";
+
+
 
 interface InstructorCourse {
   id: number;
@@ -54,6 +57,8 @@ export default function InstructorCourses() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [publishingId, setPublishingId] = useState<number | null>(null);
+  
+ const [previewSlug, setPreviewSlug] = useState<string | null>(null);
 
   const fetchCourses = useCallback(() => {
     setIsLoading(true);
@@ -171,6 +176,7 @@ export default function InstructorCourses() {
                 <tr
                   key={course.id}
                   className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors last:border-0"
+                  onClick={() => setPreviewSlug(course.slug)}
                 >
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
@@ -187,10 +193,12 @@ export default function InstructorCourses() {
                           </div>
                         )}
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-[#1a2332] truncate max-w-[200px]">
+                      <div
+                        className="min-w-0"
+                      >
+                        <button className="text-sm font-medium text-[#1a2332] truncate max-w-[200px] hover:text-[#1b5e20] transition-colors text-left">
                           {course.title}
-                        </p>
+                        </button>
                         <p className="text-xs text-gray-400 truncate max-w-[200px]">
                           {course.summary}
                         </p>
@@ -255,6 +263,12 @@ export default function InstructorCourses() {
             </tbody>
           </table>
         </div>
+      )}
+      {previewSlug && (
+        <CourseDetailModal
+          slug={previewSlug}
+          onClose={() => setPreviewSlug(null)}
+        />
       )}
     </div>
   );

@@ -4,13 +4,18 @@ import { apiRequest } from "@/lib/api-client";
 import { CourseCard } from "@/app/components/CourseCard";
 import type { CourseCardData } from "@/app/components/CourseCard";
 import { toast } from "sonner";
+import type { ApiError } from "@/lib/api-client";
+import { CourseDetailModal } from "@/app/components/CourseDetailModal";
 
 export default function BrowseCourses() {
   const [courses, setCourses] = useState<CourseCardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [enrollingSlug, setEnrollingSlug] = useState<string | null>(null);
 
+  
   const fetchCourses = () => {
     setIsLoading(true);
     apiRequest<CourseCardData[]>("/catalog/courses")
@@ -20,6 +25,23 @@ export default function BrowseCourses() {
         toast.error("Failed to load courses.");
       })
       .finally(() => setIsLoading(false));
+  };
+
+  const handleEnroll = async (slug: string, courseId: number) => {
+    setEnrollingSlug(slug);
+    try {
+      await apiRequest(`/catalog/courses/${courseId}/enroll`, {
+        method: "POST",
+      });
+      toast.success("Enrolled successfully.");
+      setSelectedSlug(null);
+      fetchCourses();
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Enrollment failed. Please try again.");
+    } finally {
+      setEnrollingSlug(null);
+    }
   };
 
   useEffect(() => {
@@ -73,15 +95,27 @@ export default function BrowseCourses() {
           </p>
         </div>
       ) : (
+        // In Browse.tsx, update the grid:
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((course) => (
             <CourseCard
               key={course.id}
               course={course}
-              onEnrolled={fetchCourses}
+              onClick={() => setSelectedSlug(course.slug)}
             />
           ))}
         </div>
+      )}
+      {selectedSlug && (
+        <CourseDetailModal
+          slug={selectedSlug}
+          onClose={() => setSelectedSlug(null)}
+          locked
+          onEnrolled={() => {
+            setSelectedSlug(null);
+            fetchCourses();
+          }}
+        />
       )}
     </div>
   );
