@@ -29,6 +29,9 @@ import AdminPayments from "./pages/dashboard/admin/Payment";
 import PaystackCallback from "./pages/PaystackCallback";
 import MyCourses from "./pages/dashboard/student/MyCourses";
 import CoursePlayer from "./pages/dashboard/student/CoursePlayer";
+import Nclex from "./pages/Services/Nclex";
+import InternationalPr from "./pages/Services/InternationalPr";
+import { NclexServiceRoute, PrServiceRoute } from "./pages/Services/ServiceDetail";
 
 function ResourcePage({ title }: { title: string }) {
   return (
@@ -68,6 +71,15 @@ export const router = createBrowserRouter([
       { path: "contact", Component: Contact },
       { path: "careers", Component: Careers },
       { path: "live-classes", Component: LiveClasses },
+
+      /* NCLEX hub + individual services */
+      { path: "nclex", Component: Nclex },
+      { path: "nclex/services/:slug", Component: NclexServiceRoute },
+
+      /* International permanent residency hub */
+      { path: "services/permanent-residency", Component: InternationalPr },
+      { path: "services/permanent-residency/services/:slug", Component: PrServiceRoute },
+
       {
         path: "resources/blog",
         Component: () => <ResourcePage title="Blog & Articles" />,

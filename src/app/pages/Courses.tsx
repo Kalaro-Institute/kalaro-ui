@@ -417,6 +417,36 @@ export default function Courses() {
         </div>
       </section>
 
+      {/* Why choose Kalaro */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1a2332] mb-3">
+              Why Choose Kalaro?
+            </h2>
+            <p className="text-gray-500 text-sm max-w-2xl mx-auto">
+              Four things that set our programmes apart.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: <GraduationCap className="w-6 h-6" />, title: "Training", body: "Practical, hands-on programmes built around real job responsibilities." },
+              { icon: <Shield className="w-6 h-6" />, title: "Professional Support", body: "Registration, documentation and licensing support beyond the classroom." },
+              { icon: <Building2 className="w-6 h-6" />, title: "Healthcare Administration", body: "Deep expertise in hospital and HMO administration and operations." },
+              { icon: <Briefcase className="w-6 h-6" />, title: "International Opportunities", body: "NCLEX, travel and permanent-residency pathways to opportunities abroad." },
+            ].map((item) => (
+              <div key={item.title} className="bg-[#f7faf7] rounded-2xl p-6 border border-gray-100 hover:border-green-200 transition-colors">
+                <div className="w-12 h-12 bg-green-700 text-white rounded-xl flex items-center justify-center mb-4">
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-[#1a2332] mb-2 text-sm">{item.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-10 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {/* Filter bar */}

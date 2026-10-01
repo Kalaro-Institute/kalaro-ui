@@ -1,148 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Outlet, NavLink, useNavigate, Link } from "react-router";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+import { NavSelectionMenu } from "@/app/components/NavDropdown";
+import { NAV, FOOTER_GROUPS } from "@/app/data/navigation";
 import logo from "@/imports/logo.jpeg";
 import {
   Menu, X, Phone, Mail, MapPin, Facebook, Twitter,
   Instagram, Linkedin, Youtube, ChevronDown,
-  BookOpen, FileText, Video, HelpCircle, Library,
-  Briefcase, Star, Play, GraduationCap,
-  UserPlus, LogIn, Rss,
+  UserPlus, LogIn,
 } from "lucide-react";
-
-/* ── Nav structure ────────────────────────────────────────── */
-const NAV = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  {
-    label: "Courses",
-    to: "/courses",
-    dropdown: [
-      { 
-        icon: <BookOpen className="w-4 h-4" />, 
-        label: "Health Insurance & HMO Operations", 
-        to: "/category/patient-verification", 
-        desc: "Core Program",
-        subItems: [
-          { label: "Patient Verification & Pre-Authorization", to: "/category/patient-verification" },
-          { label: "Claims Preparation & Submission", to: "/category/claims-prep" },
-          { label: "Billing & Reconciliation", to: "/category/billing" },
-          { label: "Utilization Review", to: "/category/utilization-review" },
-          { label: "Provider Relationship Management", to: "/category/provider-relations" },
-        ]
-      },
-      { 
-        icon: <Star className="w-4 h-4" />, 
-        label: "Hospital Administration", 
-        to: "/courses?category=hospital-admin", 
-        desc: "Popular",
-        subItems: [
-          { label: "Front Desk Operations", to: "/courses?category=front-desk" },
-          { label: "Patient Coordination & Scheduling", to: "/courses?category=patient-coordination" },
-          { label: "Medical Documentation", to: "/courses?category=medical-documentation" },
-          { label: "Healthcare Communication Systems", to: "/courses?category=healthcare-communication" },
-          { label: "Administrative Workflow", to: "/courses?category=admin-workflow" },
-        ]
-      },
-      { 
-        icon: <GraduationCap className="w-4 h-4" />, 
-        label: "Billing, Claims & Reconciliation", 
-        to: "/courses?category=billing-claims", 
-        desc: "High Demand",
-        subItems: [
-          { label: "Claims Preparation & Submission", to: "/courses?category=claims-prep" },
-          { label: "Tariff Understanding", to: "/courses?category=tariff" },
-          { label: "Reconciliation Techniques", to: "/courses?category=reconciliation" },
-          { label: "Revenue Cycle Basics", to: "/courses?category=revenue-cycle" },
-          { label: "Claims Dispute Resolution", to: "/courses?category=claims-dispute" },
-        ]
-      },
-      { 
-        icon: <Briefcase className="w-4 h-4" />, 
-        label: "Medical Virtual Assistant", 
-        to: "/courses?category=virtual-assistant", 
-        desc: "Remote Work",
-        subItems: [
-          { label: "Appointment & Calendar Management", to: "/courses?category=appointment-management" },
-          { label: "Professional Communication", to: "/courses?category=professional-communication" },
-          { label: "Email & Admin Support", to: "/courses?category=email-admin" },
-          { label: "Portfolio Creation", to: "/courses?category=portfolio-creation" },
-          { label: "Remote Healthcare Support", to: "/courses?category=remote-support" },
-        ]
-      },
-      { 
-        icon: <Play className="w-4 h-4" />, 
-        label: "EMR / EHR Training", 
-        to: "/courses?category=emr-ehr", 
-        desc: "Digital Skills",
-        subItems: [
-          { label: "Digital Patient Documentation", to: "/courses?category=digital-documentation" },
-          { label: "Healthcare Data Management", to: "/courses?category=data-management" },
-          { label: "Electronic Records Workflow", to: "/courses?category=records-workflow" },
-          { label: "Data Protection & Confidentiality", to: "/courses?category=data-protection" },
-        ]
-      },
-    ],
-  },
-  {
-    label: "Resources",
-    dropdown: [
-      { icon: <Rss className="w-4 h-4" />, label: "Blog & Articles", to: "/resources/blog", desc: "Industry insights & career tips" },
-      { icon: <Video className="w-4 h-4" />, label: "Webinars", to: "/resources/webinars", desc: "Free recorded & live sessions" },
-      { icon: <Library className="w-4 h-4" />, label: "Resource Library", to: "/resources/library", desc: "Templates, guides & policy docs" },
-      { icon: <FileText className="w-4 h-4" />, label: "HMO Glossary", to: "/resources/glossary", desc: "Key terms explained simply" },
-      { icon: <HelpCircle className="w-4 h-4" />, label: "FAQs", to: "/contact#faq", desc: "Common questions answered" },
-    ],
-  },
-  { label: "Careers", to: "/careers" },
-  { label: "Community", to: "/community" },
-  { label: "Contact", to: "/contact" },
-];
-
-type DropdownItem = { icon: JSX.Element; label: string; to: string; desc: string; subItems?: { label: string; to: string }[] };
-type NavItem = { label: string; to?: string; dropdown?: DropdownItem[] };
-
-function DropdownMenu({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
-  return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[700px] bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in">
-      {/* Arrow */}
-      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100" />
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1 px-4">
-        {items.map((item, i) => (
-          <div key={i} className="flex flex-col">
-            <Link
-              to={item.to}
-              onClick={onClose}
-              className="flex items-start gap-3 px-3 py-2 hover:bg-green-50 transition-colors group rounded-xl"
-            >
-              <div className="w-8 h-8 bg-green-100 text-green-700 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-700 group-hover:text-white transition-colors mt-0.5">
-                {item.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 group-hover:text-green-700 leading-tight">{item.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{item.desc}</p>
-              </div>
-            </Link>
-            {item.subItems && (
-              <div className="ml-11 mt-1 space-y-1">
-                {item.subItems.map((sub, j) => (
-                  <Link
-                    key={j}
-                    to={sub.to}
-                    onClick={onClose}
-                    className="block text-xs text-gray-600 hover:text-green-700 px-3 py-1 hover:bg-green-50 rounded-lg transition-colors"
-                  >
-                    {sub.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -208,19 +74,33 @@ export default function Layout() {
             {/* Desktop nav links */}
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV.map((item) => (
-                <div key={item.label} className="relative">
+                <div key={item.label} className="relative"
+                  onMouseEnter={() => setOpenDropdown(item.label)}
+                >
                   {item.dropdown ? (
-                    <button
-                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                      className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
-                        openDropdown === item.label
-                          ? "text-green-700 bg-green-50"
-                          : "text-gray-700 hover:text-green-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      {item.label}
-                      <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                        className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                          openDropdown === item.label
+                            ? "text-green-700 bg-green-50"
+                            : "text-gray-700 hover:text-green-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {item.label}
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
+                      </button>
+                      {openDropdown === item.label && (
+                        <NavSelectionMenu
+                          items={item.dropdown}
+                          onClose={() => setOpenDropdown(null)}
+                          width={item.mega ? "w-[820px]" : "w-[720px]"}
+                          railWidth={item.mega ? "w-[300px]" : "w-[270px]"}
+                          showBadge={item.mega}
+                          railHeading={item.mega ? "Course Programs" : undefined}
+                        />
+                      )}
+                    </>
                   ) : (
                     <NavLink
                       to={item.to!}
@@ -236,9 +116,6 @@ export default function Layout() {
                     >
                       {item.label}
                     </NavLink>
-                  )}
-                  {item.dropdown && openDropdown === item.label && (
-                    <DropdownMenu items={item.dropdown} onClose={() => setOpenDropdown(null)} />
                   )}
                 </div>
               ))}
@@ -283,17 +160,48 @@ export default function Layout() {
                     </button>
                     {mobileOpen === item.label && (
                       <div className="ml-3 mt-1 border-l-2 border-green-100 pl-3 flex flex-col gap-1">
-                        {item.dropdown.map((sub, j) => (
-                          <Link
-                            key={j}
-                            to={sub.to}
-                            onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
-                            className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:text-green-700 rounded-lg hover:bg-green-50"
-                          >
-                            <span className="text-green-600">{sub.icon}</span>
-                            {sub.label}
-                          </Link>
-                        ))}
+                        {item.dropdown.map((sub, j) => {
+                          const subKey = `${item.label}:${j}`;
+                          const isOpen = mobileOpen === subKey;
+                          return (
+                            <div key={subKey}>
+                              <div className="flex items-center gap-1">
+                                <Link
+                                  to={sub.to}
+                                  onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
+                                  className="flex-1 flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:text-green-700 rounded-lg hover:bg-green-50"
+                                >
+                                  <span className="text-green-600">{sub.icon}</span>
+                                  <span className="flex-1">{sub.label}</span>
+                                </Link>
+                                {sub.subItems && sub.subItems.length > 0 && (
+                                  <button
+                                    onClick={() => setMobileOpen(isOpen ? null : subKey)}
+                                    aria-label={`Show ${sub.label} modules`}
+                                    className="p-2 text-gray-400 hover:text-green-700"
+                                  >
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                                  </button>
+                                )}
+                              </div>
+                              {sub.subItems && isOpen && (
+                                <ul className="ml-6 mb-1 border-l border-green-100 pl-3 flex flex-col gap-0.5">
+                                  {sub.subItems.map((m, k) => (
+                                    <li key={k}>
+                                      <Link
+                                        to={m.to}
+                                        onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
+                                        className="block py-1.5 text-xs text-gray-500 hover:text-green-700"
+                                      >
+                                        {m.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </>
@@ -359,7 +267,7 @@ export default function Layout() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 pt-14 pb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
             {/* Brand */}
             <div>
               <div className="mb-5 bg-white inline-block rounded-xl p-2">
@@ -377,49 +285,27 @@ export default function Layout() {
               </div>
             </div>
 
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">Quick Links</h4>
-              <ul className="space-y-3 text-sm">
-                {[
-                  { label: "Home", to: "/" },
-                  { label: "About Us", to: "/about" },
-                  { label: "All Courses", to: "/courses" },
-                  { label: "Live Classes", to: "/live-classes" },
-                  { label: "Careers", to: "/careers" },
-                  { label: "Community", to: "/community" },
-                  { label: "Contact Us", to: "/contact" },
-                ].map((l) => (
-                  <li key={l.label}>
-                    <Link to={l.to} className="hover:text-green-400 transition-colors flex items-center gap-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full" />{l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Resources */}
-            <div>
-              <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">Resources</h4>
-              <ul className="space-y-3 text-sm">
-                {[
-                  { label: "Blog & Articles", to: "/resources/blog" },
-                  { label: "Webinars", to: "/resources/webinars" },
-                  { label: "Resource Library", to: "/resources/library" },
-                  { label: "HMO Glossary", to: "/resources/glossary" },
-                  { label: "Student Portal", to: "/login" },
-                  { label: "FAQs", to: "/contact#faq" },
-                  { label: "Help Centre", to: "/contact" },
-                ].map((l) => (
-                  <li key={l.label}>
-                    <Link to={l.to} className="hover:text-green-400 transition-colors flex items-center gap-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full" />{l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {/* Courses / NCLEX / Resources — derived from the nav data */}
+            {FOOTER_GROUPS.map((group) => (
+              <div key={group.heading}>
+                <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">
+                  {group.heading}
+                </h4>
+                <ul className="space-y-3 text-sm">
+                  {group.links.map((l) => (
+                    <li key={l.label}>
+                      <Link
+                        to={l.to}
+                        className="hover:text-green-400 transition-colors flex items-start gap-2"
+                      >
+                        <span className="w-1 h-1 bg-green-600 rounded-full mt-2 shrink-0" />
+                        <span className="hover:underline">{l.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
 
             {/* Contact + newsletter */}
             <div>

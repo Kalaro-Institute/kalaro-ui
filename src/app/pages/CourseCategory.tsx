@@ -9,6 +9,65 @@ import {
   Stethoscope, FileText, BarChart2, Monitor, Layers,
 } from "lucide-react";
 
+/* Programme landing pages that don't have a bespoke CATEGORY_CONTENT
+   entry yet. Without this the nav would dead-end on "Category Not
+   Found". Titles are hand-written so acronyms (AI, HMO, NHIA, VA)
+   render correctly rather than as "Hmo" / "Ai".                     */
+const PROGRAM_META: Record<string, { title: string; description: string }> = {
+  /* Hospital administration */
+  "hospital-admin": { title: "Hospital Administration", description: "Operational training for the people who run day-to-day hospital administration." },
+  "front-desk": { title: "Front Desk Operations", description: "Patient reception, records handling and first-contact care coordination." },
+  "patient-coordination": { title: "Patient Coordination & Scheduling", description: "Keeping appointments, referrals and patient flow running smoothly." },
+  "medical-documentation": { title: "Medical Documentation", description: "Accurate records, correct filing and compliant patient documentation." },
+  "healthcare-communication": { title: "Healthcare Communication Systems", description: "Professional communication across departments, patients and providers." },
+  "admin-workflow": { title: "Administrative Workflow", description: "Structured processes that keep healthcare administration moving." },
+  "hospital-administration": { title: "Hospital Administration Training", description: "Comprehensive hospital administration training for healthcare professionals and beginners." },
+
+  /* Billing & claims */
+  "billing-claims": { title: "Billing, Claims & Reconciliation", description: "High-demand training in healthcare billing, claims and account reconciliation." },
+  "tariff": { title: "Tariff Understanding", description: "Reading and applying healthcare tariffs correctly in practice." },
+  "reconciliation": { title: "Reconciliation Techniques", description: "Match payments to claims and resolve discrepancies efficiently." },
+  "revenue-cycle": { title: "Revenue Cycle Basics", description: "How revenue moves from encounter to payment across the cycle." },
+  "claims-dispute": { title: "Claims Dispute Resolution", description: "Investigating, appealing and resolving rejected or disputed claims." },
+
+  /* Virtual assistant & AI */
+  "va-ai-automation": { title: "Virtual Assistant & AI Automation", description: "Practical training combining virtual assistant skills with modern AI tools and automation." },
+  "va-skills": { title: "Virtual Assistant Skills Training", description: "Core virtual assistant skills for remote work in a professional setting." },
+  "remote-work": { title: "Remote Work Skills", description: "Work habits, communication and tooling for productive remote work." },
+  "ai-automation": { title: "AI Tools & Automation", description: "Use AI tools to automate repetitive work and move faster with less effort." },
+  "ai-tools": { title: "Healthcare AI Tools", description: "Applying AI tools within a healthcare administrative context." },
+  "healthcare-professionals": { title: "Practical Training for Healthcare Professionals", description: "Remote work and AI skills designed for practising healthcare professionals." },
+  "beginners": { title: "Practical Training for Beginners", description: "A practical starting point for people new to virtual assistant and remote work." },
+  "professional-communication": { title: "Professional Communication", description: "Clear, professional communication in remote and client-facing roles." },
+  "email-admin": { title: "Email & Admin Support", description: "Managing email and routine administrative support professionally." },
+  "portfolio": { title: "Portfolio Creation", description: "Build a portfolio that gets you hired for remote and VA roles." },
+  "virtual-assistant": { title: "Medical Virtual Assistant", description: "Healthcare-trained virtual assistant support for clinics and practitioners." },
+  "appointment-management": { title: "Appointment & Calendar Management", description: "Scheduling, reminders and calendar control that reduce no-shows." },
+
+  /* HMO operation */
+  "hospital-hmo-operation": { title: "Hospital Administration & HMO Operation", description: "Run hospitals and HMOs with confidence — administration, operations, claims and terminology." },
+  "hmo-operation": { title: "HMO Operation Training", description: "Practical HMO operations training, from enrolment to member services." },
+  "hmo-operations": { title: "HMO Operations Training", description: "Operational HMO training for staff and officers." },
+  "healthcare-claims": { title: "Healthcare Claims & Processes", description: "Healthcare claims handling and the processes that support it." },
+  "medical-terminology": { title: "Medical & HMO Terminologies", description: "The language of medicine and health insurance, explained clearly." },
+  "administrative-skills": { title: "Practical Healthcare Administrative Skills", description: "Hands-on administrative skills for healthcare settings." },
+
+  /* NHIA & regulatory */
+  "nhia-registration": { title: "NHIA Registration Support", description: "NHIA registration support for healthcare facilities and providers." },
+  "hospital-registration": { title: "Hospital Registration Assistance", description: "Assistance registering healthcare facilities with the right authorities." },
+  "hospital-renewal": { title: "Annual Hospital Renewal", description: "Keep your facility's registration current, every year." },
+  "regulatory-documentation": { title: "Regulatory Documentation Support", description: "Paperwork that satisfies every healthcare authority." },
+
+  /* HMO workforce */
+  "hmo-officer-training": { title: "HMO Officer Recruitment & Training", description: "Recruit, train and develop a capable HMO administrative workforce." },
+  "hmo-officer-recruitment": { title: "HMO Officer Recruitment", description: "Finding and onboarding the right HMO officers for your organisation." },
+  "hmo-staff-training": { title: "HMO Staff Training", description: "Practical training for HMO staff across core functions." },
+  "workforce-development": { title: "Healthcare Administrative Workforce Development", description: "Build a healthcare administrative workforce that performs." },
+
+  /* Web */
+  "website-development": { title: "Website Development", description: "Fast, mobile-first websites for clinics and health brands." },
+};
+
 interface Course {
   title: string;
   slug: string;
@@ -200,12 +259,15 @@ export default function CourseCategory() {
   const [search, setSearch] = useState("");
 
   const categoryData = category ? CATEGORY_CONTENT[category] : null;
+  /* Programmes without a bespoke entry still get a real landing page
+     built from PROGRAM_META, rather than a "Category Not Found" dead end. */
+  const programMeta = category ? PROGRAM_META[category] : undefined;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [category]);
 
-  if (!categoryData) {
+  if (!categoryData && !programMeta) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -237,11 +299,15 @@ export default function CourseCategory() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-12 bg-green-700 rounded-xl flex items-center justify-center text-white">
-              {categoryData.icon}
+              {categoryData?.icon ?? <Layers className="w-6 h-6" />}
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">{categoryData.title}</h1>
-          <p className="text-gray-300 max-w-2xl mx-auto text-sm">{categoryData.description}</p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
+            {categoryData?.title ?? programMeta?.title}
+          </h1>
+          <p className="text-gray-300 max-w-2xl mx-auto text-sm">
+            {categoryData?.description ?? programMeta?.description}
+          </p>
         </div>
       </section>
 
