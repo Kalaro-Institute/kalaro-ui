@@ -107,7 +107,7 @@ export default function Courses() {
     <div className="font-[Poppins,sans-serif]">
       {/* Header â€” with background image */}
       <section
-        className="py-24 relative overflow-hidden"
+        className="py-14 sm:py-20 lg:py-24 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1580582932707-520aed937b7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover",
@@ -117,7 +117,7 @@ export default function Courses() {
         <div className="absolute inset-0 bg-[#071a08]/90" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Our Curriculum</p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">All Courses</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">All Courses</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed">
             Every programme is designed with real HMO workflows in mind â€” practical, current, and aligned with international healthcare standards.
           </p>
@@ -134,7 +134,7 @@ export default function Courses() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[85vw]">
               {[
                 {
@@ -408,7 +408,7 @@ export default function Courses() {
           <p className="text-sm text-gray-400 mb-6">{filtered.length} course{filtered.length !== 1 ? "s" : ""} found</p>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[82vw]">
               {filtered.map((course, i) => (
                 <div key={i} onClick={() => navigate(`/course/${course.slug}`)}>
@@ -420,7 +420,7 @@ export default function Courses() {
 
           {/* Desktop carousel */}
           <div className="hidden sm:block">
-            <MobileCarousel cardWidth="w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+            <MobileCarousel cardWidth="w-[calc(50%_-_12px)] lg:w-[calc(33.333%_-_16px)]">
               {filtered.map((course, i) => (
                 <div key={i} onClick={() => navigate(`/course/${course.slug}`)}>
                   <CourseCard course={course} slug={course.slug} />
@@ -430,7 +430,7 @@ export default function Courses() {
           </div>
 
           {filtered.length === 0 && (
-            <div className="text-center py-20 text-gray-400">
+            <div className="text-center py-14 sm:py-20 text-gray-400">
               <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p className="font-semibold">No courses match your search.</p>
               <p className="text-sm mt-1">Try a different keyword or category.</p>
@@ -459,4 +459,8 @@ export default function Courses() {
     </div>
   );
 }
+
+
+
+
 

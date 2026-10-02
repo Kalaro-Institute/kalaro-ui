@@ -265,7 +265,7 @@ export default function CourseCategory() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Category Not Found</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Category Not Found</h1>
           <button onClick={() => navigate("/courses")} className="bg-green-700 text-white px-6 py-3 rounded-full font-semibold">
             Browse Courses
           </button>
@@ -296,7 +296,7 @@ export default function CourseCategory() {
               {categoryData?.icon ?? <Layers className="w-6 h-6" />}
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">
             {categoryData?.title ?? programMeta?.title}
           </h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm">

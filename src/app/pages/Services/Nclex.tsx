@@ -55,12 +55,12 @@ export default function Nclex() {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0d3b12]/95 via-[#145218]/92 to-[#1b5e20]/80" />
-        <div className="relative max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-[1fr_minmax(0,380px)] gap-12 items-center">
+        <div className="relative max-w-6xl mx-auto px-6 py-14 sm:py-20 grid md:grid-cols-[1fr_minmax(0,380px)] gap-12 items-center">
           <div>
             <p className="text-green-300 text-xs font-bold uppercase tracking-widest mb-4">
               NCLEX Support
             </p>
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight max-w-3xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight max-w-3xl">
               Everything you need to sit the NCLEX — handled end to end.
             </h1>
             <p className="text-green-100 mt-5 text-lg max-w-2xl leading-relaxed">

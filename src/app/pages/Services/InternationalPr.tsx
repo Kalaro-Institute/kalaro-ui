@@ -21,11 +21,11 @@ export default function InternationalPr() {
     <div className="bg-[#f7faf7] font-[Poppins,sans-serif]">
       {/* Hero */}
       <section className="bg-[#1b5e20] text-white">
-        <div className="max-w-6xl mx-auto px-6 py-20">
+        <div className="max-w-6xl mx-auto px-6 py-14 sm:py-20">
           <p className="text-green-300 text-xs font-bold uppercase tracking-widest mb-4">
             International Permanent Residency
           </p>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight max-w-3xl">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight max-w-3xl">
             Your route to Canada — admission, visa and residency, supported end to end.
           </h1>
           <p className="text-green-100 mt-5 text-lg max-w-2xl leading-relaxed">
@@ -112,3 +112,4 @@ function ServiceCard({
     </Link>
   );
 }
+

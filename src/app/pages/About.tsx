@@ -54,7 +54,7 @@ export default function About() {
     <div className="font-[Poppins,sans-serif]">
       {/* Header — background image */}
       <section
-        className="py-24 relative overflow-hidden"
+        className="py-14 sm:py-20 lg:py-24 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1739298061768-41a8a7d8b38f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center top",
@@ -64,7 +64,7 @@ export default function About() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-white">
             <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">About Us</p>
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Training the Next Generation of Global HMO Leaders</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-5 leading-tight">Training the Next Generation of Global HMO Leaders</h1>
             <p className="text-gray-300 text-sm leading-relaxed mb-7">
               Kalaro Institute of HMO Operations was founded with a single mission: to close the skills gap in the global healthcare sector by providing world-class, practical training that translates directly into career results.
             </p>
@@ -88,7 +88,7 @@ export default function About() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 bg-white">
+      <section className="py-14 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="bg-green-50 border border-green-100 rounded-2xl p-8">
@@ -110,7 +110,7 @@ export default function About() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[72vw]">
               {VALUES.map((v, i) => <ValueCard key={i} v={v} />)}
             </MobileCarousel>
@@ -124,7 +124,7 @@ export default function About() {
 
       {/* Team — background image */}
       <section
-        className="py-20 relative overflow-hidden"
+        className="py-14 sm:py-20 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1777703304166-d7713ec85de0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center",
@@ -139,7 +139,7 @@ export default function About() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[72vw]">
               {TEAM.map((member, i) => <TeamCard key={i} member={member} />)}
             </MobileCarousel>
@@ -152,7 +152,7 @@ export default function About() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 bg-white">
+      <section className="py-14 sm:py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Our Story</p>
@@ -195,3 +195,7 @@ export default function About() {
     </div>
   );
 }
+
+
+
+

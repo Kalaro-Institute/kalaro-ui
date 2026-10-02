@@ -79,7 +79,7 @@ export default function Community() {
     <div className="font-[Poppins,sans-serif]">
       {/* Header — background image */}
       <section
-        className="py-24 relative overflow-hidden"
+        className="py-14 sm:py-20 lg:py-24 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center",
@@ -88,7 +88,7 @@ export default function Community() {
         <div className="absolute inset-0 bg-[#071a08]/90" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Community</p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Global HMO Professional Hub</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">Global HMO Professional Hub</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed mb-10">
             More than a course platform — Kalaro is a community of ambitious HMO professionals helping each other grow, connect, and get hired.
           </p>
@@ -109,7 +109,7 @@ export default function Community() {
       </section>
 
       {/* Features */}
-      <section className="py-20 bg-[#f7faf7]">
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">What You Get</p>
@@ -117,7 +117,7 @@ export default function Community() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[78vw]">
               {FEATURES.map((f, i) => <FeatureCard key={i} f={f} />)}
             </MobileCarousel>
@@ -130,7 +130,7 @@ export default function Community() {
       </section>
 
       {/* Upcoming Events */}
-      <section className="py-20 bg-white">
+      <section className="py-14 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -143,7 +143,7 @@ export default function Community() {
           </div>
 
           {/* Mobile carousel for events */}
-          <div className="sm:hidden -mx-4 px-4 mb-4">
+          <div className="sm:hidden -mx-4 px-4 mb-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[84vw]">
               {UPCOMING_EVENTS.map((event, i) => (
                 <div key={i} className="bg-[#f7faf7] rounded-2xl p-5 border border-green-100 flex gap-4 h-full">
@@ -198,7 +198,7 @@ export default function Community() {
 
       {/* Testimonials — background image */}
       <section
-        className="py-20 relative overflow-hidden"
+        className="py-14 sm:py-20 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1777703304166-d7713ec85de0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center",
@@ -212,7 +212,7 @@ export default function Community() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[82vw]">
               {TESTIMONIALS.map((t, i) => <TestimonialCard key={i} t={t} />)}
             </MobileCarousel>
@@ -225,7 +225,7 @@ export default function Community() {
       </section>
 
       {/* Member spotlight */}
-      <section className="py-20 bg-[#f7faf7]">
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Our Members</p>
@@ -236,7 +236,7 @@ export default function Community() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[40vw]" arrows={false}>
               {MEMBERS.map((m, i) => <MemberCard key={i} m={m} />)}
             </MobileCarousel>
@@ -252,7 +252,7 @@ export default function Community() {
 
       {/* Join CTA — background image */}
       <section
-        className="py-20 relative overflow-hidden"
+        className="py-14 sm:py-20 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1654762549297-2a145fcb9924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center",
@@ -275,3 +275,8 @@ export default function Community() {
     </div>
   );
 }
+
+
+
+
+

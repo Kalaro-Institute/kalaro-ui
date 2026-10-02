@@ -83,14 +83,16 @@ export default function Layout() {
       {/* â”€â”€ NAVBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <nav className="sticky top-0 z-50 bg-white shadow-md" ref={navRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-20">
+          {/* h-16 on phones, h-20 from lg up. The logo scales with it so
+              the bag + hamburger always have room without overflowing. */}
+          <div className="flex items-center justify-between h-16 lg:h-20">
 
-            {/* Logo â€” large & prominent */}
-            <NavLink to="/" className="flex items-center gap-3 shrink-0" onClick={() => setOpenDropdown(null)}>
+            {/* Logo â€” large & prominent, scaled down on phones */}
+            <NavLink to="/" className="flex items-center gap-3 shrink-0 min-w-0" onClick={() => setOpenDropdown(null)}>
               <ImageWithFallback
                 src={logo}
                 alt="Kalaro Institute of HMO Operations"
-                className="h-[60px] w-auto object-contain"
+                className="h-9 sm:h-12 lg:h-[60px] w-auto object-contain"
               />
             </NavLink>
 
@@ -147,12 +149,13 @@ export default function Layout() {
               ))}
             </div>
 
-            {/* Cart - always visible so the bag is reachable from
-                anywhere, with a live count of what is in it. */}
+            {/* Cart - desktop placement, beside the auth buttons.
+                The mobile bag further down serves small screens, so
+                this must be hidden below lg or it renders twice. */}
             <Link
               to="/cart"
               aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
-              className="relative p-2.5 rounded-full text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
+              className="hidden lg:block relative p-2.5 rounded-full text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
             >
               <ShoppingBag className="w-5 h-5" />
               {count > 0 && (
@@ -178,24 +181,32 @@ export default function Layout() {
               </button>
             </div>
 
-            {/* Bag - visible on mobile too, so the cart is never stranded */}
-            <Link
-              to="/cart"
-              aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
-              className="lg:hidden relative p-2 rounded-full text-gray-700 hover:text-green-700 transition-colors"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              {count > 0 && (
-                <span className="absolute top-0 right-0 min-w-[16px] h-[16px] px-1 bg-green-700 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                  {count > 9 ? "9+" : count}
-                </span>
-              )}
-            </Link>
+            {/* Mobile actions - bag and hamburger grouped so they sit
+                together at the right edge instead of being spread apart
+                by justify-between. */}
+            <div className="lg:hidden flex items-center gap-0.5 -mr-2">
+              <Link
+                to="/cart"
+                aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
+                className="relative p-2 rounded-full text-gray-700 hover:text-green-700 transition-colors"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {count > 0 && (
+                  <span className="absolute top-0.5 right-0.5 min-w-[16px] h-[16px] px-1 bg-green-700 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {count > 9 ? "9+" : count}
+                  </span>
+                )}
+              </Link>
 
-            {/* Mobile toggle */}
-            <button className="lg:hidden p-2 text-gray-700" onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                className="p-2 rounded-full text-gray-700 hover:text-green-700 transition-colors"
+              >
+                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -276,6 +287,24 @@ export default function Layout() {
                 )}
               </div>
             ))}
+
+            {/* Mobile bag row - reinforces the header icon and shows
+                the running total without opening the bag. */}
+            <Link
+              to="/cart"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-700 rounded-lg hover:bg-green-50 mt-1"
+            >
+              <span className="flex items-center gap-2.5">
+                <ShoppingBag className="w-4 h-4 text-green-600" />
+                Your bag
+              </span>
+              {count > 0 && (
+                <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                  {count} item{count !== 1 ? "s" : ""}
+                </span>
+              )}
+            </Link>
 
             {/* Mobile auth */}
             <div className="flex gap-3 pt-3 mt-2 border-t border-gray-100">

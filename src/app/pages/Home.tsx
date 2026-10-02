@@ -208,13 +208,13 @@ export default function Home() {
       <section className="relative bg-[#071a08] min-h-[92vh] flex items-center overflow-hidden">
         <div className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full bg-green-900/30 blur-[120px] -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-green-800/20 blur-[100px] translate-x-1/4 translate-y-1/4" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 items-center w-full">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 grid lg:grid-cols-2 gap-12 items-center w-full">
           <div className="text-white">
             <div className="inline-flex items-center gap-2 bg-green-900/60 border border-green-700/40 text-green-300 text-xs font-semibold px-4 py-1.5 rounded-full mb-7">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
               Global Healthcare Education & Career Platform
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold leading-[1.12] mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-[3.4rem] font-extrabold leading-[1.12] mb-4 sm:mb-6">
               Learn. Practice.<br />
               <span className="text-green-400">Get Certified.</span><br />
               Get Hired. Go Global.
@@ -336,7 +336,7 @@ export default function Home() {
       </section>
 
       {/* ── TOP COURSES ───────────────────────────────────────── */}
-      <section className="py-20 bg-[#f7faf7]">
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
@@ -352,7 +352,7 @@ export default function Home() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[78vw]">
               {COURSES.map((c, i) => (
                 <CourseCard key={i} {...c} onNavigate={() => navigate("/courses")} />
@@ -400,7 +400,7 @@ export default function Home() {
       </section>
 
       {/* ── QUALITY EDUCATION ─────────────────────────────────── */}
-      <section className="py-24 bg-white">
+      <section className="py-14 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative order-2 lg:order-1">
@@ -444,7 +444,7 @@ export default function Home() {
 
       {/* ── LEARNING JOURNEY — with background image ──────────── */}
       <section
-        className="py-20 relative overflow-hidden"
+        className="py-14 sm:py-20 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1580582932707-520aed937b7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover",
@@ -467,7 +467,7 @@ export default function Home() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[78vw]">
               {JOURNEY.map((s, i) => <JourneyCard key={i} {...s} />)}
             </MobileCarousel>
@@ -488,7 +488,7 @@ export default function Home() {
 
       {/* ── TESTIMONIALS — with background image ─────────────── */}
       <section
-        className="py-20 relative overflow-hidden"
+        className="py-14 sm:py-20 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1777703304166-d7713ec85de0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover",
@@ -503,7 +503,7 @@ export default function Home() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[82vw]">
               {TESTIMONIALS.map((t, i) => <TestimonialCard key={i} {...t} />)}
             </MobileCarousel>
@@ -517,7 +517,7 @@ export default function Home() {
       </section>
 
       {/* ── BLOG PREVIEW ──────────────────────────────────────── */}
-      <section className="py-20 bg-[#f7faf7]">
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
@@ -530,7 +530,7 @@ export default function Home() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[78vw]">
               {BLOG_POSTS.map((p, i) => <BlogCard key={i} {...p} />)}
             </MobileCarousel>
@@ -545,7 +545,7 @@ export default function Home() {
 
       {/* ── CAREERS CTA — with background image ───────────────── */}
       <section
-        className="py-24 relative overflow-hidden"
+        className="py-14 sm:py-20 lg:py-24 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1739298061768-41a8a7d8b38f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover",
@@ -602,3 +602,7 @@ export default function Home() {
     </div>
   );
 }
+
+
+
+

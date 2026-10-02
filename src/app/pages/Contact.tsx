@@ -77,12 +77,12 @@ export default function Contact() {
   return (
     <div className="font-[Poppins,sans-serif]">
       {/* Header */}
-      <section className="bg-[#071a08] py-20 relative overflow-hidden">
+      <section className="bg-[#071a08] py-14 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "radial-gradient(circle at 30% 60%, #4caf50 0%, transparent 50%)" }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Get In Touch</p>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">We're Here to Help</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">We're Here to Help</h1>
           <p className="text-gray-300 max-w-xl mx-auto text-sm leading-relaxed">
             Have questions about a course, your career, or how Kalaro can help you? Our team is ready to assist.
           </p>
@@ -110,7 +110,7 @@ export default function Contact() {
       </section>
 
       {/* Form + FAQs */}
-      <section className="py-20 bg-[#f7faf7]">
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Form */}
@@ -267,3 +267,5 @@ export default function Contact() {
     </div>
   );
 }
+
+

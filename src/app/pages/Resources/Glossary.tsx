@@ -99,7 +99,7 @@ export default function Glossary() {
         </div>
 
         {terms.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-14 sm:py-20 text-gray-400">
             <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p className="font-semibold">No terms match your search.</p>
             <p className="text-sm mt-1">Try a broader keyword.</p>
@@ -128,3 +128,4 @@ export default function Glossary() {
     </div>
   );
 }
+

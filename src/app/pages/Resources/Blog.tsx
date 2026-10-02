@@ -121,7 +121,7 @@ export function BlogIndex() {
         </div>
 
         {posts.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-14 sm:py-20 text-gray-400">
             <Rss className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p className="font-semibold">No articles match your search.</p>
             <p className="text-sm mt-1">Try a different keyword or category.</p>
@@ -251,3 +251,4 @@ export function BlogPost({ slug }: { slug: string }) {
     </div>
   );
 }
+

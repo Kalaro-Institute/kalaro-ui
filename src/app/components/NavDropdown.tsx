@@ -30,7 +30,7 @@ export function NavFlatMenu({
 }: Props) {
   return (
     <div
-      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 ${width} bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 animate-in`}
+      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 ${width} max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 animate-in`}
     >
       {/* Arrow */}
       <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100" />

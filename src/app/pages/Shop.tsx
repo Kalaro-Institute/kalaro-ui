@@ -104,7 +104,7 @@ export default function Shop() {
         </div>
 
         {products.length === 0 && (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-14 sm:py-20 text-gray-400">
             <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p className="font-semibold">No products match your search.</p>
             <p className="text-sm mt-1">Try a different keyword or category.</p>

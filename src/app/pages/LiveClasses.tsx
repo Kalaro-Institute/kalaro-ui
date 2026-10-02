@@ -139,14 +139,14 @@ export default function LiveClasses() {
   return (
     <div className="font-[Poppins,sans-serif]">
       {/* Header */}
-      <section className="bg-[#071a08] py-20 relative overflow-hidden">
+      <section className="bg-[#071a08] py-14 sm:py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "radial-gradient(circle at 20% 60%, #4caf50 0%, transparent 50%)" }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center text-white">
           <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-bold px-4 py-1.5 rounded-full mb-5">
             <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" /> LIVE Sessions Available
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">Live Classes & Webinars</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4">Live Classes & Webinars</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed mb-8">
             Real-time learning with the world's foremost HMO professionals. Join live, ask questions, and get recorded replays — all included with your Kalaro enrolment.
           </p>
@@ -184,7 +184,7 @@ export default function LiveClasses() {
       </section>
 
       {/* Upcoming sessions */}
-      <section className="py-20 bg-[#f7faf7]">
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -241,7 +241,7 @@ export default function LiveClasses() {
       </section>
 
       {/* Past recordings */}
-      <section className="py-20 bg-white">
+      <section className="py-14 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -298,3 +298,5 @@ export default function LiveClasses() {
     </div>
   );
 }
+
+
