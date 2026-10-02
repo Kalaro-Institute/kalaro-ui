@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { apiRequest, apiUpload } from "@/lib/api-client";
 import type { ApiError } from "@/lib/api-client";
-import { toast } from "sonner";
 
 interface Course {
   id: number;
@@ -35,7 +34,7 @@ type PaystackStatus =
   | "success"
   | "failed";
 
-export function PaymentModal({ course, onClose, onSuccess }: Props) {
+export function PaymentModal({ course, onClose }: Props) {
   const [tab, setTab] = useState<Tab>("paystack");
 
   // Paystack state

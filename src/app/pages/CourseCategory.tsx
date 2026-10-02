@@ -1,12 +1,8 @@
 import { useParams, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { useState, useEffect } from "react";
-import { useLocationPricing } from "@/app/hooks/useLocationPricing";
-import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+import { useEffect } from "react";
 import {
-  ArrowLeft, Star, Clock, Users, BookOpen, CheckCircle,
-  Play, Award, ChevronRight, Search,
-  Stethoscope, FileText, BarChart2, Monitor, Layers,
+  Users, Stethoscope, FileText, BarChart2, Monitor, Layers,
 } from "lucide-react";
 
 /* Programme landing pages that don't have a bespoke CATEGORY_CONTENT
@@ -255,8 +251,6 @@ const CATEGORY_CONTENT: Record<string, {
 export default function CourseCategory() {
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
-  const { formatPrice, loading } = useLocationPricing();
-  const [search, setSearch] = useState("");
 
   const categoryData = category ? CATEGORY_CONTENT[category] : null;
   /* Programmes without a bespoke entry still get a real landing page

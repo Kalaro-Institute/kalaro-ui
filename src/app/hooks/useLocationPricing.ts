@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react';
 
-// Base prices in USD
-export const BASE_PRICES: Record<string, number> = {
-  "Introduction to HMO Operations": 350,
-  "HMO Claims Management": 450,
-  "Provider Relations & Network Management": 400,
-  "Health Insurance Fundamentals": 250,
-  "HMO Financial Management": 600,
-  "Healthcare Compliance & Regulation": 500,
-  "HMO Customer Service Excellence": 200,
-  "Utilization Management & Care Coordination": 550,
-};
+// Prices are NOT stored here. Each Course (data/courses.ts) and each
+// Service (data/services.ts) carries its own priceUsd, and callers pass
+// that amount to formatAmount(). A title-keyed table here would drift
+// out of step with those records and silently fall back to a default.
 
 // Regional pricing multipliers and currency configurations
 export const REGIONAL_PRICING: Record<string, {
@@ -181,9 +174,14 @@ export function useLocationPricing() {
     }
   };
 
-  const getPricingForCourse = (courseTitle: string): PricingInfo => {
-    const basePriceUSD = BASE_PRICES[courseTitle] || 300;
-    
+  /**
+   * Price an explicit USD amount for the visitor's location.
+   * Takes a number rather than a title so a single implementation
+   * serves courses AND fee-based services, and so the price always
+   * comes from the record that owns it instead of a lookup table
+   * that can drift out of date.
+   */
+  const getPricingForAmount = (basePriceUSD: number): PricingInfo => {
     if (!location) {
       return {
         basePriceUSD,
@@ -197,11 +195,16 @@ export function useLocationPricing() {
     // Find matching regional pricing
     let regionalConfig = REGIONAL_PRICING["USD"]; // Default
     
-    for (const [key, config] of Object.entries(REGIONAL_PRICING)) {
-      if (config.countries.some(country => 
-        country.toLowerCase() === location.countryCode.toLowerCase() ||
-        country.toLowerCase() === location.country.toLowerCase()
-      )) {
+    /* Iterate the configs directly rather than destructuring the key,
+       which this loop never uses. */
+    for (const config of Object.values(REGIONAL_PRICING)) {
+      if (
+        config.countries.some(
+          (country) =>
+            country.toLowerCase() === location.countryCode.toLowerCase() ||
+            country.toLowerCase() === location.country.toLowerCase(),
+        )
+      ) {
         regionalConfig = config;
         break;
       }
@@ -218,9 +221,9 @@ export function useLocationPricing() {
     };
   };
 
-  const formatPrice = (courseTitle: string): string => {
-    const pricing = getPricingForCourse(courseTitle);
-    
+  const formatAmount = (basePriceUSD: number): string => {
+    const pricing = getPricingForAmount(basePriceUSD);
+
     return new Intl.NumberFormat(pricing.locale, {
       style: 'currency',
       currency: pricing.currency,
@@ -233,8 +236,8 @@ export function useLocationPricing() {
     location,
     loading,
     error,
-    getPricingForCourse,
-    formatPrice,
+    getPricingForAmount,
+    formatAmount,
     detectLocation
   };
 }

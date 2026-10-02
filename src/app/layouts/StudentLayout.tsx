@@ -11,7 +11,6 @@ import {
   LogOut,
   Bell,
   ChevronDown,
-  Menu,
 } from "lucide-react";
 import {
   Sidebar,

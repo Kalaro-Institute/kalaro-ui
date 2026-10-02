@@ -1,9 +1,11 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, useParams } from "react-router";
 import Layout from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
+import CoursePage from "./pages/CoursePage";
+import CourseCheckout from "./pages/CourseCheckout";
+import ServiceCheckout from "./pages/ServiceCheckout";
 import CourseCategory from "./pages/CourseCategory";
 import About from "./pages/About";
 import Community from "./pages/Community";
@@ -32,21 +34,18 @@ import CoursePlayer from "./pages/dashboard/student/CoursePlayer";
 import Nclex from "./pages/Services/Nclex";
 import InternationalPr from "./pages/Services/InternationalPr";
 import { NclexServiceRoute, PrServiceRoute } from "./pages/Services/ServiceDetail";
+import { BlogIndex, BlogPost } from "./pages/Resources/Blog";
+import Webinars from "./pages/Resources/Webinars";
+import ResourceLibrary from "./pages/Resources/Library";
+import Glossary from "./pages/Resources/Glossary";
+import Shop from "./pages/Shop";
+import ProductPage from "./pages/ProductPage";
+import Cart from "./pages/Cart";
 
-function ResourcePage({ title }: { title: string }) {
-  return (
-    <div className="min-h-screen bg-[#f7faf7] flex items-center justify-center font-[Poppins,sans-serif]">
-      <div className="text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <span className="text-2xl">📚</span>
-        </div>
-        <h1 className="text-2xl font-extrabold text-gray-900 mb-2">{title}</h1>
-        <p className="text-gray-500 text-sm">
-          Coming soon — check back shortly.
-        </p>
-      </div>
-    </div>
-  );
+/* Resolve the article body by slug; the page handles a missing post. */
+function BlogPostRoute() {
+  const { slug } = useParams<{ slug: string }>();
+  return <BlogPost slug={slug ?? ""} />;
 }
 
 function DashboardStub({ label }: { label: string }) {
@@ -64,7 +63,9 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "courses", Component: Courses },
-      { path: "course/:slug", Component: CourseDetail },
+      { path: "course/:slug", Component: CoursePage },
+      { path: "checkout/:slug", Component: CourseCheckout },
+      { path: "checkout/service/:slug", Component: ServiceCheckout },
       { path: "category/:category", Component: CourseCategory },
       { path: "about", Component: About },
       { path: "community", Component: Community },
@@ -80,22 +81,17 @@ export const router = createBrowserRouter([
       { path: "services/permanent-residency", Component: InternationalPr },
       { path: "services/permanent-residency/services/:slug", Component: PrServiceRoute },
 
-      {
-        path: "resources/blog",
-        Component: () => <ResourcePage title="Blog & Articles" />,
-      },
-      {
-        path: "resources/webinars",
-        Component: () => <ResourcePage title="Webinars" />,
-      },
-      {
-        path: "resources/library",
-        Component: () => <ResourcePage title="Resource Library" />,
-      },
-      {
-        path: "resources/glossary",
-        Component: () => <ResourcePage title="HMO Glossary" />,
-      },
+      /* Resources - real content pages, one per dropdown entry */
+      { path: "resources/blog", Component: BlogIndex },
+      { path: "resources/blog/:slug", Component: BlogPostRoute },
+      { path: "resources/webinars", Component: Webinars },
+      { path: "resources/library", Component: ResourceLibrary },
+      { path: "resources/glossary", Component: Glossary },
+
+      /* Shop + cart */
+      { path: "shop", Component: Shop },
+      { path: "shop/:slug", Component: ProductPage },
+      { path: "cart", Component: Cart },
     ],
   },
 

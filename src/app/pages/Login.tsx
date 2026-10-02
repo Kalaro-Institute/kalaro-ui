@@ -61,10 +61,6 @@ export default function Login() {
   const from = (location.state as { from?: { pathname: string } } | null)?.from
     ?.pathname;
 
-  const redirectAfterLogin = (role: UserRole) => {
-    navigate(from ?? dashboardPath(role), { replace: true });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

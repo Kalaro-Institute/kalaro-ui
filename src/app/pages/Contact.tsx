@@ -206,8 +206,9 @@ export default function Contact() {
               )}
             </div>
 
-            {/* FAQs */}
-            <div>
+            {/* FAQs - id="faq" is the anchor the Resources dropdown
+                "FAQs" entry links to (/contact#faq). */}
+            <div id="faq" className="scroll-mt-28">
               <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Frequently Asked Questions</h2>
               <p className="text-gray-500 text-sm mb-8">Quick answers to the questions we hear most often.</p>
 

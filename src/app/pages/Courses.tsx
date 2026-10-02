@@ -3,101 +3,42 @@ import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
 import { useNavigate } from "react-router";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
+import { CATALOG, totalLessons } from "@/app/data/courses";
 import {
   Star, Clock, Users, BookOpen, ArrowRight, Search,
-  CheckCircle, Shield, HeartPulse, FileText, BarChart2, Layers,
+  CheckCircle, Shield, FileText, BarChart2, Layers,
   Stethoscope, GraduationCap, Briefcase, RefreshCw, Monitor, Building2,
   Calendar, Video, MonitorPlay,
 } from "lucide-react";
 
+
+
 const CATEGORIES = ["All", "Beginner", "Intermediate", "Advanced"];
 
 const ALL_COURSES = [
-  {
-    title: "Introduction to HMO Operations",
-    category: "Beginner", duration: "6 Weeks", students: "1,240", rating: 4.9,
-    lessons: 24, price: "$350",
-    img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-emerald-100 text-emerald-700",
-    desc: "Get a solid foundation in how Health Maintenance Organisations work, from enrolment to benefit administration and regulatory compliance.",
-    highlights: ["HMO structure & governance", "Enrolment processes", "Member services", "Healthcare fundamentals"],
-    instructor: "Dr. Adebayo Mensah",
-  },
-  {
-    title: "HMO Claims Management",
-    category: "Intermediate", duration: "8 Weeks", students: "980", rating: 4.8,
-    lessons: 32, price: "$450",
-    img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-blue-100 text-blue-700",
-    desc: "Master the end-to-end claims processing workflow — from submission and adjudication to fraud detection and appeals management.",
-    highlights: ["Claims adjudication", "Fraud detection", "ICD-10 coding basics", "Appeals & disputes"],
-    instructor: "Mrs. Ngozi Uchenna",
-  },
-  {
-    title: "Provider Relations & Network Management",
-    category: "Intermediate", duration: "6 Weeks", students: "760", rating: 4.7,
-    lessons: 20, price: "$400",
-    img: "https://images.unsplash.com/photo-1739285388427-d6f85d12a8fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-purple-100 text-purple-700",
-    desc: "Learn how to build, manage and negotiate with provider networks. Understand capitation models and performance monitoring.",
-    highlights: ["Provider contracting", "Capitation models", "Network adequacy", "Performance metrics"],
-    instructor: "Mr. Emeka Okafor",
-  },
-  {
-    title: "Health Insurance Fundamentals",
-    category: "Beginner", duration: "4 Weeks", students: "1,540", rating: 4.9,
-    lessons: 16, price: "$250",
-    img: "https://images.unsplash.com/photo-1513258496099-48168024aec0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-amber-100 text-amber-700",
-    desc: "Understand the principles of health insurance — risk pooling, premium calculation, benefit design, and international regulatory frameworks.",
-    highlights: ["Insurance principles", "Risk management", "Premium design", "Regulatory compliance"],
-    instructor: "Dr. Aisha Musa",
-  },
-  {
-    title: "HMO Financial Management",
-    category: "Advanced", duration: "10 Weeks", students: "540", rating: 4.8,
-    lessons: 40, price: "$600",
-    img: "https://images.unsplash.com/photo-1762341117487-dbc411bcf574?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-red-100 text-red-700",
-    desc: "Advanced financial operations for HMO professionals — budgeting, actuarial basics, reserve management, and financial reporting.",
-    highlights: ["Actuarial basics", "Reserve management", "Financial reporting", "Cost control strategies"],
-    instructor: "Mr. Tunde Afolabi",
-  },
-  {
-    title: "Healthcare Compliance & Regulation",
-    category: "Advanced", duration: "8 Weeks", students: "430", rating: 4.6,
-    lessons: 28, price: "$500",
-    img: "https://images.unsplash.com/photo-1663549662588-a3c62ff48a3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-teal-100 text-teal-700",
-    desc: "Navigate the complex regulatory environment governing HMOs globally — international healthcare regulations, data protection laws, and compliance standards.",
-    highlights: ["International regulations", "Healthcare compliance", "Data protection", "Audit readiness"],
-    instructor: "Barrister Funke Adeyemi",
-  },
-  {
-    title: "HMO Customer Service Excellence",
-    category: "Beginner", duration: "3 Weeks", students: "890", rating: 4.7,
-    lessons: 12, price: "$200",
-    img: "https://images.unsplash.com/photo-1758691462878-6edc3d3da1be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-pink-100 text-pink-700",
-    desc: "Deliver exceptional member experiences. Learn complaint handling, service quality standards, and communication best practices in managed care.",
-    highlights: ["Member experience design", "Complaint resolution", "SLA management", "Communication skills"],
-    instructor: "Mrs. Blessing Okonkwo",
-  },
-  {
-    title: "Utilization Management & Care Coordination",
-    category: "Advanced", duration: "8 Weeks", students: "320", rating: 4.8,
-    lessons: 30, price: "$550",
-    img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=500&q=80",
-    badgeColor: "bg-indigo-100 text-indigo-700",
-    desc: "Master utilisation review, pre-authorisation, and care management strategies that balance quality outcomes with cost efficiency.",
-    highlights: ["Pre-authorisation", "Utilisation review", "Case management", "Disease management"],
-    instructor: "Dr. Chike Nwosu",
-  },
+  /* The catalogue is the only list of courses. Every entry carries its
+     own slug, so each card links to a real /course/:slug page. */
+  ...CATALOG.map((c) => ({
+    title: c.title,
+    category: c.level,
+    duration: `${c.durationWeeks} Weeks`,
+    students: "",
+    rating: 0,
+    lessons: totalLessons(c),
+    price: "",
+    priceUsd: c.priceUsd,
+    img: c.img,
+    badgeColor: "bg-green-100 text-green-700",
+    desc: c.summary,
+    highlights: c.outcomes.slice(0, 4),
+    instructor: c.instructor,
+    slug: c.slug,
+  })),
 ];
 
 function CourseCard({ course, slug }: { course: typeof ALL_COURSES[0]; slug: string }) {
   const navigate = useNavigate();
-  const { formatPrice, loading } = useLocationPricing();
+  const { formatAmount, loading } = useLocationPricing();
   
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group cursor-pointer border border-gray-100 hover:-translate-y-1 flex flex-col h-full">
@@ -105,7 +46,7 @@ function CourseCard({ course, slug }: { course: typeof ALL_COURSES[0]; slug: str
         <ImageWithFallback src={course.img} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${course.badgeColor}`}>{course.category}</span>
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-green-800">{loading ? "..." : formatPrice(course.title)}</div>
+        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold text-green-800">{loading ? "..." : formatAmount(course.priceUsd)}</div>
       </div>
       <div className="p-6 flex flex-col flex-1">
         <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors leading-snug">{course.title}</h3>
@@ -120,14 +61,20 @@ function CourseCard({ course, slug }: { course: typeof ALL_COURSES[0]; slug: str
         <div className="flex items-center gap-3 text-xs text-gray-400 mb-3 flex-wrap">
           <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {course.duration}</span>
           <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {course.lessons} lessons</span>
-          <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {course.students}</span>
+          {course.students && (
+            <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {course.students}</span>
+          )}
         </div>
         <div className="text-xs text-gray-400 mb-4">Instructor: <span className="text-gray-700 font-semibold">{course.instructor}</span></div>
         <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-          <div className="flex items-center gap-1">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            <span className="text-sm font-bold text-gray-800">{course.rating}</span>
-          </div>
+          {course.rating > 0 ? (
+            <div className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span className="text-sm font-bold text-gray-800">{course.rating}</span>
+            </div>
+          ) : (
+            <span className="text-xs font-semibold text-green-700">{course.category}</span>
+          )}
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -148,26 +95,17 @@ export default function Courses() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  const courseSlugs: Record<string, string> = {
-    "Introduction to HMO Operations": "introduction-to-hmo-operations",
-    "HMO Claims Management": "hmo-claims-management",
-    "Provider Relations & Network Management": "provider-relations-network-management",
-    "Health Insurance Fundamentals": "health-insurance-fundamentals",
-    "HMO Financial Management": "hmo-financial-management",
-    "Healthcare Compliance & Regulation": "healthcare-compliance-regulation",
-    "HMO Customer Service Excellence": "hmo-customer-service-excellence",
-    "Utilization Management & Care Coordination": "utilization-management-care-coordination",
-  };
-
+  /* Every card here comes from the CATALOG and carries its own slug,
+     so it always resolves to a real /course/:slug page. */
   const filtered = ALL_COURSES.filter((c) => {
-    const matchCat = active === "All" || c.category === c.category;
+    const matchCat = active === "All" || c.category === active;
     const matchSearch = c.title.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
   return (
     <div className="font-[Poppins,sans-serif]">
-      {/* Header — with background image */}
+      {/* Header â€” with background image */}
       <section
         className="py-24 relative overflow-hidden"
         style={{
@@ -181,7 +119,7 @@ export default function Courses() {
           <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Our Curriculum</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">All Courses</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-sm leading-relaxed">
-            Every programme is designed with real HMO workflows in mind — practical, current, and aligned with international healthcare standards.
+            Every programme is designed with real HMO workflows in mind â€” practical, current, and aligned with international healthcare standards.
           </p>
         </div>
       </section>
@@ -204,7 +142,7 @@ export default function Courses() {
                   title: "Health Insurance & HMO Operations",
                   badge: "Core Program",
                   badgeColor: "bg-green-50 text-green-600",
-                  desc: "Understand how health insurance works within hospitals and insurance companies — both hospital-side and insurer-side HMO operations.",
+                  desc: "Understand how health insurance works within hospitals and insurance companies â€” both hospital-side and insurer-side HMO operations.",
                   items: ["Patient Verification & Pre-Authorization", "Claims Preparation & Submission", "Billing & Reconciliation", "Utilization Review", "Provider Relationship Management"]
                 },
                 {
@@ -272,7 +210,7 @@ export default function Courses() {
                 title: "Health Insurance & HMO Operations",
                 badge: "Core Program",
                 badgeColor: "bg-green-50 text-green-600",
-                desc: "Understand how health insurance works within hospitals and insurance companies — both hospital-side and insurer-side HMO operations.",
+                desc: "Understand how health insurance works within hospitals and insurance companies â€” both hospital-side and insurer-side HMO operations.",
                 items: ["Patient Verification & Pre-Authorization", "Claims Preparation & Submission", "Billing & Reconciliation", "Utilization Review", "Provider Relationship Management"]
               },
               {
@@ -354,7 +292,7 @@ export default function Courses() {
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Video className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
-              <div className="text-xl sm:text-3xl font-extrabold text-gray-900 mb-1">2× Weekly</div>
+              <div className="text-xl sm:text-3xl font-extrabold text-gray-900 mb-1">2Ã— Weekly</div>
               <div className="text-xs sm:text-sm text-gray-500">Live online classes every week</div>
             </div>
 
@@ -473,8 +411,8 @@ export default function Courses() {
           <div className="sm:hidden -mx-4 px-4">
             <MobileCarousel cardWidth="w-[82vw]">
               {filtered.map((course, i) => (
-                <div key={i} onClick={() => navigate(`/course/${courseSlugs[course.title]}`)}>
-                  <CourseCard course={course} slug={courseSlugs[course.title]} />
+                <div key={i} onClick={() => navigate(`/course/${course.slug}`)}>
+                  <CourseCard course={course} slug={course.slug} />
                 </div>
               ))}
             </MobileCarousel>
@@ -484,8 +422,8 @@ export default function Courses() {
           <div className="hidden sm:block">
             <MobileCarousel cardWidth="w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
               {filtered.map((course, i) => (
-                <div key={i} onClick={() => navigate(`/course/${courseSlugs[course.title]}`)}>
-                  <CourseCard course={course} slug={courseSlugs[course.title]} />
+                <div key={i} onClick={() => navigate(`/course/${course.slug}`)}>
+                  <CourseCard course={course} slug={course.slug} />
                 </div>
               ))}
             </MobileCarousel>
@@ -501,7 +439,7 @@ export default function Courses() {
         </div>
       </section>
 
-      {/* CTA strip — background image */}
+      {/* CTA strip â€” background image */}
       <section
         className="py-12 relative overflow-hidden"
         style={{
@@ -521,3 +459,4 @@ export default function Courses() {
     </div>
   );
 }
+

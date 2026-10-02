@@ -1,11 +1,21 @@
-﻿/* Content for the service pages. Slugs match the nav links so the
-   nav and the pages can never drift apart.                       */
+/* Content for the service pages. Slugs match the nav links so the
+   nav and the pages can never drift apart.
+
+   A Service is PAID WORK the institute performs on a client's
+   behalf - it is not a course. It has no curriculum, no lessons and
+   no duration; it is bought once, for a fee, and delivered by the
+   team. priceUsd is the base fee, converted per visitor location
+   at render time by useLocationPricing().                          */
 
 export type Service = {
   slug: string;
   title: string;
   tagline: string;
   icon: string;
+  /** Base fee in USD for this service. */
+  priceUsd: number;
+  /** Rough turnaround once engaged, shown as reassurance on the page. */
+  turnaround?: string;
   description: string;
   includes: string[];
   process: { step: string; title: string; detail: string }[];
@@ -19,6 +29,8 @@ export const NCLEX_SERVICES: Service[] = [
     title: "NCLEX Registration Support",
     tagline: "We handle the paperwork so you focus on the exam.",
     icon: "clipboard",
+    priceUsd: 120,
+    turnaround: "5-7 working days",
     description:
       "Full end-to-end support with NCLEX registration for both RN and PN candidates â€” from eligibility checks to final submission and confirmation.",
     includes: [
@@ -44,6 +56,8 @@ export const NCLEX_SERVICES: Service[] = [
     title: "NCLEX Booking & Pearson VUE",
     tagline: "Secure your test date, centre and reschedule when you need to.",
     icon: "calendar",
+    priceUsd: 90,
+    turnaround: "24-48 hours",
     description:
       "Pearson VUE test-centre booking, rescheduling, cancellation and date-change support â€” plus guidance on what to bring and how the day runs.",
     includes: [
@@ -64,6 +78,8 @@ export const NCLEX_SERVICES: Service[] = [
   },
   {
     slug: "nclex-prep",
+    priceUsd: 150,
+    turnaround: "2-4 weeks",
     title: "NCLEX Study Plan & Question Bank",
     tagline: "A structured plan, CAT practice and targeted remediation.",
     icon: "book",
@@ -84,6 +100,8 @@ export const NCLEX_SERVICES: Service[] = [
   },
   {
     slug: "nursing-board",
+    priceUsd: 130,
+    turnaround: "10-14 working days",
     title: "Nursing Board & Alert Support",
     tagline: "State board applications, alerts and licence verification.",
     icon: "shield",
@@ -104,6 +122,8 @@ export const NCLEX_SERVICES: Service[] = [
   },
   {
     slug: "ati-support",
+    priceUsd: 80,
+    turnaround: "5-7 working days",
     title: "ATI / TEAS Application Support",
     tagline: "Get through the pre-application gate with a strong score.",
     icon: "award",
@@ -124,6 +144,8 @@ export const NCLEX_SERVICES: Service[] = [
   },
   {
     slug: "credential-evaluation",
+    priceUsd: 140,
+    turnaround: "7-10 working days",
     title: "Credential Evaluation & Verification",
     tagline: "Your foreign credentials, evaluated and verified for local and international use.",
     icon: "file",
@@ -144,6 +166,8 @@ export const NCLEX_SERVICES: Service[] = [
   },
   {
     slug: "document-processing",
+    priceUsd: 60,
+    turnaround: "3-5 working days",
     title: "Professional Document Processing",
     tagline: "Accurate, notarised, and delivered without delay.",
     icon: "mail",
@@ -171,6 +195,8 @@ export const NCLEX_SERVICES: Service[] = [
 export const PR_SERVICES: Service[] = [
   {
     slug: "canada-admission",
+    priceUsd: 180,
+    turnaround: "2-3 weeks",
     title: "Canada Admission Support",
     tagline: "From school selection to a submitted application.",
     icon: "globe",
@@ -193,6 +219,8 @@ export const PR_SERVICES: Service[] = [
   },
   {
     slug: "canada-study-visa",
+    priceUsd: 200,
+    turnaround: "2-4 weeks",
     title: "Canada Study Visa Support",
     tagline: "Study permit applications, prepared properly the first time.",
     icon: "file",
@@ -212,6 +240,8 @@ export const PR_SERVICES: Service[] = [
   },
   {
     slug: "canada-express-entry",
+    priceUsd: 220,
+    turnaround: "Ongoing",
     title: "Canada Express Entry Support",
     tagline: "A stronger profile, built and guided end to end.",
     icon: "award",
@@ -231,6 +261,8 @@ export const PR_SERVICES: Service[] = [
   },
   {
     slug: "international-payments",
+    priceUsd: 40,
+    turnaround: "24-48 hours",
     title: "International Payments",
     tagline: "Pay in the currency the application actually requires.",
     icon: "globe",
@@ -250,6 +282,8 @@ export const PR_SERVICES: Service[] = [
   },
   {
     slug: "kenya-travel-support",
+    priceUsd: 320,
+    turnaround: "Full duration of your stay",
     title: "Kenya NCLEX & Travel Support",
     tagline: "Complete support for your whole stay in Kenya.",
     icon: "plane",

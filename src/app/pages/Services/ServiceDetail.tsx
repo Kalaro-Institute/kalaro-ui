@@ -1,11 +1,16 @@
 import { Link, useParams } from "react-router";
 import {
-  ArrowLeft, ArrowRight, CheckCircle, Phone, Mail,
+  ArrowLeft, ArrowRight, CheckCircle, Mail,
   ClipboardCheck, CalendarCheck, BookOpen, ShieldCheck, Award,
   FileText, Globe, Stethoscope, Bot, Monitor,
   ScanLine, Plane, Landmark, Building2, RefreshCw, HelpCircle,
+  CreditCard,
 } from "lucide-react";
 import type { Service } from "@/app/data/services";
+import { NclexLogo } from "./NclexLogo";
+import { useLocationPricing } from "@/app/hooks/useLocationPricing";
+import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 import {
   NCLEX_SERVICES, PR_SERVICES,
   findNclexService, findPrService,
@@ -42,29 +47,41 @@ export function ServiceDetailPage({
 }) {
   const Icon = ICONS[service.icon] ?? FileText;
   const others = siblings.filter((s) => s.slug !== service.slug);
+  /* The NCLEX brand mark only appears on NCLEX service pages. */
+  const isNclex = basePath === "/nclex";
+  const { formatAmount } = useLocationPricing();
+  const { addItem, has } = useCart();
+  const inCart = has("service", service.slug);
 
   return (
     <div className="bg-[#f7faf7] font-[Poppins,sans-serif]">
       {/* Hero */}
       <section className="bg-[#1b5e20] text-white">
-        <div className="max-w-5xl mx-auto px-6 py-16">
-          <Link
-            to={basePath}
-            className="inline-flex items-center gap-2 text-sm text-green-200 hover:text-white transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to all services
-          </Link>
-          <div className="flex items-start gap-5">
-            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
-              <Icon className="w-7 h-7 text-green-300" />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-extrabold leading-tight">
-                {service.title}
-              </h1>
-              <p className="text-green-200 mt-2 text-lg">{service.tagline}</p>
+        <div className="max-w-5xl mx-auto px-6 py-16 flex flex-col md:flex-row md:items-center gap-8">
+          <div className="min-w-0 flex-1">
+            <Link
+              to={basePath}
+              className="inline-flex items-center gap-2 text-sm text-green-200 hover:text-white transition-colors mb-6"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to all services
+            </Link>
+            <div className="flex items-start gap-5">
+              <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
+                <Icon className="w-7 h-7 text-green-300" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-extrabold leading-tight">
+                  {service.title}
+                </h1>
+                <p className="text-green-200 mt-2 text-lg">{service.tagline}</p>
+              </div>
             </div>
           </div>
+          {isNclex && (
+            <div className="shrink-0 hidden md:block">
+              <NclexLogo />
+            </div>
+          )}
         </div>
       </section>
 
@@ -139,29 +156,56 @@ export function ServiceDetailPage({
           </div>
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-28 h-fit">
-            <div className="bg-white border border-gray-100 rounded-2xl p-6">
-              <h3 className="font-bold text-[#1a2332] mb-2">Ready to get started?</h3>
-              <p className="text-sm text-gray-500 mb-5">
-                Speak to a specialist about {service.title.toLowerCase()}.
+            {/* Fee card. A service is paid for, so its price and the
+                route to pay belong on the page - not just a contact form. */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 mb-5">
+              <p className="text-sm text-gray-500 mb-1">Service fee</p>
+              <p className="text-3xl font-extrabold text-[#1a2332] mb-1">
+                {formatAmount(service.priceUsd)}
               </p>
+              <p className="text-xs text-gray-500 mb-5">
+                One-time fee &middot; {service.turnaround ?? "Delivered by our team"}
+              </p>
+
               <Link
-                to="/contact"
+                to={`/checkout/service/${service.slug}`}
                 className="block w-full text-center bg-green-700 hover:bg-green-800 text-white text-sm font-bold py-3 rounded-full transition-colors mb-3"
               >
-                Request this service
+                Pay for this service
               </Link>
-              <a
-                href="tel:+2348000000000"
-                className="flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 border-2 border-gray-200 hover:border-green-600 hover:text-green-700 rounded-full py-3 transition-colors mb-2"
+              <button
+                onClick={() => {
+                  addItem({
+                    kind: "service",
+                    slug: service.slug,
+                    title: service.title,
+                    priceUsd: service.priceUsd,
+                    meta: service.turnaround ?? "Delivered by our team",
+                  });
+                  toast.success(`${service.title} added to your bag`);
+                }}
+                className={`block w-full text-center text-sm font-semibold border-2 py-3 rounded-full transition-colors mb-3 ${
+                  inCart
+                    ? "border-green-600 text-green-700 bg-green-50"
+                    : "border-gray-200 hover:border-green-600 text-gray-700 hover:text-green-700"
+                }`}
               >
-                <Phone className="w-4 h-4" /> Call us
-              </a>
-              <a
-                href="mailto:info@kalaroinstitute.com"
-                className="flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 hover:text-green-700 transition-colors"
+                {inCart ? "In your bag" : "Add to bag"}
+              </button>
+              <Link
+                to="/contact"
+                className="block w-full text-center text-sm font-semibold text-gray-700 border-2 border-gray-200 hover:border-green-600 hover:text-green-700 rounded-full py-3 transition-colors mb-3"
               >
-                <Mail className="w-4 h-4" /> Email us
-              </a>
+                Ask a question first
+              </Link>
+              <div className="flex items-start gap-2.5 text-xs text-gray-500">
+                <CreditCard className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                Card, USSD or bank transfer
+              </div>
+              <div className="flex items-start gap-2.5 text-xs text-gray-500 mt-2">
+                <ShieldCheck className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                Work starts once payment clears
+              </div>
             </div>
 
             <div className="bg-white border border-gray-100 rounded-2xl p-6 mt-5">

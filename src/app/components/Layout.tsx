@@ -1,21 +1,44 @@
-import { useState, useRef, useEffect } from "react";
-import { Outlet, NavLink, useNavigate, Link } from "react-router";
+﻿import { useState, useRef, useEffect } from "react";
+import { Outlet, NavLink, useNavigate, Link, useLocation } from "react-router";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
-import { NavSelectionMenu } from "@/app/components/NavDropdown";
+import { NavFlatMenu } from "@/app/components/NavDropdown";
 import { NAV, FOOTER_GROUPS } from "@/app/data/navigation";
+import { useCart } from "@/context/CartContext";
 import logo from "@/imports/logo.jpeg";
 import {
   Menu, X, Phone, Mail, MapPin, Facebook, Twitter,
   Instagram, Linkedin, Youtube, ChevronDown,
-  UserPlus, LogIn,
+  UserPlus, LogIn, ShoppingBag,
 } from "lucide-react";
 
 export default function Layout() {
+  const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  /* Reset scroll on every route change. Without this, navigating from
+     the footer (or any scrolled page) lands you mid-page and it looks
+     like nothing happened. Hash links still scroll to their anchor. */
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  }, [location.pathname, location.hash]);
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setMenuOpen(false);
+    setMobileOpen(null);
+  }, [location.pathname]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -39,7 +62,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-[Poppins,sans-serif]">
-      {/* ── TOP BAR ──────────────────────────────────────────── */}
+      {/* â”€â”€ TOP BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="bg-[#1b5e20] text-white text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -57,12 +80,12 @@ export default function Layout() {
         </div>
       </div>
 
-      {/* ── NAVBAR ───────────────────────────────────────────── */}
+      {/* â”€â”€ NAVBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <nav className="sticky top-0 z-50 bg-white shadow-md" ref={navRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-20">
 
-            {/* Logo — large & prominent */}
+            {/* Logo â€” large & prominent */}
             <NavLink to="/" className="flex items-center gap-3 shrink-0" onClick={() => setOpenDropdown(null)}>
               <ImageWithFallback
                 src={logo}
@@ -91,13 +114,16 @@ export default function Layout() {
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
                       </button>
                       {openDropdown === item.label && (
-                        <NavSelectionMenu
+                        <NavFlatMenu
                           items={item.dropdown}
                           onClose={() => setOpenDropdown(null)}
-                          width={item.mega ? "w-[820px]" : "w-[720px]"}
-                          railWidth={item.mega ? "w-[300px]" : "w-[270px]"}
-                          showBadge={item.mega}
-                          railHeading={item.mega ? "Course Programs" : undefined}
+                          width={item.flat ? "w-[720px]" : "w-[680px]"}
+                          heading={item.flat ? "Our Courses" : item.label}
+                          footer={
+                            item.flat
+                              ? { label: "View all courses", to: "/courses" }
+                              : undefined
+                          }
                         />
                       )}
                     </>
@@ -121,6 +147,21 @@ export default function Layout() {
               ))}
             </div>
 
+            {/* Cart - always visible so the bag is reachable from
+                anywhere, with a live count of what is in it. */}
+            <Link
+              to="/cart"
+              aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
+              className="relative p-2.5 rounded-full text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-green-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {count > 9 ? "9+" : count}
+                </span>
+              )}
+            </Link>
+
             {/* Auth buttons */}
             <div className="hidden lg:flex items-center gap-2.5">
               <button
@@ -137,6 +178,20 @@ export default function Layout() {
               </button>
             </div>
 
+            {/* Bag - visible on mobile too, so the cart is never stranded */}
+            <Link
+              to="/cart"
+              aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
+              className="lg:hidden relative p-2 rounded-full text-gray-700 hover:text-green-700 transition-colors"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {count > 0 && (
+                <span className="absolute top-0 right-0 min-w-[16px] h-[16px] px-1 bg-green-700 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                  {count > 9 ? "9+" : count}
+                </span>
+              )}
+            </Link>
+
             {/* Mobile toggle */}
             <button className="lg:hidden p-2 text-gray-700" onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -144,7 +199,7 @@ export default function Layout() {
           </div>
         </div>
 
-        {/* ── MOBILE MENU ──────────────────────────────────── */}
+        {/* â”€â”€ MOBILE MENU â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         {menuOpen && (
           <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-1 shadow-lg max-h-[80vh] overflow-y-auto">
             {NAV.map((item) => (
@@ -246,101 +301,141 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      {/* ── FOOTER ───────────────────────────────────────────── */}
+
+      {/* -- FOOTER ---------------------------------------------- */}
       <footer className="bg-[#071209] text-gray-400">
-        {/* CTA strip */}
-        <div className="bg-[#1b5e20] py-12">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-white text-center md:text-left">
-              <h3 className="text-2xl font-bold mb-1">Ready to Start Your HMO Career?</h3>
+        {/* CTA band */}
+        <div className="bg-[#1b5e20]">
+          <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-1">Ready to Start Your HMO Career?</h3>
               <p className="text-green-200 text-sm">Join 500+ professionals who have already transformed their careers.</p>
             </div>
-            <div className="flex gap-3 shrink-0">
-              <button onClick={() => navigate("/courses")} className="bg-white text-green-800 font-bold px-6 py-3 rounded-full hover:bg-green-50 transition-colors text-sm">
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
+              <button
+                onClick={() => navigate("/courses")}
+                className="bg-white text-green-800 font-bold px-6 py-3 rounded-full hover:bg-green-50 transition-colors text-sm"
+              >
                 Browse Courses
               </button>
-              <button onClick={() => navigate("/contact")} className="border-2 border-white text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm">
+              <button
+                onClick={() => navigate("/contact")}
+                className="border-2 border-white text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm"
+              >
                 Talk to Us
               </button>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 pt-14 pb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        {/* Top tier: brand + contact + newsletter */}
+        <div className="max-w-7xl mx-auto px-6 pt-14">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 pb-12">
             {/* Brand */}
-            <div>
+            <div className="lg:col-span-4">
               <div className="mb-5 bg-white inline-block rounded-xl p-2">
                 <ImageWithFallback src={logo} alt="Kalaro Institute" className="h-14 w-auto object-contain" />
               </div>
-              <p className="text-sm leading-relaxed mb-5">
-                Nigeria's premier institute for HMO operations training — equipping healthcare professionals with knowledge and skills to thrive.
+              <p className="text-sm leading-relaxed mb-6 max-w-sm">
+                Nigeria&apos;s premier institute for HMO operations training — equipping healthcare
+                professionals with knowledge and skills to thrive.
               </p>
-              <div className="flex gap-3">
-                {[Facebook, Twitter, Instagram, Linkedin, Youtube].map((Icon, i) => (
-                  <a key={i} href="#" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-700 transition-colors">
-                    <Icon className="w-4 h-4 text-white" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Courses / NCLEX / Resources — derived from the nav data */}
-            {FOOTER_GROUPS.map((group) => (
-              <div key={group.heading}>
-                <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">
-                  {group.heading}
-                </h4>
-                <ul className="space-y-3 text-sm">
-                  {group.links.map((l) => (
-                    <li key={l.label}>
-                      <Link
-                        to={l.to}
-                        className="hover:text-green-400 transition-colors flex items-start gap-2"
-                      >
-                        <span className="w-1 h-1 bg-green-600 rounded-full mt-2 shrink-0" />
-                        <span className="hover:underline">{l.label}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-
-            {/* Contact + newsletter */}
-            <div>
-              <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">Contact Us</h4>
-              <ul className="space-y-4 text-sm mb-6">
+              <ul className="space-y-3 text-sm">
                 <li className="flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                   <span>Plot 14, Abuja Business District, FCT, Nigeria</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-green-400 shrink-0" />
-                  <span>+234 800 000 0000</span>
+                  <a href="tel:+2348000000000" className="hover:text-green-400 transition-colors">+234 800 000 0000</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-green-400 shrink-0" />
-                  <span>info@kalaroinstitute.com</span>
+                  <a href="mailto:info@kalaroinstitute.com" className="hover:text-green-400 transition-colors">info@kalaroinstitute.com</a>
                 </li>
               </ul>
-              <p className="text-white text-xs font-bold mb-2 uppercase tracking-wide">Newsletter</p>
-              <div className="flex gap-2">
+            </div>
+
+            {/* Newsletter */}
+            <div className="lg:col-span-4 lg:col-start-9">
+              <h4 className="text-white font-bold text-xs mb-4 uppercase tracking-wider">Stay Updated</h4>
+              <p className="text-sm mb-5 max-w-sm">
+                Get new course launches, NCLEX updates and career tips in your inbox.
+              </p>
+              <form className="flex flex-col sm:flex-row gap-2 max-w-sm" onSubmit={(e) => e.preventDefault()}>
+                <label htmlFor="footer-email" className="sr-only">Email address</label>
                 <input
+                  id="footer-email"
                   type="email"
+                  required
                   placeholder="Your email address"
-                  className="flex-1 bg-white/10 border border-white/10 text-white text-xs px-3 py-2.5 rounded-full placeholder-gray-500 outline-none focus:border-green-500 transition-colors"
+                  className="flex-1 min-w-0 bg-white/10 border border-white/15 text-white text-sm px-4 py-3 rounded-full placeholder-gray-500 outline-none focus:border-green-500 transition-colors"
                 />
-                <button className="bg-green-600 hover:bg-green-500 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-colors shrink-0">
-                  Go
+                <button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-500 text-white text-sm font-bold px-6 py-3 rounded-full transition-colors shrink-0"
+                >
+                  Subscribe
                 </button>
+              </form>
+              <div className="flex gap-2.5 mt-7">
+                {[
+                  { Icon: Facebook, label: "Facebook" },
+                  { Icon: Twitter, label: "Twitter" },
+                  { Icon: Instagram, label: "Instagram" },
+                  { Icon: Linkedin, label: "LinkedIn" },
+                  { Icon: Youtube, label: "YouTube" },
+                ].map(({ Icon, label }) => (
+                  <a
+                    key={label}
+                    href="#"
+                    aria-label={label}
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-700 focus-visible:ring-2 focus-visible:ring-green-400 transition-colors"
+                  >
+                    <Icon className="w-4 h-4 text-white" />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <span>© {new Date().getFullYear()} Kalaro Institute of HMO Operations. All rights reserved.</span>
-            <div className="flex gap-4">
+          {/* Link columns, divided from the tier above */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10 py-12 border-t border-white/10">
+            {FOOTER_GROUPS.map((group) => (
+              <div key={group.heading}>
+                <h4 className="text-white font-bold text-xs mb-4 uppercase tracking-wider">
+                  {group.heading}
+                </h4>
+                <ul className="space-y-2.5 text-sm">
+                  {group.links.map((l) => (
+                    <li key={l.label}>
+                      <Link to={l.to} className="hover:text-green-400 transition-colors">
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                  {group.viewAll && (
+                    <li className="pt-1">
+                      <Link
+                        to={group.viewAll.to}
+                        className="inline-flex items-center gap-1 text-green-400 font-semibold hover:text-green-300 transition-colors"
+                      >
+                        {group.viewAll.label}
+                        <ChevronDown className="w-3 h-3 -rotate-90" />
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Legal bar */}
+        <div className="border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <span>&copy; {new Date().getFullYear()} Kalaro Institute of HMO Operations. All rights reserved.</span>
+            <div className="flex gap-5">
               <a href="#" className="hover:text-green-400 transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-green-400 transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-green-400 transition-colors">Refund Policy</a>
