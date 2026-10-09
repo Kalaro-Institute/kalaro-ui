@@ -22,7 +22,7 @@ const BANK = {
 export default function CourseCheckout() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { formatAmount } = useLocationPricing();
+  const { formatCoursePrice } = useLocationPricing();
   const [method, setMethod] = useState<Method>("card");
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -224,7 +224,7 @@ export default function CourseCheckout() {
                   <div className="flex justify-between gap-4">
                     <span className="text-gray-500">Amount</span>
                     <span className="font-bold text-green-700">
-                      {formatAmount(course.priceUsd)}
+                      {formatCoursePrice(course.priceNgn, course.priceUsd)}
                     </span>
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export default function CourseCheckout() {
                   <div className="flex justify-between items-baseline">
                     <span className="text-sm text-gray-500">Total</span>
                     <span className="text-2xl font-extrabold text-[#1a2332]">
-                      {formatAmount(course.priceUsd)}
+                      {formatCoursePrice(course.priceNgn, course.priceUsd)}
                     </span>
                   </div>
                   <p className="text-[11px] text-gray-400 mt-1 text-right">One-time payment</p>

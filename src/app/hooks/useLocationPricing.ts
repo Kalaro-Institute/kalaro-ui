@@ -4,6 +4,13 @@ import { useState, useEffect } from 'react';
 // Service (data/services.ts) carries its own priceUsd, and callers pass
 // that amount to formatAmount(). A title-keyed table here would drift
 // out of step with those records and silently fall back to a default.
+//
+// COURSE PRICING CONTRACT: course fees are set in NAIRA. The catalogue
+// stores priceNgn (exact fee, e.g. 40000) and a derived priceUsd
+// (priceNgn / 1550). Nigerian IPs must see the EXACT naira fee — so
+// Nigerian display never multiplies priceUsd back up (rounding would
+// drift it). Everyone else sees the USD figure. Pass priceNgn through
+// formatCoursePrice(); formatAmount(usd) stays for services/products.
 
 // Regional pricing multipliers and currency configurations
 export const REGIONAL_PRICING: Record<string, {
@@ -92,6 +99,42 @@ export interface LocationData {
   city: string;
 }
 
+/* The institute is Nigerian and its fee catalogue is denominated in
+   naira, so the OPTIMISTIC default is Nigeria: visitors inside Nigeria
+   see exact naira figures from the very first paint even when
+   geolocation is slow or blocked. A successful detection overwrites
+   and caches this; a failed one keeps it - we never force USD on
+   someone just because a lookup service was unreachable. */
+const NG_LOCALE: LocationData = {
+  country: "Nigeria",
+  countryCode: "NG",
+  region: "",
+  city: "",
+};
+const LOCALE_CACHE_KEY = "kalaro-pricing-locale";
+
+/* Cache the detected locale so repeat visits skip the flash of the
+   wrong currency. Wrapped in try/catch: storage can be unavailable
+   (private mode) and must never break pricing. */
+const readCachedLocale = (): LocationData | null => {
+  try {
+    const raw = localStorage.getItem(LOCALE_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as LocationData;
+    return parsed && typeof parsed.countryCode === "string" ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCachedLocale = (data: LocationData) => {
+  try {
+    localStorage.setItem(LOCALE_CACHE_KEY, JSON.stringify(data));
+  } catch {
+    /* ignore - caching is best-effort */
+  }
+};
+
 export interface PricingInfo {
   basePriceUSD: number;
   localPrice: number;
@@ -101,7 +144,9 @@ export interface PricingInfo {
 }
 
 export function useLocationPricing() {
-  const [location, setLocation] = useState<LocationData | null>(null);
+  const [location, setLocation] = useState<LocationData | null>(
+    () => readCachedLocale() ?? NG_LOCALE,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -151,24 +196,13 @@ export function useLocationPricing() {
 
       if (locationData && locationData.countryCode) {
         setLocation(locationData);
-      } else {
-        // Default to USD if detection fails
-        setLocation({
-          country: "United States",
-          countryCode: "US",
-          region: "",
-          city: ""
-        });
+        writeCachedLocale(locationData);
       }
+      /* On failure keep the cached/optimistic locale (Nigeria by
+         default). Forcing a US fallback here is what made Nigerian
+         visitors see USD whenever the lookup services were down. */
     } catch (err) {
       setError('Failed to detect location');
-      // Default to USD on error
-      setLocation({
-        country: "United States",
-        countryCode: "US",
-        region: "",
-        city: ""
-      });
     } finally {
       setLoading(false);
     }
@@ -232,12 +266,63 @@ export function useLocationPricing() {
     }).format(pricing.localPrice);
   };
 
+  const isNigeria = location
+    ? location.countryCode.toLowerCase() === "ng" ||
+      location.country.toLowerCase() === "nigeria"
+    : false;
+
+  const formatCoursePrice = (
+    priceNgn: number | undefined,
+    priceUsd: number,
+  ): string => {
+    /* Nigerian visitors see the EXACT naira fee from the catalogue.
+       Everyone else sees USD — never a converted EUR/GBP/KES figure,
+       per the pricing contract. */
+    if (isNigeria && priceNgn != null) {
+      return new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(priceNgn);
+    }
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(priceUsd);
+  };
+
+  /**
+   * Format an order total that mixes exact-naira course fees with
+   * USD-priced services/products. Callers supply BOTH figures: sumUsd
+   * always, and sumNgn when they can compute the exact naira figure
+   * (course priceNgn lines plus the converted value of the rest).
+   * Nigerian visitors then see the exact naira total; everyone else
+   * sees the location-converted USD total.
+   */
+  const formatTotal = (sumUsd: number, sumNgn?: number): string => {
+    if (isNigeria && sumNgn != null) {
+      return new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(sumNgn);
+    }
+    return formatAmount(sumUsd);
+  };
+
   return {
     location,
     loading,
     error,
+    isNigeria,
     getPricingForAmount,
     formatAmount,
+    formatCoursePrice,
+    formatTotal,
     detectLocation
   };
 }

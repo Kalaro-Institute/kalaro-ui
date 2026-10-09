@@ -7,7 +7,7 @@ import { useCart } from "@/context/CartContext";
 import logo from "@/imports/logo.jpeg";
 import {
   Menu, X, Phone, Mail, MapPin, Facebook, Twitter,
-  Instagram, Linkedin, Youtube, ChevronDown,
+  Instagram, Linkedin, Youtube, ChevronDown, ArrowRight,
   UserPlus, LogIn, ShoppingBag,
 } from "lucide-react";
 
@@ -81,7 +81,7 @@ export default function Layout() {
       </div>
 
       {/* â”€â”€ NAVBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <nav className="sticky top-0 z-50 bg-white shadow-md" ref={navRef}>
+      <nav className="sticky top-0 z-50 bg-[#071209] shadow-md" ref={navRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           {/* h-16 on phones, h-20 from lg up. The logo scales with it so
               the bag + hamburger always have room without overflowing. */}
@@ -89,11 +89,13 @@ export default function Layout() {
 
             {/* Logo â€” large & prominent, scaled down on phones */}
             <NavLink to="/" className="flex items-center gap-3 shrink-0 min-w-0" onClick={() => setOpenDropdown(null)}>
-              <ImageWithFallback
-                src={logo}
-                alt="Kalaro Institute of HMO Operations"
-                className="h-9 sm:h-12 lg:h-[60px] w-auto object-contain"
-              />
+              <span className="bg-white rounded-xl p-1.5 inline-flex">
+                <ImageWithFallback
+                  src={logo}
+                  alt="Kalaro Institute of HMO Operations"
+                  className="h-8 sm:h-11 lg:h-[52px] w-auto object-contain"
+                />
+              </span>
             </NavLink>
 
             {/* Desktop nav links */}
@@ -108,8 +110,8 @@ export default function Layout() {
                         onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
                         className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
                           openDropdown === item.label
-                            ? "text-green-700 bg-green-50"
-                            : "text-gray-700 hover:text-green-700 hover:bg-gray-50"
+                            ? "text-green-300 bg-white/10"
+                            : "text-gray-300 hover:text-white hover:bg-white/10"
                         }`}
                       >
                         {item.label}
@@ -137,8 +139,8 @@ export default function Layout() {
                       className={({ isActive }) =>
                         `px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors block ${
                           isActive
-                            ? "text-green-700 bg-green-50"
-                            : "text-gray-700 hover:text-green-700 hover:bg-gray-50"
+                            ? "text-green-300 bg-white/10"
+                            : "text-gray-300 hover:text-white hover:bg-white/10"
                         }`
                       }
                     >
@@ -155,7 +157,7 @@ export default function Layout() {
             <Link
               to="/cart"
               aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
-              className="hidden lg:block relative p-2.5 rounded-full text-gray-700 hover:text-green-700 hover:bg-green-50 transition-colors"
+              className="hidden lg:block relative p-2.5 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
             >
               <ShoppingBag className="w-5 h-5" />
               {count > 0 && (
@@ -169,13 +171,13 @@ export default function Layout() {
             <div className="hidden lg:flex items-center gap-2.5">
               <button
                 onClick={() => { setOpenDropdown(null); navigate("/login"); }}
-                className="flex items-center gap-1.5 text-sm font-bold text-gray-700 border-2 border-gray-200 px-4 py-2 rounded-full hover:border-green-600 hover:text-green-700 transition-colors"
+                className="flex items-center gap-1.5 text-sm font-bold text-white border-2 border-white/30 px-4 py-2 rounded-full hover:border-green-400 hover:text-green-300 transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" /> Login
               </button>
               <button
                 onClick={() => { setOpenDropdown(null); navigate("/signup"); }}
-                className="flex items-center gap-1.5 text-sm font-bold text-white bg-green-700 px-5 py-2 rounded-full hover:bg-green-800 transition-all shadow-md shadow-green-200"
+                className="flex items-center gap-1.5 text-sm font-bold text-white bg-[#1b5e20] px-5 py-2 rounded-full hover:bg-green-600 transition-all shadow-md"
               >
                 <UserPlus className="w-3.5 h-3.5" /> Get Started
               </button>
@@ -188,7 +190,7 @@ export default function Layout() {
               <Link
                 to="/cart"
                 aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
-                className="relative p-2 rounded-full text-gray-700 hover:text-green-700 transition-colors"
+                className="relative p-2 rounded-full text-gray-300 hover:text-white transition-colors"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {count > 0 && (
@@ -202,7 +204,7 @@ export default function Layout() {
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
-                className="p-2 rounded-full text-gray-700 hover:text-green-700 transition-colors"
+                className="p-2 rounded-full text-gray-300 hover:text-white transition-colors"
               >
                 {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -212,20 +214,20 @@ export default function Layout() {
 
         {/* â”€â”€ MOBILE MENU â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         {menuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-1 shadow-lg max-h-[80vh] overflow-y-auto">
+          <div className="lg:hidden bg-[#071209] border-t border-white/10 px-4 py-4 flex flex-col gap-1 shadow-lg max-h-[80vh] overflow-y-auto">
             {NAV.map((item) => (
               <div key={item.label}>
                 {item.dropdown ? (
                   <>
                     <button
                       onClick={() => setMobileOpen(mobileOpen === item.label ? null : item.label)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-700 rounded-lg hover:bg-gray-50"
+                      className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-300 rounded-lg hover:bg-white/10 hover:text-white"
                     >
                       {item.label}
                       <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpen === item.label ? "rotate-180" : ""}`} />
                     </button>
                     {mobileOpen === item.label && (
-                      <div className="ml-3 mt-1 border-l-2 border-green-100 pl-3 flex flex-col gap-1">
+                      <div className="ml-3 mt-1 border-l-2 border-white/10 pl-3 flex flex-col gap-1">
                         {item.dropdown.map((sub, j) => {
                           const subKey = `${item.label}:${j}`;
                           const isOpen = mobileOpen === subKey;
@@ -235,29 +237,29 @@ export default function Layout() {
                                 <Link
                                   to={sub.to}
                                   onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
-                                  className="flex-1 flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:text-green-700 rounded-lg hover:bg-green-50"
+                                  className="flex-1 flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/10"
                                 >
-                                  <span className="text-green-600">{sub.icon}</span>
+                                  <span className="text-green-400">{sub.icon}</span>
                                   <span className="flex-1">{sub.label}</span>
                                 </Link>
                                 {sub.subItems && sub.subItems.length > 0 && (
                                   <button
                                     onClick={() => setMobileOpen(isOpen ? null : subKey)}
                                     aria-label={`Show ${sub.label} modules`}
-                                    className="p-2 text-gray-400 hover:text-green-700"
+                                    className="p-2 text-gray-500 hover:text-white"
                                   >
                                     <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                                   </button>
                                 )}
                               </div>
                               {sub.subItems && isOpen && (
-                                <ul className="ml-6 mb-1 border-l border-green-100 pl-3 flex flex-col gap-0.5">
+                                <ul className="ml-6 mb-1 border-l border-white/10 pl-3 flex flex-col gap-0.5">
                                   {sub.subItems.map((m, k) => (
                                     <li key={k}>
                                       <Link
                                         to={m.to}
                                         onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
-                                        className="block py-1.5 text-xs text-gray-500 hover:text-green-700"
+                                        className="block py-1.5 text-xs text-gray-500 hover:text-green-300"
                                       >
                                         {m.label}
                                       </Link>
@@ -268,6 +270,16 @@ export default function Layout() {
                             </div>
                           );
                         })}
+                        {item.flat && (
+                          <Link
+                            to="/courses"
+                            onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
+                            className="flex items-center gap-2 mt-1 px-3 py-2.5 text-sm font-bold text-green-300 rounded-lg hover:bg-white/10 hover:text-green-200 transition-colors"
+                          >
+                            View all courses
+                            <ArrowRight className="w-4 h-4" />
+                          </Link>
+                        )}
                       </div>
                     )}
                   </>
@@ -278,7 +290,7 @@ export default function Layout() {
                     onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
                       `block px-3 py-2.5 text-sm font-semibold rounded-lg ${
-                        isActive ? "text-green-700 bg-green-50" : "text-gray-700 hover:bg-gray-50"
+                        isActive ? "text-green-300 bg-white/10" : "text-gray-300 hover:text-white hover:bg-white/10"
                       }`
                     }
                   >
@@ -293,30 +305,30 @@ export default function Layout() {
             <Link
               to="/cart"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-700 rounded-lg hover:bg-green-50 mt-1"
+              className="flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-300 rounded-lg hover:bg-white/10 hover:text-white mt-1"
             >
               <span className="flex items-center gap-2.5">
-                <ShoppingBag className="w-4 h-4 text-green-600" />
+                <ShoppingBag className="w-4 h-4 text-green-400" />
                 Your bag
               </span>
               {count > 0 && (
-                <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-green-300 bg-white/10 px-2 py-0.5 rounded-full">
                   {count} item{count !== 1 ? "s" : ""}
                 </span>
               )}
             </Link>
 
             {/* Mobile auth */}
-            <div className="flex gap-3 pt-3 mt-2 border-t border-gray-100">
+            <div className="flex gap-3 pt-3 mt-2 border-t border-white/10">
               <button
                 onClick={() => { setMenuOpen(false); navigate("/login"); }}
-                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-gray-700 border-2 border-gray-200 py-2.5 rounded-full"
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white border-2 border-white/30 py-2.5 rounded-full hover:border-green-400 hover:text-green-300 transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" /> Login
               </button>
               <button
                 onClick={() => { setMenuOpen(false); navigate("/signup"); }}
-                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white bg-green-700 py-2.5 rounded-full"
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white bg-[#1b5e20] py-2.5 rounded-full hover:bg-green-600 transition-colors"
               >
                 <UserPlus className="w-3.5 h-3.5" /> Get Started
               </button>

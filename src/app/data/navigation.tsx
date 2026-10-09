@@ -1,6 +1,6 @@
 import {
   BookOpen, Star, ShieldCheck,
-  ClipboardCheck, Bot, Rss, Video, Library, FileText,
+  ClipboardCheck, ClipboardList, Bot, Rss, Video, Library, FileText,
   HelpCircle, Globe, Landmark,
   Users, Monitor,
 } from "lucide-react";
@@ -59,15 +59,33 @@ export const COURSES: NavDropdownItem[] = [
   },
   {
     icon: <Users className="w-4 h-4" />,
-    label: "HMO Officer Recruitment & Training",
-    to: "/course/hmo-officer-recruitment-training",
-    desc: "Recruit, onboard and train a capable HMO workforce.",
+    label: "Provider Relationship Manager",
+    to: "/course/provider-relationship-manager",
+    desc: "Recruit, onboard and manage hospitals and clinics in an HMO network.",
+  },
+  {
+    icon: <HelpCircle className="w-4 h-4" />,
+    label: "Customer Service Support",
+    to: "/course/customer-service-support",
+    desc: "Handle enquiries and complaints across chat, email and phone.",
+  },
+  {
+    icon: <Globe className="w-4 h-4" />,
+    label: "Flight & Hotel Bookings",
+    to: "/course/flight-hotel-bookings",
+    desc: "Search, price and confirm flights and hotel stays for clients.",
   },
   {
     icon: <Monitor className="w-4 h-4" />,
     label: "Website Development",
     to: "/course/website-development",
     desc: "Build fast, mobile-first websites that bring in patients.",
+  },
+  {
+    icon: <ClipboardList className="w-4 h-4" />,
+    label: "Project Management",
+    to: "/course/project-management",
+    desc: "Plan, schedule and deliver projects on time and on budget.",
   },
 ];
 /* -- NCLEX ------------------------------------------------------ */
@@ -157,7 +175,8 @@ export const FOOTER_GROUPS: { heading: string; links: FooterLink[]; viewAll?: Fo
       { label: "Hospital Administration", to: "/course/hospital-administration" },
       { label: "Virtual Assistant & AI Automation", to: "/course/virtual-assistant-ai-automation" },
       { label: "Website Development", to: "/course/website-development" },
-      { label: "HMO Officer Recruitment & Training", to: "/course/hmo-officer-recruitment-training" },
+      { label: "Provider Relationship Manager", to: "/course/provider-relationship-manager" },
+      { label: "Project Management", to: "/course/project-management" },
     ],
     viewAll: { label: "All Courses", to: "/courses" },
   },

@@ -7,6 +7,7 @@ import {
 import { toast } from "sonner";
 import { useCart, type CartItem } from "@/context/CartContext";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
+import { getCourse, NGN_PER_USD } from "@/app/data/courses";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 
 const BANK = {
@@ -32,11 +33,29 @@ const KIND_META: Record<
    server is the authority on the final total - never the prices shown
    here, which are for display only. */
 export default function Cart() {
-  const { items, removeItem, setQty, clear, subtotalUsd, count } = useCart();
-  const { formatAmount } = useLocationPricing();
+  const { items, removeItem, setQty, clear, count } = useCart();
+  const { formatAmount, formatCoursePrice, formatTotal } = useLocationPricing();
   const [method, setMethod] = useState<Method>("card");
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  /* Exact naira fee for a course line. Bags saved before the naira
+     rollout carry no priceNgn - recover it from the catalogue so those
+     lines never fall back to a USD display. */
+  const lineNgn = (i: CartItem) =>
+    i.kind === "course" ? i.priceNgn ?? getCourse(i.slug)?.priceNgn : undefined;
+
+  /* Local totals for a set of lines: exact naira for course fees plus
+     the converted value of USD-priced services/products. formatTotal
+     picks the right figure for the visitor's location. */
+  const fmtSum = (lines: CartItem[]): string => {
+    const sumUsd = lines.reduce((n, i) => n + i.priceUsd * i.qty, 0);
+    const sumNgn = lines.reduce(
+      (n, i) => n + (lineNgn(i) ?? Math.round(i.priceUsd * NGN_PER_USD)) * i.qty,
+      0,
+    );
+    return formatTotal(sumUsd, sumNgn);
+  };
 
   const copyAccount = async () => {
     try {
@@ -168,7 +187,9 @@ return (
                         </div>
                         <div className="flex items-start gap-3 shrink-0">
                           <span className="font-bold text-[#1a2332]">
-                            {formatAmount(item.priceUsd * item.qty)}
+                            {item.kind === "course"
+                              ? formatCoursePrice(lineNgn(item), item.priceUsd * item.qty)
+                              : formatAmount(item.priceUsd * item.qty)}
                           </span>
                           <button
                             onClick={() => removeItem(item.key)}
@@ -277,7 +298,7 @@ return (
                   ) : (
                     <>
                       <CreditCard className="w-4 h-4" /> Pay{" "}
-                      {formatAmount(subtotalUsd)}
+                      {fmtSum(items)}
                     </>
                   )}
                 </button>
@@ -319,7 +340,7 @@ return (
                   <div className="flex justify-between gap-4">
                     <span className="text-gray-500">Amount</span>
                     <span className="font-bold text-green-700">
-                      {formatAmount(subtotalUsd)}
+                      {fmtSum(items)}
                     </span>
                   </div>
                 </div>
@@ -344,10 +365,6 @@ return (
                 {(["course", "service", "product"] as const).map((kind) => {
                   const lines = items.filter((i) => i.kind === kind);
                   if (lines.length === 0) return null;
-                  const sum = lines.reduce(
-                    (n, i) => n + i.priceUsd * i.qty,
-                    0,
-                  );
                   return (
                     <div key={kind} className="flex justify-between">
                       <dt className="text-gray-500">
@@ -360,7 +377,7 @@ return (
                         )}
                       </dt>
                       <dd className="font-semibold text-[#1a2332]">
-                        {formatAmount(sum)}
+                        {fmtSum(lines)}
                       </dd>
                     </div>
                   );
@@ -375,7 +392,7 @@ return (
               <div className="border-t border-gray-100 pt-4 flex justify-between items-baseline">
                 <span className="text-sm text-gray-500">Total</span>
                 <span className="text-2xl font-extrabold text-[#1a2332]">
-                  {formatAmount(subtotalUsd)}
+                  {fmtSum(items)}
                 </span>
               </div>
               <p className="text-[11px] text-gray-400 mt-2 leading-relaxed">

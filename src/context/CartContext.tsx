@@ -29,6 +29,10 @@ export type CartItem = {
   title: string;
   /** Base price in USD, used only for local totals and display. */
   priceUsd: number;
+  /** Exact naira fee for courses. Nigerian visitors see this figure;
+      everyone else sees priceUsd. Services/products omit it and use
+      the location-converted display. */
+  priceNgn?: number;
   image?: string;
   /** Quantity. Digital items (courses) are always 1. */
   qty: number;

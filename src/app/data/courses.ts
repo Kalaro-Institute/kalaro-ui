@@ -23,6 +23,9 @@ export type Course = {
   level: "Beginner" | "Intermediate" | "Advanced";
   /** Base price in USD; converted per visitor location at render time. */
   priceUsd: number;
+  /** Canonical Nigerian fee. Nigerian IPs see this exact figure. Set on every course
+      whose fee is confirmed; legacy entries fall back to converting priceUsd. */
+  priceNgn?: number;
   durationWeeks: number;
   summary: string;
   overview: string;
@@ -35,6 +38,10 @@ export type Course = {
   img: string;
   instructor: string;
 };
+
+/* Naira source of truth. Fees are set in NGN - priceUsd is always priceNgn / NGN_PER_USD
+   so Nigerian visitors see the exact naira fee and everyone else sees the USD equivalent. */
+export const NGN_PER_USD = 1550;
 
 const IMG = {
   insurance:
@@ -51,6 +58,12 @@ const IMG = {
   canada:
     "https://images.unsplash.com/photo-1517935706615-2717063c2225?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
   web: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
+  provider:
+    "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
+  support:
+    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
+  flights:
+    "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
 };
 
 export const CATALOG: Course[] = [
@@ -59,7 +72,8 @@ export const CATALOG: Course[] = [
     title: "Health Insurance & HMO Operations",
     category: "Health Insurance",
     level: "Beginner",
-    priceUsd: 350,
+    priceNgn: 40000,
+    priceUsd: 26,
     durationWeeks: 8,
     instructor: "Dr. Adebayo Mensah",
     img: IMG.insurance,
@@ -143,7 +157,8 @@ export const CATALOG: Course[] = [
     title: "Hospital Administration & HMO Operation",
     category: "Healthcare Administration",
     level: "Intermediate",
-    priceUsd: 450,
+    priceNgn: 30000,
+    priceUsd: 19,
     durationWeeks: 10,
     instructor: "Mrs. Ngozi Uchenna",
     img: IMG.hospital,
@@ -245,7 +260,8 @@ export const CATALOG: Course[] = [
     title: "Virtual Assistant & AI Automation",
     category: "Digital Skills",
     level: "Beginner",
-    priceUsd: 300,
+    priceNgn: 35000,
+    priceUsd: 23,
     durationWeeks: 6,
     instructor: "Mr. Emeka Okafor",
     img: IMG.ai,
@@ -334,152 +350,12 @@ export const CATALOG: Course[] = [
     ],
   },
   {
-    slug: "canada-admission-support",
-    title: "Canada Admission Support",
-    category: "International",
-    level: "Intermediate",
-    priceUsd: 400,
-    durationWeeks: 6,
-    instructor: "International Admissions Team",
-    img: IMG.canada,
-    summary:
-      "School selection guidance, applications to Canadian schools, full document support and step-by-step guidance through the admission process.",
-    overview:
-      "Applying to study in Canada means choosing the right schools, meeting their specific requirements and submitting a convincing application on time. We help you shortlist institutions that genuinely match your academic background, prepare and submit your applications, organise every supporting document, and track the process through to a decision.",
-    expectations: [
-      "Shortlist schools that fit your profile and budget",
-      "Prepare a strong, complete application",
-      "Track submissions and respond to admissions queries",
-      "Understand each stage of the admission process",
-    ],
-    modules: [
-      {
-        title: "Profile & School Selection",
-        lessons: [
-          "Assessing your academic profile",
-          "How Canadian admission works",
-          "Building a realistic shortlist",
-        ],
-      },
-      {
-        title: "Application Preparation",
-        lessons: [
-          "Required documents for each application",
-          "Transcripts, language tests and prerequisites",
-          "Writing a convincing statement of purpose",
-        ],
-      },
-      {
-        title: "Submission & Follow-Up",
-        lessons: [
-          "Submitting applications correctly",
-          "Tracking application status",
-          "Responding to admissions queries",
-        ],
-      },
-    ],
-    outcomes: [
-      "Apply to schools that genuinely match your profile",
-      "Submit complete, competitive applications",
-      "Track every application through to decision",
-      "Navigate the Canadian admission process confidently",
-    ],
-    requirements: [
-      "Secondary school certificate or equivalent",
-      "Language test results where required",
-      "Academic transcripts",
-    ],
-    includes: [
-      "School selection strategy session",
-      "Application preparation and review",
-      "Document organisation and submission",
-      "Ongoing admissions guidance",
-    ],
-  },
-  {
-    slug: "hmo-officer-recruitment-training",
-    title: "HMO Officer Recruitment & Training",
-    category: "Healthcare Administration",
-    level: "Intermediate",
-    priceUsd: 400,
-    durationWeeks: 8,
-    instructor: "Mrs. Chioma Nwosu",
-    img: IMG.office,
-    summary:
-      "Recruit, train and develop HMO officers and staff - covering recruitment, HMO operations training and building a capable healthcare administrative workforce.",
-    overview:
-      "An HMO only performs as well as the people running it day to day. This programme covers the full workforce cycle: writing and running a recruitment process, onboarding new officers, training them on HMO operations, and developing the administrative team over time. It is aimed at supervisors, HR staff and owners responsible for building an HMO team.",
-    expectations: [
-      "Design and run a fair recruitment process",
-      "Onboard new officers effectively",
-      "Train staff on HMO operations",
-      "Build a team that performs consistently",
-    ],
-    modules: [
-      {
-        title: "Workforce Planning",
-        lessons: [
-          "Identifying the roles your HMO needs",
-          "Writing clear, unbiased job descriptions",
-          "Competency frameworks for healthcare administrators",
-        ],
-      },
-      {
-        title: "Recruitment",
-        lessons: [
-          "Sourcing candidates",
-          "Structured interviews and assessment",
-          "Reference and background checks",
-        ],
-      },
-      {
-        title: "Onboarding",
-        lessons: [
-          "First-day and first-week structure",
-          "Orientation to HMO operations",
-          "Systems access, policies and compliance",
-        ],
-      },
-      {
-        title: "HMO Operations Training",
-        lessons: [
-          "Core HMO functions every officer must know",
-          "Enrolment, claims and member services operations",
-          "Quality standards and error checking",
-        ],
-      },
-      {
-        title: "Workforce Development",
-        lessons: [
-          "Performance reviews and feedback",
-          "Closing competency gaps",
-          "Retention and progression",
-        ],
-      },
-    ],
-    outcomes: [
-      "Recruit strong administrative staff",
-      "Onboard new hires to a professional standard",
-      "Train officers on HMO operations",
-      "Build a team that performs consistently",
-    ],
-    requirements: [
-      "Experience in HR, supervision or administration",
-      "Ownership or management role helpful",
-    ],
-    includes: [
-      "Recruitment templates and interview guides",
-      "Training manuals for new officers",
-      "Performance review frameworks",
-      "Certificate of completion",
-    ],
-  },
-  {
     slug: "website-development",
     title: "Website Development",
     category: "Digital Skills",
     level: "Beginner",
-    priceUsd: 350,
+    priceNgn: 40000,
+    priceUsd: 26,
     durationWeeks: 6,
     instructor: "Technical Training Team",
     img: IMG.web,
@@ -552,6 +428,325 @@ export const CATALOG: Course[] = [
       "Certificate of completion",
     ],
   },
+  {
+    slug: "provider-relationship-manager",
+    title: "Provider Relationship Manager",
+    category: "Health Insurance",
+    level: "Intermediate",
+    priceNgn: 25000,
+    priceUsd: 16,
+    durationWeeks: 8,
+    instructor: "Mrs. Chioma Nwosu",
+    img: IMG.provider,
+    summary:
+      "Build and manage the hospital and clinic partnerships that keep an HMO network strong - from provider recruitment to disputes and performance reviews.",
+    overview:
+      "An HMO is only as strong as its provider network. This programme trains you to source, onboard and manage hospitals and clinics as a relationship manager: negotiating terms, supporting providers day to day, resolving disputes quickly, and monitoring network performance so members always get care where and when they need it.",
+    expectations: [
+      "Recruit and onboard new hospitals and clinics",
+      "Handle provider queries and escalations professionally",
+      "Resolve disputes before they affect members",
+      "Track network performance and close coverage gaps",
+    ],
+    modules: [
+      {
+        title: "The Provider Network",
+        lessons: [
+          "How HMO networks are structured",
+          "Provider categories, tiers and coverage mapping",
+          "Why network quality decides member retention",
+        ],
+      },
+      {
+        title: "Recruitment & Onboarding",
+        lessons: [
+          "Sourcing and qualifying hospitals and clinics",
+          "Site visits and document checks",
+          "Contract terms, tariffs and service-level agreements",
+        ],
+      },
+      {
+        title: "Day-to-Day Relationship Management",
+        lessons: [
+          "Regular provider touchpoints and check-ins",
+          "Handling queries, approvals and escalations",
+          "Supporting providers with claims workflows",
+        ],
+      },
+      {
+        title: "Disputes & Issue Resolution",
+        lessons: [
+          "Common sources of provider disputes",
+          "Investigating complaints with evidence",
+          "Escalation paths and closing the loop",
+        ],
+      },
+      {
+        title: "Network Performance",
+        lessons: [
+          "Key metrics: utilisation, claims turnaround, service quality",
+          "Identifying and closing coverage gaps",
+          "Reporting and renewing provider contracts",
+        ],
+      },
+    ],
+    outcomes: [
+      "Recruit and onboard providers to standard",
+      "Run a professional provider relationship calendar",
+      "Resolve disputes quickly and fairly",
+      "Measure and improve network performance",
+    ],
+    requirements: [
+      "Experience in HMO, hospital or customer-facing roles helpful",
+      "Strong written and verbal communication",
+    ],
+    includes: [
+      "8 weeks of on-demand lessons",
+      "Provider recruitment and onboarding templates",
+      "Contract and SLA sample library",
+      "Certificate of completion",
+    ],
+  },
+  {
+    slug: "customer-service-support",
+    title: "Customer Service Support",
+    category: "Digital Skills",
+    level: "Beginner",
+    priceNgn: 15000,
+    priceUsd: 10,
+    durationWeeks: 6,
+    instructor: "Kalaro Training Faculty",
+    img: IMG.support,
+    summary:
+      "Handle enquiries, complaints and follow-ups with confidence - the core skills every support agent needs for HMOs, hospitals and remote roles.",
+    overview:
+      "Customer service is the front line of every healthcare organisation. This programme covers the fundamentals: understanding the customer, writing clear replies, handling complaints calmly, working ticketing and CRM tools, and meeting response-time targets. By the end you will be ready for support roles in HMOs, hospitals and remote customer-service teams.",
+    expectations: [
+      "Respond to enquiries across chat, email and phone",
+      "Turn complaints into resolved issues",
+      "Use ticketing and CRM tools correctly",
+      "Meet response-time and quality targets",
+    ],
+    modules: [
+      {
+        title: "Service Fundamentals",
+        lessons: [
+          "What good service looks like in healthcare",
+          "Understanding enquiry types and priorities",
+          "Tone, empathy and professional language",
+        ],
+      },
+      {
+        title: "Written Communication",
+        lessons: [
+          "Clear, concise email and chat replies",
+          "Templates, macros and consistency",
+          "Writing that builds trust",
+        ],
+      },
+      {
+        title: "Handling Complaints",
+        lessons: [
+          "De-escalating an upset customer",
+          "Investigating and documenting issues",
+          "When and how to escalate",
+        ],
+      },
+      {
+        title: "Tools of the Trade",
+        lessons: [
+          "Ticketing systems and case lifecycles",
+          "CRM basics and logging interactions",
+          "Knowledge bases and internal notes",
+        ],
+      },
+      {
+        title: "Performance",
+        lessons: [
+          "Response-time and resolution targets",
+          "Quality scoring and self-review",
+          "Growing into a team-lead role",
+        ],
+      },
+    ],
+    outcomes: [
+      "Handle enquiries across email, chat and phone",
+      "Resolve complaints without escalation friction",
+      "Use ticketing and CRM tools confidently",
+      "Work to response-time and quality targets",
+    ],
+    requirements: [
+      "Good written English",
+      "A computer or smartphone with internet access",
+      "No prior experience required",
+    ],
+    includes: [
+      "6 weeks of on-demand lessons",
+      "Reply and complaint-handling templates",
+      "Mock ticketing practice exercises",
+      "Certificate of completion",
+    ],
+  },
+  {
+    slug: "flight-hotel-bookings",
+    title: "Flight & Hotel Bookings",
+    category: "Digital Skills",
+    level: "Beginner",
+    priceNgn: 25000,
+    priceUsd: 16,
+    durationWeeks: 6,
+    instructor: "Kalaro Training Faculty",
+    img: IMG.flights,
+    summary:
+      "Learn to search, price and confirm flights and hotel stays for clients - fares, reservations, changes and itinerary handling from start to finish.",
+    overview:
+      "Travel booking is a practical, in-demand skill for remote and agency work. This programme takes you from searching fares to issuing itineraries: booking tools, fare rules, seat and hotel selections, schedule changes, refunds and client communication. You will practise real bookings end to end so you can work confidently in a travel agency or as a freelance booking assistant.",
+    expectations: [
+      "Search and compare fares and hotel rates",
+      "Create and confirm reservations",
+      "Handle changes, cancellations and refunds",
+      "Send clear itineraries to clients",
+    ],
+    modules: [
+      {
+        title: "Travel Industry Basics",
+        lessons: [
+          "How flights and fares work",
+          "Cabin classes, fare rules and penalties",
+          "Hotel categories, rates and inclusions",
+        ],
+      },
+      {
+        title: "Searching & Pricing",
+        lessons: [
+          "Searching flights and building options",
+          "Comparing hotels: location, rate and policy",
+          "Presenting choices to a client",
+        ],
+      },
+      {
+        title: "Making Bookings",
+        lessons: [
+          "Creating and holding reservations",
+          "Passenger details and document checks",
+          "Confirmations, tickets and vouchers",
+        ],
+      },
+      {
+        title: "Changes & Problem Solving",
+        lessons: [
+          "Rebooking and schedule changes",
+          "Cancellations, refunds and no-shows",
+          "Delays, disruptions and client updates",
+        ],
+      },
+      {
+        title: "Serving the Client",
+        lessons: [
+          "Writing clear itineraries",
+          "Payment, receipts and record keeping",
+          "Building repeat clients and referrals",
+        ],
+      },
+    ],
+    outcomes: [
+      "Search and price flights and hotels accurately",
+      "Confirm bookings and issue itineraries",
+      "Manage changes, refunds and disruptions",
+      "Run a professional client booking workflow",
+    ],
+    requirements: [
+      "A computer with reliable internet access",
+      "Good written English",
+      "No prior travel-industry experience required",
+    ],
+    includes: [
+      "6 weeks of on-demand lessons",
+      "Fare and hotel comparison worksheets",
+      "Itinerary and confirmation templates",
+      "Certificate of completion",
+    ],
+  },
+  {
+    slug: "project-management",
+    title: "Project Management",
+    category: "Project Management",
+    level: "Intermediate",
+    priceNgn: 20000,
+    priceUsd: 13,
+    durationWeeks: 8,
+    instructor: "Kalaro Training Faculty",
+    img: IMG.office,
+    summary:
+      "Plan, schedule and deliver projects on time and on budget - the practical tools, templates and team skills every modern workplace expects.",
+    overview:
+      "Projects fail when nobody owns the plan. This programme builds a working command of the full project lifecycle: defining scope, building a schedule, managing budget and risk, leading the team, and closing out cleanly. You will use real templates - charter, work breakdown, schedule, risk register, status report - and practise them on a case project from week one, so you finish able to run a small project end to end.",
+    expectations: [
+      "Write a clear project charter and scope statement",
+      "Build a realistic schedule with milestones",
+      "Track budget, risks and status professionally",
+      "Lead meetings and keep stakeholders aligned",
+    ],
+    modules: [
+      {
+        title: "Project Fundamentals",
+        lessons: [
+          "What a project is (and what it is not)",
+          "The project lifecycle and key deliverables",
+          "Roles: sponsor, manager, team and stakeholders",
+        ],
+      },
+      {
+        title: "Scope & Planning",
+        lessons: [
+          "Writing objectives and a tight scope statement",
+          "Breaking work down into a WBS",
+          "Estimating effort, cost and dependencies",
+        ],
+      },
+      {
+        title: "Scheduling & Budget",
+        lessons: [
+          "Building timelines and milestones",
+          "Critical path basics",
+          "Budgeting, tracking and change control",
+        ],
+      },
+      {
+        title: "Risk & Communication",
+        lessons: [
+          "Identifying and scoring risks",
+          "Stakeholder mapping and reporting",
+          "Running effective status meetings",
+        ],
+      },
+      {
+        title: "Delivery & Closure",
+        lessons: [
+          "Monitoring progress with RAG status",
+          "Handling scope creep and issues",
+          "Handover, lessons learned and close-out",
+        ],
+      },
+    ],
+    outcomes: [
+      "Plan and run a project from charter to close-out",
+      "Build schedules, budgets and risk registers that hold up",
+      "Report status clearly to sponsors and stakeholders",
+      "Use templates you can take into any role",
+    ],
+    requirements: [
+      "No prior project-management experience required",
+      "Suitable for coordinators, officers, team leads and business owners",
+      "A computer or smartphone with internet access",
+    ],
+    includes: [
+      "8 weeks of on-demand lessons",
+      "Charter, schedule, budget and status templates",
+      "Weekly live Q&A sessions",
+      "Certificate of completion",
+    ],
+  },
 ];
 
 /** Lookup helpers - the /course/:slug route resolves content by slug. */
@@ -559,5 +754,6 @@ export const getCourse = (slug: string) => CATALOG.find((c) => c.slug === slug);
 
 export const totalLessons = (course: Course) =>
   course.modules.reduce((acc, m) => acc + m.lessons.length, 0);
+
 
 
