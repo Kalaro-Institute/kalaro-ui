@@ -1,155 +1,44 @@
-import { useState, useRef, useEffect } from "react";
-import { Outlet, NavLink, useNavigate, Link } from "react-router";
+﻿import { useState, useRef, useEffect } from "react";
+import { Outlet, NavLink, useNavigate, Link, useLocation } from "react-router";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+import { NavFlatMenu } from "@/app/components/NavDropdown";
+import { NAV, FOOTER_GROUPS } from "@/app/data/navigation";
+import { useCart } from "@/context/CartContext";
 import logo from "@/imports/logo.jpeg";
 import {
   Menu, X, Phone, Mail, MapPin, Facebook, Twitter,
-  Instagram, Linkedin, Youtube, ChevronDown,
-  BookOpen, FileText, Video, HelpCircle, Library,
-  Briefcase, Star, Play, GraduationCap,
-  UserPlus, LogIn, Rss,
+  Instagram, Linkedin, Youtube, ChevronDown, ArrowRight,
+  UserPlus, LogIn, ShoppingBag,
 } from "lucide-react";
 
-/* ── Nav structure ────────────────────────────────────────── */
-const NAV = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  {
-    label: "Courses",
-    to: "/courses",
-    dropdown: [
-      { 
-        icon: <BookOpen className="w-4 h-4" />, 
-        label: "Health Insurance & HMO Operations", 
-        to: "/category/patient-verification", 
-        desc: "Core Program",
-        subItems: [
-          { label: "Patient Verification & Pre-Authorization", to: "/category/patient-verification" },
-          { label: "Claims Preparation & Submission", to: "/category/claims-prep" },
-          { label: "Billing & Reconciliation", to: "/category/billing" },
-          { label: "Utilization Review", to: "/category/utilization-review" },
-          { label: "Provider Relationship Management", to: "/category/provider-relations" },
-        ]
-      },
-      { 
-        icon: <Star className="w-4 h-4" />, 
-        label: "Hospital Administration", 
-        to: "/courses?category=hospital-admin", 
-        desc: "Popular",
-        subItems: [
-          { label: "Front Desk Operations", to: "/courses?category=front-desk" },
-          { label: "Patient Coordination & Scheduling", to: "/courses?category=patient-coordination" },
-          { label: "Medical Documentation", to: "/courses?category=medical-documentation" },
-          { label: "Healthcare Communication Systems", to: "/courses?category=healthcare-communication" },
-          { label: "Administrative Workflow", to: "/courses?category=admin-workflow" },
-        ]
-      },
-      { 
-        icon: <GraduationCap className="w-4 h-4" />, 
-        label: "Billing, Claims & Reconciliation", 
-        to: "/courses?category=billing-claims", 
-        desc: "High Demand",
-        subItems: [
-          { label: "Claims Preparation & Submission", to: "/courses?category=claims-prep" },
-          { label: "Tariff Understanding", to: "/courses?category=tariff" },
-          { label: "Reconciliation Techniques", to: "/courses?category=reconciliation" },
-          { label: "Revenue Cycle Basics", to: "/courses?category=revenue-cycle" },
-          { label: "Claims Dispute Resolution", to: "/courses?category=claims-dispute" },
-        ]
-      },
-      { 
-        icon: <Briefcase className="w-4 h-4" />, 
-        label: "Medical Virtual Assistant", 
-        to: "/courses?category=virtual-assistant", 
-        desc: "Remote Work",
-        subItems: [
-          { label: "Appointment & Calendar Management", to: "/courses?category=appointment-management" },
-          { label: "Professional Communication", to: "/courses?category=professional-communication" },
-          { label: "Email & Admin Support", to: "/courses?category=email-admin" },
-          { label: "Portfolio Creation", to: "/courses?category=portfolio-creation" },
-          { label: "Remote Healthcare Support", to: "/courses?category=remote-support" },
-        ]
-      },
-      { 
-        icon: <Play className="w-4 h-4" />, 
-        label: "EMR / EHR Training", 
-        to: "/courses?category=emr-ehr", 
-        desc: "Digital Skills",
-        subItems: [
-          { label: "Digital Patient Documentation", to: "/courses?category=digital-documentation" },
-          { label: "Healthcare Data Management", to: "/courses?category=data-management" },
-          { label: "Electronic Records Workflow", to: "/courses?category=records-workflow" },
-          { label: "Data Protection & Confidentiality", to: "/courses?category=data-protection" },
-        ]
-      },
-    ],
-  },
-  {
-    label: "Resources",
-    dropdown: [
-      { icon: <Rss className="w-4 h-4" />, label: "Blog & Articles", to: "/resources/blog", desc: "Industry insights & career tips" },
-      { icon: <Video className="w-4 h-4" />, label: "Webinars", to: "/resources/webinars", desc: "Free recorded & live sessions" },
-      { icon: <Library className="w-4 h-4" />, label: "Resource Library", to: "/resources/library", desc: "Templates, guides & policy docs" },
-      { icon: <FileText className="w-4 h-4" />, label: "HMO Glossary", to: "/resources/glossary", desc: "Key terms explained simply" },
-      { icon: <HelpCircle className="w-4 h-4" />, label: "FAQs", to: "/contact#faq", desc: "Common questions answered" },
-    ],
-  },
-  { label: "Careers", to: "/careers" },
-  { label: "Community", to: "/community" },
-  { label: "Contact", to: "/contact" },
-];
-
-type DropdownItem = { icon: JSX.Element; label: string; to: string; desc: string; subItems?: { label: string; to: string }[] };
-type NavItem = { label: string; to?: string; dropdown?: DropdownItem[] };
-
-function DropdownMenu({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
-  return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[700px] bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in">
-      {/* Arrow */}
-      <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100" />
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1 px-4">
-        {items.map((item, i) => (
-          <div key={i} className="flex flex-col">
-            <Link
-              to={item.to}
-              onClick={onClose}
-              className="flex items-start gap-3 px-3 py-2 hover:bg-green-50 transition-colors group rounded-xl"
-            >
-              <div className="w-8 h-8 bg-green-100 text-green-700 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-green-700 group-hover:text-white transition-colors mt-0.5">
-                {item.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 group-hover:text-green-700 leading-tight">{item.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{item.desc}</p>
-              </div>
-            </Link>
-            {item.subItems && (
-              <div className="ml-11 mt-1 space-y-1">
-                {item.subItems.map((sub, j) => (
-                  <Link
-                    key={j}
-                    to={sub.to}
-                    onClick={onClose}
-                    className="block text-xs text-gray-600 hover:text-green-700 px-3 py-1 hover:bg-green-50 rounded-lg transition-colors"
-                  >
-                    {sub.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Layout() {
+  const { count } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  /* Reset scroll on every route change. Without this, navigating from
+     the footer (or any scrolled page) lands you mid-page and it looks
+     like nothing happened. Hash links still scroll to their anchor. */
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+  }, [location.pathname, location.hash]);
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setMenuOpen(false);
+    setMobileOpen(null);
+  }, [location.pathname]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -173,7 +62,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-[Poppins,sans-serif]">
-      {/* ── TOP BAR ──────────────────────────────────────────── */}
+      {/* â”€â”€ TOP BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="bg-[#1b5e20] text-white text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -191,36 +80,57 @@ export default function Layout() {
         </div>
       </div>
 
-      {/* ── NAVBAR ───────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-50 bg-white shadow-md" ref={navRef}>
+      {/* â”€â”€ NAVBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      <nav className="sticky top-0 z-50 bg-[#071209] shadow-md" ref={navRef}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-20">
+          {/* h-16 on phones, h-20 from lg up. The logo scales with it so
+              the bag + hamburger always have room without overflowing. */}
+          <div className="flex items-center justify-between h-16 lg:h-20">
 
-            {/* Logo — large & prominent */}
-            <NavLink to="/" className="flex items-center gap-3 shrink-0" onClick={() => setOpenDropdown(null)}>
-              <ImageWithFallback
-                src={logo}
-                alt="Kalaro Institute of HMO Operations"
-                className="h-[60px] w-auto object-contain"
-              />
+            {/* Logo â€” large & prominent, scaled down on phones */}
+            <NavLink to="/" className="flex items-center gap-3 shrink-0 min-w-0" onClick={() => setOpenDropdown(null)}>
+              <span className="bg-white rounded-xl p-1.5 inline-flex">
+                <ImageWithFallback
+                  src={logo}
+                  alt="Kalaro Institute of HMO Operations"
+                  className="h-8 sm:h-11 lg:h-[52px] w-auto object-contain"
+                />
+              </span>
             </NavLink>
 
             {/* Desktop nav links */}
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV.map((item) => (
-                <div key={item.label} className="relative">
+                <div key={item.label} className="relative"
+                  onMouseEnter={() => setOpenDropdown(item.label)}
+                >
                   {item.dropdown ? (
-                    <button
-                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
-                      className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
-                        openDropdown === item.label
-                          ? "text-green-700 bg-green-50"
-                          : "text-gray-700 hover:text-green-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      {item.label}
-                      <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                        className={`flex items-center gap-1 px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                          openDropdown === item.label
+                            ? "text-green-300 bg-white/10"
+                            : "text-gray-300 hover:text-white hover:bg-white/10"
+                        }`}
+                      >
+                        {item.label}
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
+                      </button>
+                      {openDropdown === item.label && (
+                        <NavFlatMenu
+                          items={item.dropdown}
+                          onClose={() => setOpenDropdown(null)}
+                          width={item.flat ? "w-[720px]" : "w-[680px]"}
+                          heading={item.flat ? "Our Courses" : item.label}
+                          footer={
+                            item.flat
+                              ? { label: "View all courses", to: "/courses" }
+                              : undefined
+                          }
+                        />
+                      )}
+                    </>
                   ) : (
                     <NavLink
                       to={item.to!}
@@ -229,71 +139,147 @@ export default function Layout() {
                       className={({ isActive }) =>
                         `px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors block ${
                           isActive
-                            ? "text-green-700 bg-green-50"
-                            : "text-gray-700 hover:text-green-700 hover:bg-gray-50"
+                            ? "text-green-300 bg-white/10"
+                            : "text-gray-300 hover:text-white hover:bg-white/10"
                         }`
                       }
                     >
                       {item.label}
                     </NavLink>
                   )}
-                  {item.dropdown && openDropdown === item.label && (
-                    <DropdownMenu items={item.dropdown} onClose={() => setOpenDropdown(null)} />
-                  )}
                 </div>
               ))}
             </div>
+
+            {/* Cart - desktop placement, beside the auth buttons.
+                The mobile bag further down serves small screens, so
+                this must be hidden below lg or it renders twice. */}
+            <Link
+              to="/cart"
+              aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
+              className="hidden lg:block relative p-2.5 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {count > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-green-700 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {count > 9 ? "9+" : count}
+                </span>
+              )}
+            </Link>
 
             {/* Auth buttons */}
             <div className="hidden lg:flex items-center gap-2.5">
               <button
                 onClick={() => { setOpenDropdown(null); navigate("/login"); }}
-                className="flex items-center gap-1.5 text-sm font-bold text-gray-700 border-2 border-gray-200 px-4 py-2 rounded-full hover:border-green-600 hover:text-green-700 transition-colors"
+                className="flex items-center gap-1.5 text-sm font-bold text-white border-2 border-white/30 px-4 py-2 rounded-full hover:border-green-400 hover:text-green-300 transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" /> Login
               </button>
               <button
                 onClick={() => { setOpenDropdown(null); navigate("/signup"); }}
-                className="flex items-center gap-1.5 text-sm font-bold text-white bg-green-700 px-5 py-2 rounded-full hover:bg-green-800 transition-all shadow-md shadow-green-200"
+                className="flex items-center gap-1.5 text-sm font-bold text-white bg-[#1b5e20] px-5 py-2 rounded-full hover:bg-green-600 transition-all shadow-md"
               >
                 <UserPlus className="w-3.5 h-3.5" /> Get Started
               </button>
             </div>
 
-            {/* Mobile toggle */}
-            <button className="lg:hidden p-2 text-gray-700" onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {/* Mobile actions - bag and hamburger grouped so they sit
+                together at the right edge instead of being spread apart
+                by justify-between. */}
+            <div className="lg:hidden flex items-center gap-0.5 -mr-2">
+              <Link
+                to="/cart"
+                aria-label={`Bag, ${count} item${count !== 1 ? "s" : ""}`}
+                className="relative p-2 rounded-full text-gray-300 hover:text-white transition-colors"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {count > 0 && (
+                  <span className="absolute top-0.5 right-0.5 min-w-[16px] h-[16px] px-1 bg-green-700 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {count > 9 ? "9+" : count}
+                  </span>
+                )}
+              </Link>
+
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                className="p-2 rounded-full text-gray-300 hover:text-white transition-colors"
+              >
+                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* ── MOBILE MENU ──────────────────────────────────── */}
+        {/* â”€â”€ MOBILE MENU â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         {menuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-1 shadow-lg max-h-[80vh] overflow-y-auto">
+          <div className="lg:hidden bg-[#071209] border-t border-white/10 px-4 py-4 flex flex-col gap-1 shadow-lg max-h-[80vh] overflow-y-auto">
             {NAV.map((item) => (
               <div key={item.label}>
                 {item.dropdown ? (
                   <>
                     <button
                       onClick={() => setMobileOpen(mobileOpen === item.label ? null : item.label)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-700 rounded-lg hover:bg-gray-50"
+                      className="w-full flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-300 rounded-lg hover:bg-white/10 hover:text-white"
                     >
                       {item.label}
                       <ChevronDown className={`w-4 h-4 transition-transform ${mobileOpen === item.label ? "rotate-180" : ""}`} />
                     </button>
                     {mobileOpen === item.label && (
-                      <div className="ml-3 mt-1 border-l-2 border-green-100 pl-3 flex flex-col gap-1">
-                        {item.dropdown.map((sub, j) => (
+                      <div className="ml-3 mt-1 border-l-2 border-white/10 pl-3 flex flex-col gap-1">
+                        {item.dropdown.map((sub, j) => {
+                          const subKey = `${item.label}:${j}`;
+                          const isOpen = mobileOpen === subKey;
+                          return (
+                            <div key={subKey}>
+                              <div className="flex items-center gap-1">
+                                <Link
+                                  to={sub.to}
+                                  onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
+                                  className="flex-1 flex items-center gap-2.5 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/10"
+                                >
+                                  <span className="text-green-400">{sub.icon}</span>
+                                  <span className="flex-1">{sub.label}</span>
+                                </Link>
+                                {sub.subItems && sub.subItems.length > 0 && (
+                                  <button
+                                    onClick={() => setMobileOpen(isOpen ? null : subKey)}
+                                    aria-label={`Show ${sub.label} modules`}
+                                    className="p-2 text-gray-500 hover:text-white"
+                                  >
+                                    <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                                  </button>
+                                )}
+                              </div>
+                              {sub.subItems && isOpen && (
+                                <ul className="ml-6 mb-1 border-l border-white/10 pl-3 flex flex-col gap-0.5">
+                                  {sub.subItems.map((m, k) => (
+                                    <li key={k}>
+                                      <Link
+                                        to={m.to}
+                                        onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
+                                        className="block py-1.5 text-xs text-gray-500 hover:text-green-300"
+                                      >
+                                        {m.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          );
+                        })}
+                        {item.flat && (
                           <Link
-                            key={j}
-                            to={sub.to}
+                            to="/courses"
                             onClick={() => { setMenuOpen(false); setMobileOpen(null); }}
-                            className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-600 hover:text-green-700 rounded-lg hover:bg-green-50"
+                            className="flex items-center gap-2 mt-1 px-3 py-2.5 text-sm font-bold text-green-300 rounded-lg hover:bg-white/10 hover:text-green-200 transition-colors"
                           >
-                            <span className="text-green-600">{sub.icon}</span>
-                            {sub.label}
+                            View all courses
+                            <ArrowRight className="w-4 h-4" />
                           </Link>
-                        ))}
+                        )}
                       </div>
                     )}
                   </>
@@ -304,7 +290,7 @@ export default function Layout() {
                     onClick={() => setMenuOpen(false)}
                     className={({ isActive }) =>
                       `block px-3 py-2.5 text-sm font-semibold rounded-lg ${
-                        isActive ? "text-green-700 bg-green-50" : "text-gray-700 hover:bg-gray-50"
+                        isActive ? "text-green-300 bg-white/10" : "text-gray-300 hover:text-white hover:bg-white/10"
                       }`
                     }
                   >
@@ -314,17 +300,35 @@ export default function Layout() {
               </div>
             ))}
 
+            {/* Mobile bag row - reinforces the header icon and shows
+                the running total without opening the bag. */}
+            <Link
+              to="/cart"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-gray-300 rounded-lg hover:bg-white/10 hover:text-white mt-1"
+            >
+              <span className="flex items-center gap-2.5">
+                <ShoppingBag className="w-4 h-4 text-green-400" />
+                Your bag
+              </span>
+              {count > 0 && (
+                <span className="text-xs font-bold text-green-300 bg-white/10 px-2 py-0.5 rounded-full">
+                  {count} item{count !== 1 ? "s" : ""}
+                </span>
+              )}
+            </Link>
+
             {/* Mobile auth */}
-            <div className="flex gap-3 pt-3 mt-2 border-t border-gray-100">
+            <div className="flex gap-3 pt-3 mt-2 border-t border-white/10">
               <button
                 onClick={() => { setMenuOpen(false); navigate("/login"); }}
-                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-gray-700 border-2 border-gray-200 py-2.5 rounded-full"
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white border-2 border-white/30 py-2.5 rounded-full hover:border-green-400 hover:text-green-300 transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5" /> Login
               </button>
               <button
                 onClick={() => { setMenuOpen(false); navigate("/signup"); }}
-                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white bg-green-700 py-2.5 rounded-full"
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-bold text-white bg-[#1b5e20] py-2.5 rounded-full hover:bg-green-600 transition-colors"
               >
                 <UserPlus className="w-3.5 h-3.5" /> Get Started
               </button>
@@ -338,123 +342,141 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      {/* ── FOOTER ───────────────────────────────────────────── */}
+
+      {/* -- FOOTER ---------------------------------------------- */}
       <footer className="bg-[#071209] text-gray-400">
-        {/* CTA strip */}
-        <div className="bg-[#1b5e20] py-12">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-white text-center md:text-left">
-              <h3 className="text-2xl font-bold mb-1">Ready to Start Your HMO Career?</h3>
+        {/* CTA band */}
+        <div className="bg-[#1b5e20]">
+          <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-1">Ready to Start Your HMO Career?</h3>
               <p className="text-green-200 text-sm">Join 500+ professionals who have already transformed their careers.</p>
             </div>
-            <div className="flex gap-3 shrink-0">
-              <button onClick={() => navigate("/courses")} className="bg-white text-green-800 font-bold px-6 py-3 rounded-full hover:bg-green-50 transition-colors text-sm">
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
+              <button
+                onClick={() => navigate("/courses")}
+                className="bg-white text-green-800 font-bold px-6 py-3 rounded-full hover:bg-green-50 transition-colors text-sm"
+              >
                 Browse Courses
               </button>
-              <button onClick={() => navigate("/contact")} className="border-2 border-white text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm">
+              <button
+                onClick={() => navigate("/contact")}
+                className="border-2 border-white text-white font-bold px-6 py-3 rounded-full hover:bg-white/10 transition-colors text-sm"
+              >
                 Talk to Us
               </button>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 pt-14 pb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        {/* Top tier: brand + contact + newsletter */}
+        <div className="max-w-7xl mx-auto px-6 pt-14">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 pb-12">
             {/* Brand */}
-            <div>
+            <div className="lg:col-span-4">
               <div className="mb-5 bg-white inline-block rounded-xl p-2">
                 <ImageWithFallback src={logo} alt="Kalaro Institute" className="h-14 w-auto object-contain" />
               </div>
-              <p className="text-sm leading-relaxed mb-5">
-                Nigeria's premier institute for HMO operations training — equipping healthcare professionals with knowledge and skills to thrive.
+              <p className="text-sm leading-relaxed mb-6 max-w-sm">
+                Nigeria&apos;s premier institute for HMO operations training — equipping healthcare
+                professionals with knowledge and skills to thrive.
               </p>
-              <div className="flex gap-3">
-                {[Facebook, Twitter, Instagram, Linkedin, Youtube].map((Icon, i) => (
-                  <a key={i} href="#" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-700 transition-colors">
-                    <Icon className="w-4 h-4 text-white" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">Quick Links</h4>
               <ul className="space-y-3 text-sm">
-                {[
-                  { label: "Home", to: "/" },
-                  { label: "About Us", to: "/about" },
-                  { label: "All Courses", to: "/courses" },
-                  { label: "Live Classes", to: "/live-classes" },
-                  { label: "Careers", to: "/careers" },
-                  { label: "Community", to: "/community" },
-                  { label: "Contact Us", to: "/contact" },
-                ].map((l) => (
-                  <li key={l.label}>
-                    <Link to={l.to} className="hover:text-green-400 transition-colors flex items-center gap-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full" />{l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Resources */}
-            <div>
-              <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">Resources</h4>
-              <ul className="space-y-3 text-sm">
-                {[
-                  { label: "Blog & Articles", to: "/resources/blog" },
-                  { label: "Webinars", to: "/resources/webinars" },
-                  { label: "Resource Library", to: "/resources/library" },
-                  { label: "HMO Glossary", to: "/resources/glossary" },
-                  { label: "Student Portal", to: "/login" },
-                  { label: "FAQs", to: "/contact#faq" },
-                  { label: "Help Centre", to: "/contact" },
-                ].map((l) => (
-                  <li key={l.label}>
-                    <Link to={l.to} className="hover:text-green-400 transition-colors flex items-center gap-2">
-                      <span className="w-1 h-1 bg-green-600 rounded-full" />{l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact + newsletter */}
-            <div>
-              <h4 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">Contact Us</h4>
-              <ul className="space-y-4 text-sm mb-6">
                 <li className="flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
                   <span>Plot 14, Abuja Business District, FCT, Nigeria</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-green-400 shrink-0" />
-                  <span>+234 800 000 0000</span>
+                  <a href="tel:+2348000000000" className="hover:text-green-400 transition-colors">+234 800 000 0000</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-green-400 shrink-0" />
-                  <span>info@kalaroinstitute.com</span>
+                  <a href="mailto:info@kalaroinstitute.com" className="hover:text-green-400 transition-colors">info@kalaroinstitute.com</a>
                 </li>
               </ul>
-              <p className="text-white text-xs font-bold mb-2 uppercase tracking-wide">Newsletter</p>
-              <div className="flex gap-2">
+            </div>
+
+            {/* Newsletter */}
+            <div className="lg:col-span-4 lg:col-start-9">
+              <h4 className="text-white font-bold text-xs mb-4 uppercase tracking-wider">Stay Updated</h4>
+              <p className="text-sm mb-5 max-w-sm">
+                Get new course launches, NCLEX updates and career tips in your inbox.
+              </p>
+              <form className="flex flex-col sm:flex-row gap-2 max-w-sm" onSubmit={(e) => e.preventDefault()}>
+                <label htmlFor="footer-email" className="sr-only">Email address</label>
                 <input
+                  id="footer-email"
                   type="email"
+                  required
                   placeholder="Your email address"
-                  className="flex-1 bg-white/10 border border-white/10 text-white text-xs px-3 py-2.5 rounded-full placeholder-gray-500 outline-none focus:border-green-500 transition-colors"
+                  className="flex-1 min-w-0 bg-white/10 border border-white/15 text-white text-sm px-4 py-3 rounded-full placeholder-gray-500 outline-none focus:border-green-500 transition-colors"
                 />
-                <button className="bg-green-600 hover:bg-green-500 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-colors shrink-0">
-                  Go
+                <button
+                  type="submit"
+                  className="bg-green-600 hover:bg-green-500 text-white text-sm font-bold px-6 py-3 rounded-full transition-colors shrink-0"
+                >
+                  Subscribe
                 </button>
+              </form>
+              <div className="flex gap-2.5 mt-7">
+                {[
+                  { Icon: Facebook, label: "Facebook" },
+                  { Icon: Twitter, label: "Twitter" },
+                  { Icon: Instagram, label: "Instagram" },
+                  { Icon: Linkedin, label: "LinkedIn" },
+                  { Icon: Youtube, label: "YouTube" },
+                ].map(({ Icon, label }) => (
+                  <a
+                    key={label}
+                    href="#"
+                    aria-label={label}
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-700 focus-visible:ring-2 focus-visible:ring-green-400 transition-colors"
+                  >
+                    <Icon className="w-4 h-4 text-white" />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-            <span>© {new Date().getFullYear()} Kalaro Institute of HMO Operations. All rights reserved.</span>
-            <div className="flex gap-4">
+          {/* Link columns, divided from the tier above */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-10 py-12 border-t border-white/10">
+            {FOOTER_GROUPS.map((group) => (
+              <div key={group.heading}>
+                <h4 className="text-white font-bold text-xs mb-4 uppercase tracking-wider">
+                  {group.heading}
+                </h4>
+                <ul className="space-y-2.5 text-sm">
+                  {group.links.map((l) => (
+                    <li key={l.label}>
+                      <Link to={l.to} className="hover:text-green-400 transition-colors">
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                  {group.viewAll && (
+                    <li className="pt-1">
+                      <Link
+                        to={group.viewAll.to}
+                        className="inline-flex items-center gap-1 text-green-400 font-semibold hover:text-green-300 transition-colors"
+                      >
+                        {group.viewAll.label}
+                        <ChevronDown className="w-3 h-3 -rotate-90" />
+                      </Link>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Legal bar */}
+        <div className="border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <span>&copy; {new Date().getFullYear()} Kalaro Institute of HMO Operations. All rights reserved.</span>
+            <div className="flex gap-5">
               <a href="#" className="hover:text-green-400 transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-green-400 transition-colors">Terms of Service</a>
               <a href="#" className="hover:text-green-400 transition-colors">Refund Policy</a>

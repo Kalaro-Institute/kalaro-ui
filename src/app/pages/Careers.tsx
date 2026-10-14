@@ -72,17 +72,17 @@ export default function Careers() {
     <div className="font-[Poppins,sans-serif]">
       {/* Header — background image */}
       <section
-        className="py-24 relative overflow-hidden"
+        className="py-14 sm:py-20 lg:py-24 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1739298061768-41a8a7d8b38f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center top",
         }}
       >
         <div className="absolute inset-0 bg-[#071a08]/90" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="text-white">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="text-white min-w-0">
             <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mb-3">Career Corner</p>
-             <h1 className="text-4xl sm:text-5xl font-extrabold mb-5 leading-tight">Explore Jobs.<br />Grow Your HMO Career.</h1>
+             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-5 leading-tight">Explore Jobs.<br />Grow Your HMO Career.</h1>
              <p className="text-gray-300 text-sm leading-relaxed mb-8 max-w-lg">Exclusive HMO job listings from top healthcare organisations worldwide — visible only to Kalaro graduates and community members.</p>
             <div className="flex flex-wrap gap-3">
               <button onClick={() => navigate("/signup")} className="bg-green-500 hover:bg-green-400 text-white font-bold px-7 py-3.5 rounded-full text-sm flex items-center gap-2 transition-all">
@@ -95,8 +95,8 @@ export default function Careers() {
           </div>
 
           {/* Mobile carousel for stats */}
-          <div className="sm:hidden -mx-4 px-4">
-            <MobileCarousel cardWidth="w-[42vw]" arrows={false}>
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
+            <MobileCarousel cardWidth="w-[44vw] max-w-[180px]" arrows={false}>
               {STATS.map((s, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm text-white">
                   <div className="text-green-400 mb-2">{s.icon}</div>
@@ -119,7 +119,7 @@ export default function Careers() {
       </section>
 
       {/* Employer strip */}
-      <section className="py-8 bg-white border-b border-gray-100">
+      <section className="py-6 sm:py-8 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-5">Our hiring partners</p>
           <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-12">
@@ -129,7 +129,7 @@ export default function Careers() {
       </section>
 
       {/* Job board */}
-      <section className="py-16 bg-[#f7faf7]">
+      <section className="py-12 sm:py-16 bg-[#f7faf7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-10">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Open Positions</p>
@@ -156,7 +156,7 @@ export default function Careers() {
           <p className="text-xs text-gray-400 mb-5">{filtered.length} position{filtered.length !== 1 ? "s" : ""} found</p>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[84vw]">
               {filtered.map((job, i) => <JobCard key={i} job={job} />)}
             </MobileCarousel>
@@ -177,7 +177,7 @@ export default function Careers() {
       </section>
 
       {/* Career support */}
-      <section className="py-20 bg-white">
+      <section className="py-14 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">Career Support</p>
@@ -185,7 +185,7 @@ export default function Careers() {
           </div>
 
           {/* Mobile carousel */}
-          <div className="sm:hidden -mx-4 px-4">
+          <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
             <MobileCarousel cardWidth="w-[78vw]">
               {[
                 { icon: <Users className="w-6 h-6" />, title: "CV Review & Coaching", desc: "Our career advisors review your CV and coach you to present yourself powerfully to HMO hiring managers.", color: "bg-green-700" },
@@ -218,7 +218,7 @@ export default function Careers() {
 
       {/* CTA */}
       <section
-        className="py-14 relative overflow-hidden"
+        className="py-12 sm:py-14 relative overflow-hidden"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1654762549297-2a145fcb9924?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
           backgroundSize: "cover", backgroundPosition: "center",
@@ -236,3 +236,7 @@ export default function Careers() {
     </div>
   );
 }
+
+
+
+

@@ -80,11 +80,17 @@ export function MobileCarousel({
       {/* Arrow buttons */}
       {arrows && count > 1 && (
         <>
+          {/* Arrows sit INSIDE the track bounds. Positioned outside
+              (e.g. -translate-x-2) they extended past the carousel, and
+              because these carousels are used inside -mx-4 wrappers
+              that sit flush with the viewport edge, that pushed the
+              document wider than the screen and made mobile browsers
+              shrink the page to fit. */}
           <button
             onClick={prev}
             disabled={current === 0}
             aria-label="Previous"
-            className="absolute left-0 top-[40%] -translate-y-1/2 -translate-x-2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center text-gray-600 disabled:opacity-20 hover:bg-gray-50 transition-all z-10"
+            className="absolute left-1 top-[40%] -translate-y-1/2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center text-gray-600 disabled:opacity-20 hover:bg-gray-50 transition-all z-10"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -92,7 +98,7 @@ export function MobileCarousel({
             onClick={next}
             disabled={current === count - 1}
             aria-label="Next"
-            className="absolute right-0 top-[40%] -translate-y-1/2 translate-x-2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center text-gray-600 disabled:opacity-20 hover:bg-gray-50 transition-all z-10"
+            className="absolute right-1 top-[40%] -translate-y-1/2 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center text-gray-600 disabled:opacity-20 hover:bg-gray-50 transition-all z-10"
           >
             <ChevronRight className="w-4 h-4" />
           </button>

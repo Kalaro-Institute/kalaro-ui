@@ -4,7 +4,6 @@ import { apiRequest } from "@/lib/api-client";
 import { CourseCard } from "@/app/components/CourseCard";
 import type { CourseCardData } from "@/app/components/CourseCard";
 import { toast } from "sonner";
-import type { ApiError } from "@/lib/api-client";
 import { CourseDetailModal } from "@/app/components/CourseDetailModal";
 
 export default function BrowseCourses() {
@@ -13,7 +12,6 @@ export default function BrowseCourses() {
   const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
-  const [enrollingSlug, setEnrollingSlug] = useState<string | null>(null);
 
   
   const fetchCourses = () => {
@@ -25,23 +23,6 @@ export default function BrowseCourses() {
         toast.error("Failed to load courses.");
       })
       .finally(() => setIsLoading(false));
-  };
-
-  const handleEnroll = async (slug: string, courseId: number) => {
-    setEnrollingSlug(slug);
-    try {
-      await apiRequest(`/catalog/courses/${courseId}/enroll`, {
-        method: "POST",
-      });
-      toast.success("Enrolled successfully.");
-      setSelectedSlug(null);
-      fetchCourses();
-    } catch (err) {
-      const apiErr = err as ApiError;
-      toast.error(apiErr.message ?? "Enrollment failed. Please try again.");
-    } finally {
-      setEnrollingSlug(null);
-    }
   };
 
   useEffect(() => {

@@ -136,6 +136,46 @@
     @apply bg-background text-foreground;
   }
 
+  /* ── Horizontal overflow guard ──────────────────────────────────
+     Without this, one wide child (a fixed-width panel, a carousel
+     with negative margins, a long unbreakable string) makes the page
+     wider than the viewport, and mobile browsers shrink to fit.
+
+     `clip`, NOT `hidden`. Setting overflow-x:hidden on html/body makes
+     that element a SCROLL CONTAINER, which lets the page be scrolled
+     past its own content into empty space - the page appeared to have
+     infinite scroll below the footer. `clip` suppresses the overflow
+     without creating a scroll container, so it has no such side
+     effect.
+
+     Note: max-width:100vw is deliberately NOT set. On desktop 100vw
+     includes the scrollbar gutter, which would itself introduce a
+     horizontal scrollbar. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  /* Media must never exceed its column. */
+  img,
+  video,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Respect a user's reduced-motion preference. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).
   * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.

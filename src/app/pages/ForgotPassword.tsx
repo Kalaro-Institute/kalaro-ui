@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import logo from "@/imports/logo.jpeg";
 import {
