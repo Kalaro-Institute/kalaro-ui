@@ -13,10 +13,8 @@ import {
   Globe,
   CheckCircle,
 } from "lucide-react";
-import { apiRequest } from "@/lib/api-client";
+import { apiRequest, mediaUrl } from "@/lib/api-client";
 import { PaymentModal } from "./PaymentModal";
-
-
 
 interface LessonDetail {
   id: number;
@@ -49,6 +47,13 @@ interface CourseDetail {
   modules: ModuleDetail[];
 }
 
+interface Resource {
+  id: number;
+  title: string;
+  file_url: string;
+  size_bytes: number;
+}
+
 function formatDuration(seconds: number): string {
   if (!seconds) return "";
   const m = Math.floor(seconds / 60);
@@ -59,9 +64,11 @@ function formatDuration(seconds: number): string {
 function ModuleAccordion({
   module,
   locked,
+  resourcesByLesson,
 }: {
   module: ModuleDetail;
   locked: boolean;
+  resourcesByLesson: Record<number, Resource[]>;
 }) {
   const [open, setOpen] = useState(true);
 
@@ -101,36 +108,53 @@ function ModuleAccordion({
           ) : (
             module.lessons.map((lesson) => {
               const Icon = lesson.content_type === "video" ? Video : FileText;
+              const resources = resourcesByLesson[lesson.id] ?? [];
               return (
-                <div
-                  key={lesson.id}
-                  className="flex items-center gap-3 px-4 py-3"
-                >
-                  <div
-                    className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
-                      lesson.content_type === "video"
-                        ? "bg-blue-50"
-                        : "bg-gray-100"
-                    }`}
-                  >
-                    <Icon
-                      className={`w-3.5 h-3.5 ${
+                <div key={lesson.id} className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
                         lesson.content_type === "video"
-                          ? "text-blue-500"
-                          : "text-gray-400"
+                          ? "bg-blue-50"
+                          : "bg-gray-100"
                       }`}
-                    />
-                  </div>
-                  <span className="text-sm text-gray-700 flex-1 truncate">
-                    {lesson.title}
-                  </span>
-                  {lesson.duration_seconds > 0 && (
-                    <span className="text-xs text-gray-400 shrink-0">
-                      {formatDuration(lesson.duration_seconds)}
+                    >
+                      <Icon
+                        className={`w-3.5 h-3.5 ${
+                          lesson.content_type === "video"
+                            ? "text-blue-500"
+                            : "text-gray-400"
+                        }`}
+                      />
+                    </div>
+                    <span className="text-sm text-gray-700 flex-1 truncate">
+                      {lesson.title}
                     </span>
-                  )}
-                  {locked && (
-                    <Lock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                    {lesson.duration_seconds > 0 && (
+                      <span className="text-xs text-gray-400 shrink-0">
+                        {formatDuration(lesson.duration_seconds)}
+                      </span>
+                    )}
+                    {locked && (
+                      <Lock className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+                    )}
+                  </div>
+
+                  {!locked && resources.length > 0 && (
+                    <div className="mt-2 ml-9 space-y-1">
+                      {resources.map((r) => (
+                        <a
+                          key={r.id}
+                          href={mediaUrl(r.file_url)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs text-gray-500 hover:text-[#1b5e20] transition-colors"
+                        >
+                          <FileText className="w-3 h-3 shrink-0" />
+                          <span className="truncate">{r.title}</span>
+                        </a>
+                      ))}
+                    </div>
                   )}
                 </div>
               );
@@ -142,14 +166,12 @@ function ModuleAccordion({
   );
 }
 
-
-
 interface Props {
   slug: string;
   onClose: () => void;
   locked?: boolean;
   onEnrolled?: () => void;
-  isEnrolled?: boolean; 
+  isEnrolled?: boolean;
 }
 
 export function CourseDetailModal({
@@ -163,10 +185,36 @@ export function CourseDetailModal({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [resourcesByLesson, setResourcesByLesson] = useState<
+    Record<number, Resource[]>
+  >({});
 
   useEffect(() => {
     apiRequest<CourseDetail>(`/catalog/courses/${slug}`)
-      .then(setCourse)
+      .then((data) => {
+        setCourse(data);
+
+        const lessonIds = data.modules.flatMap((m) =>
+          m.lessons.map((l) => l.id),
+        );
+
+        Promise.allSettled(
+          lessonIds.map((id) =>
+            apiRequest<Resource[]>(`/catalog/lessons/${id}/resources`).then(
+              (resources) => [id, resources] as const,
+            ),
+          ),
+        ).then((results) => {
+          const map: Record<number, Resource[]> = {};
+          for (const r of results) {
+            if (r.status === "fulfilled") {
+              const [id, resources] = r.value;
+              map[id] = resources;
+            }
+          }
+          setResourcesByLesson(map);
+        });
+      })
       .catch(() => setError(true))
       .finally(() => setIsLoading(false));
   }, [slug]);
@@ -333,6 +381,7 @@ export function CourseDetailModal({
                         key={mod.id}
                         module={mod}
                         locked={locked && !isEnrolled}
+                        resourcesByLesson={resourcesByLesson}
                       />
                     ))}
                   </div>

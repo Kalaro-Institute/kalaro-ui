@@ -14,7 +14,7 @@ import {
   AlertCircle,
   PlayCircle,
 } from "lucide-react";
-import { apiRequest } from "@/lib/api-client";
+import { apiRequest, mediaUrl } from "@/lib/api-client";
 import type { ApiError } from "@/lib/api-client";
 import { toast } from "sonner";
 
@@ -55,8 +55,8 @@ interface Course {
 }
 
 interface Progress {
-  completed_lessons: number[];
-  progress_percent: number;
+  percent: number;
+  completed_at: string | null;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -75,28 +75,23 @@ function formatDuration(seconds: number): string {
 }
 
 // ─── Sidebar module ───────────────────────────────────────────
+// NOTE: per-lesson completion isn't available from the backend yet
+// (the progress endpoint only returns an overall percent, no list of
+// completed lesson ids). Until that endpoint exists, every lesson
+// renders as not-done — no false checkmarks, just nothing lit up yet.
 
 function SidebarModule({
   module,
-  completedLessons,
   activeLesson,
   onSelectLesson,
 }: {
   module: Module;
-  completedLessons: number[];
   activeLesson: Lesson | null;
   onSelectLesson: (lesson: Lesson) => void;
 }) {
   const [open, setOpen] = useState(
-    module.lessons.some((l) => l.id === activeLesson?.id) ||
-      !module.lessons.every((l) => completedLessons.includes(l.id)),
+    module.lessons.some((l) => l.id === activeLesson?.id) || true,
   );
-
-  const completedCount = module.lessons.filter((l) =>
-    completedLessons.includes(l.id),
-  ).length;
-  const allDone =
-    completedCount === module.lessons.length && module.lessons.length > 0;
 
   return (
     <div className="border-b border-white/5 last:border-0">
@@ -109,13 +104,10 @@ function SidebarModule({
             {module.title}
           </p>
           <p className="text-[10px] text-green-300/50 mt-0.5">
-            {completedCount}/{module.lessons.length} lessons
-            {allDone && " · Complete"}
+            {module.lessons.length} lesson
+            {module.lessons.length !== 1 ? "s" : ""}
           </p>
         </div>
-        {allDone && (
-          <CheckCircle className="w-3.5 h-3.5 text-green-400 shrink-0" />
-        )}
         {open ? (
           <ChevronUp className="w-3.5 h-3.5 text-white/40 shrink-0" />
         ) : (
@@ -127,7 +119,6 @@ function SidebarModule({
         <div className="pb-1">
           {module.lessons.map((lesson) => {
             const isActive = activeLesson?.id === lesson.id;
-            const isDone = completedLessons.includes(lesson.id);
             const Icon = lesson.content_type === "video" ? Video : FileText;
 
             return (
@@ -142,18 +133,10 @@ function SidebarModule({
               >
                 <div
                   className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                    isDone
-                      ? "bg-green-500"
-                      : isActive
-                        ? "bg-white/20"
-                        : "bg-white/10"
+                    isActive ? "bg-white/20" : "bg-white/10"
                   }`}
                 >
-                  {isDone ? (
-                    <CheckCircle className="w-3 h-3 text-white" />
-                  ) : (
-                    <Icon className="w-3 h-3" />
-                  )}
+                  <Icon className="w-3 h-3" />
                 </div>
                 <span className="text-xs truncate flex-1">{lesson.title}</span>
                 {lesson.duration_seconds > 0 && (
@@ -178,8 +161,8 @@ export default function CoursePlayer() {
 
   const [course, setCourse] = useState<Course | null>(null);
   const [progress, setProgress] = useState<Progress>({
-    completed_lessons: [],
-    progress_percent: 0,
+    percent: 0,
+    completed_at: null,
   });
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -207,38 +190,34 @@ export default function CoursePlayer() {
       ? allLessons[activeLessonIndex + 1]
       : null;
 
-  const isCurrentDone = activeLesson
-    ? progress.completed_lessons.includes(activeLesson.id)
-    : false;
+  const isCurrentDone = false;
 
-  // Load course and progress on mount
   useEffect(() => {
     if (!courseSlug) return;
 
-    Promise.all([
-      apiRequest<Course>(`/catalog/courses/${courseSlug}`),
-      apiRequest<Progress>(`/catalog/courses/${courseSlug}/progress`),
-    ])
-      .then(([courseData, progressData]) => {
+    apiRequest<Course>(`/catalog/courses/${courseSlug}`)
+      .then(async (courseData) => {
         setCourse(courseData);
+
+        const progressData = await apiRequest<Progress>(
+          `/catalog/courses/${courseData.id}/progress`,
+        );
         setProgress(progressData);
 
-        // Auto-select the first incomplete lesson, or the first lesson
         const flat = courseData.modules
           .slice()
           .sort((a, b) => a.order - b.order)
           .flatMap((m) => m.lessons.slice().sort((a, b) => a.order - b.order));
 
-        const firstIncomplete = flat.find(
-          (l) => !progressData.completed_lessons.includes(l.id),
-        );
-        setActiveLesson(firstIncomplete ?? flat[0] ?? null);
+        setActiveLesson(flat[0] ?? null);
       })
-      .catch(() => setError(true))
+      .catch((err) => {
+        console.error("CoursePlayer load failed:", err);
+        setError(true);
+      })
       .finally(() => setIsLoading(false));
   }, [courseSlug]);
 
-  // Load resources whenever active lesson changes
   useEffect(() => {
     if (!activeLesson) return;
     setResources([]);
@@ -249,21 +228,17 @@ export default function CoursePlayer() {
       .finally(() => setIsLoadingResources(false));
   }, [activeLesson?.id]);
 
-  // Mark current lesson complete — only called by the explicit button
   const handleMarkComplete = async () => {
-    if (!courseSlug || !activeLesson) return;
-    if (progress.completed_lessons.includes(activeLesson.id)) return;
+    if (!course || !activeLesson) return;
 
     setIsMarkingDone(true);
     try {
-      await apiRequest(`/catalog/courses/${courseSlug}/progress`, {
+      await apiRequest(`/catalog/lessons/${activeLesson.id}/complete`, {
         method: "POST",
-        body: { lesson_id: activeLesson.id },
       });
 
-      // Fetch fresh progress from server — server is source of truth
       const freshProgress = await apiRequest<Progress>(
-        `/catalog/courses/${courseSlug}/progress`,
+        `/catalog/courses/${course.id}/progress`,
       );
       setProgress(freshProgress);
       toast.success("Lesson marked as complete.");
@@ -323,13 +298,13 @@ export default function CoursePlayer() {
             <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] text-green-300/50">Progress</span>
               <span className="text-[10px] text-green-400 font-semibold">
-                {progress.progress_percent}%
+                {progress.percent}%
               </span>
             </div>
             <div className="h-1 bg-white/10 rounded-full overflow-hidden">
               <div
                 className="h-full bg-green-500 rounded-full transition-all"
-                style={{ width: `${progress.progress_percent}%` }}
+                style={{ width: `${progress.percent}%` }}
               />
             </div>
           </div>
@@ -344,7 +319,6 @@ export default function CoursePlayer() {
               <SidebarModule
                 key={module.id}
                 module={module}
-                completedLessons={progress.completed_lessons}
                 activeLesson={activeLesson}
                 onSelectLesson={setActiveLesson}
               />
@@ -371,7 +345,7 @@ export default function CoursePlayer() {
           )}
 
           <span className="text-green-400/70 text-xs shrink-0">
-            {progress.progress_percent}% complete
+            {progress.percent}% complete
           </span>
         </div>
 
@@ -452,7 +426,7 @@ export default function CoursePlayer() {
                     {resources.map((resource) => (
                       <a
                         key={resource.id}
-                        href={resource.file_url}
+                        href={mediaUrl(resource.file_url)}
                         download
                         target="_blank"
                         rel="noopener noreferrer"
@@ -491,27 +465,21 @@ export default function CoursePlayer() {
                 </button>
 
                 {/* Mark complete — only triggers POST */}
-                {!isCurrentDone ? (
-                  <button
-                    onClick={handleMarkComplete}
-                    disabled={isMarkingDone}
-                    className="flex items-center gap-2 bg-[#1b5e20] text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-[#145218] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isMarkingDone ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Marking...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-4 h-4" /> Mark as complete
-                      </>
-                    )}
-                  </button>
-                ) : (
-                  <span className="flex items-center gap-2 text-sm text-[#1b5e20] font-semibold">
-                    <CheckCircle className="w-4 h-4" /> Completed
-                  </span>
-                )}
+                <button
+                  onClick={handleMarkComplete}
+                  disabled={isMarkingDone}
+                  className="flex items-center gap-2 bg-[#1b5e20] text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-[#145218] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isMarkingDone ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Marking...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" /> Mark as complete
+                    </>
+                  )}
+                </button>
 
                 {/* Next — just navigates, never POSTs */}
                 <button

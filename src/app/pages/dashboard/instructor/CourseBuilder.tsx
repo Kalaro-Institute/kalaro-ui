@@ -19,6 +19,9 @@ import {
 import { apiRequest, apiUpload } from "@/lib/api-client";
 import type { ApiError } from "@/lib/api-client";
 import { toast } from "sonner";
+import { QuizBuilderModal } from "@/app/components/assessments/QuizBuilderModal";
+import { AssignmentBuilderModal } from "@/app/components/assessments/AssignmentBuilderModal";
+import { ClipboardList, BookMarked } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -412,36 +415,45 @@ function CourseDetailsForm({
 
 function LessonRow({ lesson }: { lesson: Lesson }) {
   const [isVideoUploading, setIsVideoUploading] = useState(false);
-  const [videoUploaded, setVideoUploaded] = useState(false);
   const [isResourceUploading, setIsResourceUploading] = useState(false);
+  const [videoUploaded, setVideoUploaded] = useState(false);
   const [resources, setResources] = useState<Resource[]>([]);
-  const [showResourceForm, setShowResourceForm] = useState(false);
   const [resourceTitle, setResourceTitle] = useState("");
   const [resourceFile, setResourceFile] = useState<File | null>(null);
+  const [showResourceForm, setShowResourceForm] = useState(false);
+  const [showQuizBuilder, setShowQuizBuilder] = useState(false);
+  const [showAssignmentBuilder, setShowAssignmentBuilder] = useState(false);
 
-  const iconMap: Record<string, React.ElementType> = {
-    video: Video,
-    text: FileText,
-  };
-  const LessonIcon = iconMap[lesson.content_type] ?? FileText;
+  useEffect(() => {
+    let cancelled = false;
+    apiRequest<Resource[]>(`/catalog/lessons/${lesson.id}/resources`)
+      .then((data) => {
+        if (!cancelled) setResources(data);
+      })
+      .catch(() => {
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [lesson.id]);
 
-  const handleRetryVideoUpload = async (file: File) => {
+  const handleVideoUpload = async (file: File) => {
     setIsVideoUploading(true);
     try {
-      const { upload_url } = await apiRequest<{ upload_url: string }>(
+      const data = await apiRequest<{ upload_url: string }>(
         `/catalog/lessons/${lesson.id}/video-upload-url`,
         { method: "POST" },
       );
-      await fetch(upload_url, {
+      await fetch(data.upload_url, {
         method: "PUT",
         body: file,
         headers: { "Content-Type": file.type },
       });
       setVideoUploaded(true);
-      toast.success("Video uploaded.");
+      toast.success("Video uploaded successfully.");
     } catch (err) {
       const apiErr = err as ApiError;
-      toast.error(apiErr.message ?? "Video upload failed. Please try again.");
+      toast.error(apiErr.message ?? "Video upload failed.");
     } finally {
       setIsVideoUploading(false);
     }
@@ -472,153 +484,217 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
     }
   };
 
+  const iconMap: Record<string, React.ElementType> = {
+    video: Video,
+    text: FileText,
+  };
+  const LessonIcon = iconMap[lesson.content_type] ?? FileText;
+
   return (
-    <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
-      {/* Lesson title row */}
-      <div className="flex items-center gap-3 px-4 py-3">
-        <GripVertical className="w-3.5 h-3.5 text-gray-300 shrink-0" />
-        <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
-          lesson.content_type === "video" ? "bg-blue-50" : "bg-gray-100"
-        }`}>
-          <LessonIcon className={`w-3.5 h-3.5 ${
-            lesson.content_type === "video" ? "text-blue-500" : "text-gray-400"
-          }`} />
-        </div>
-        <span className="text-sm text-[#1a2332] font-medium flex-1 truncate">
-          {lesson.title}
-        </span>
-      </div>
-
-      {/* Video retry — only shows if video upload failed during creation */}
-      {lesson.content_type === "video" && !videoUploaded && (
-        <div className="px-4 py-2.5 bg-amber-50 border-t border-amber-100 flex items-center justify-between gap-3">
-          <p className="text-xs text-amber-700">
-            Video not yet uploaded. Upload it now.
-          </p>
-          <label className={`inline-flex items-center gap-1.5 text-xs font-semibold cursor-pointer shrink-0 transition-colors ${
-            isVideoUploading
-              ? "text-gray-400 pointer-events-none"
-              : "text-[#1b5e20] hover:text-[#145218]"
-          }`}>
-            {isVideoUploading ? (
-              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
-            ) : (
-              <><Upload className="w-3.5 h-3.5" /> Upload video</>
-            )}
-            <input
-              type="file"
-              accept="video/*"
-              className="hidden"
-              disabled={isVideoUploading}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) void handleRetryVideoUpload(file);
-                e.target.value = "";
-              }}
+    <>
+      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
+        {/* Lesson header row */}
+        <div className="flex items-center gap-3 px-4 py-3">
+          <GripVertical className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+          <div
+            className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
+              lesson.content_type === "video" ? "bg-blue-50" : "bg-gray-100"
+            }`}
+          >
+            <LessonIcon
+              className={`w-3.5 h-3.5 ${
+                lesson.content_type === "video"
+                  ? "text-blue-500"
+                  : "text-gray-400"
+              }`}
             />
-          </label>
-        </div>
-      )}
-
-      {/* Video uploaded confirmation */}
-      {lesson.content_type === "video" && videoUploaded && (
-        <div className="px-4 py-2 bg-[#e8f5e9] border-t border-[#1b5e20]/10 flex items-center gap-2">
-          <Check className="w-3.5 h-3.5 text-[#1b5e20]" />
-          <span className="text-xs text-[#1b5e20] font-medium">Video uploaded</span>
-        </div>
-      )}
-
-      {/* Resources */}
-      <div className="px-4 py-3 border-t border-gray-50">
-        {resources.length > 0 && (
-          <div className="space-y-1.5 mb-2.5">
-            {resources.map((r) => (
-              <div
-                key={r.id}
-                className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2"
-              >
-                <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                <span className="text-xs text-gray-700 flex-1 truncate">{r.title}</span>
-                <span className="text-[11px] text-gray-400 shrink-0">
-                  {formatBytes(r.size_bytes)}
-                </span>
-              </div>
-            ))}
           </div>
-        )}
+          <span className="text-sm text-[#1a2332] font-medium flex-1 truncate">
+            {lesson.title}
+          </span>
+          {/* Quiz button */}
+          <button
+            type="button"
+            onClick={() => setShowQuizBuilder(true)}
+            className="flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors shrink-0"
+            title="Add quiz to this lesson"
+          >
+            <ClipboardList className="w-3 h-3" /> Quiz
+          </button>
+          {/* Assignment button */}
+          <button
+            type="button"
+            onClick={() => setShowAssignmentBuilder(true)}
+            className="flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors shrink-0"
+            title="Add assignment to this lesson"
+          >
+            <BookMarked className="w-3 h-3" /> Assignment
+          </button>
+        </div>
 
-        {showResourceForm ? (
-          <form onSubmit={handleResourceSubmit} noValidate className="space-y-2">
-            <input
-              type="text"
-              placeholder="Resource title (e.g. Week 1 PDF)"
-              value={resourceTitle}
-              onChange={(e) => setResourceTitle(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1b5e20] transition-colors"
-            />
-            {resourceFile ? (
-              <div className="flex items-center gap-2 bg-[#e8f5e9] border border-[#1b5e20]/20 rounded-lg px-3 py-2">
-                <FileText className="w-3.5 h-3.5 text-[#1b5e20] shrink-0" />
-                <span className="text-xs text-[#1b5e20] flex-1 truncate">{resourceFile.name}</span>
-                <button
-                  type="button"
-                  onClick={() => setResourceFile(null)}
-                  className="text-[#1b5e20]/60 hover:text-red-500 transition-colors"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
+        {/* Video upload section */}
+        {lesson.content_type === "video" && (
+          <div className="px-4 pb-3 border-t border-gray-50 pt-2.5">
+            {videoUploaded ? (
+              <div className="flex items-center gap-2 text-xs text-[#1b5e20] font-medium">
+                <Check className="w-3.5 h-3.5" /> Video uploaded
               </div>
             ) : (
-              <label className="flex items-center gap-2 border border-dashed border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-[#1b5e20]/40 transition-colors">
-                <Upload className="w-3.5 h-3.5 text-gray-400" />
-                <span className="text-xs text-gray-400">Select file</span>
+              <label
+                className={`inline-flex items-center gap-2 text-xs font-semibold cursor-pointer transition-colors ${
+                  isVideoUploading
+                    ? "text-gray-400 pointer-events-none"
+                    : "text-[#1b5e20] hover:text-[#145218]"
+                }`}
+              >
+                {isVideoUploading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading
+                    video...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-3.5 h-3.5" /> Upload video
+                  </>
+                )}
                 <input
                   type="file"
+                  accept="video/*"
                   className="hidden"
+                  disabled={isVideoUploading}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) setResourceFile(file);
+                    if (file) void handleVideoUpload(file);
                     e.target.value = "";
                   }}
                 />
               </label>
             )}
-            <div className="flex items-center gap-2">
-              <button
-                type="submit"
-                disabled={isResourceUploading || !resourceTitle.trim() || !resourceFile}
-                className="flex-1 bg-[#1b5e20] text-white text-xs font-semibold py-2 rounded-lg disabled:opacity-60 transition-colors flex items-center justify-center gap-1.5"
-              >
-                {isResourceUploading ? (
-                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
-                ) : (
-                  "Attach resource"
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowResourceForm(false);
-                  setResourceTitle("");
-                  setResourceFile(null);
-                }}
-                className="px-3 py-2 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setShowResourceForm(true)}
-            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#1b5e20] transition-colors font-medium"
-          >
-            <Plus className="w-3.5 h-3.5" /> Attach resource
-          </button>
+          </div>
         )}
+
+        {/* Resources section */}
+        <div className="px-4 pb-3 border-t border-gray-50 pt-2.5">
+          {resources.length > 0 && (
+            <div className="space-y-1.5 mb-2">
+              {resources.map((r) => (
+                <div
+                  key={r.id}
+                  className="flex items-center gap-2 bg-gray-50 rounded-lg px-2.5 py-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                  <span className="text-xs text-gray-700 flex-1 truncate">
+                    {r.title}
+                  </span>
+                  <span className="text-[11px] text-gray-400 shrink-0">
+                    {formatBytes(r.size_bytes)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {showResourceForm ? (
+            <form
+              onSubmit={handleResourceSubmit}
+              noValidate
+              className="space-y-2"
+            >
+              <input
+                type="text"
+                placeholder="Resource title (e.g. Week 1 PDF)"
+                value={resourceTitle}
+                onChange={(e) => setResourceTitle(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1b5e20] transition-colors"
+              />
+              {resourceFile ? (
+                <div className="flex items-center gap-2 bg-[#e8f5e9] border border-[#1b5e20]/20 rounded-lg px-3 py-2">
+                  <FileText className="w-3.5 h-3.5 text-[#1b5e20] shrink-0" />
+                  <span className="text-xs text-[#1b5e20] flex-1 truncate">
+                    {resourceFile.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setResourceFile(null)}
+                    className="text-[#1b5e20]/60 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex items-center gap-2 border border-dashed border-gray-200 rounded-lg px-3 py-2 cursor-pointer hover:border-[#1b5e20]/40 transition-colors">
+                  <Upload className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="text-xs text-gray-400">Select file</span>
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setResourceFile(file);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+              )}
+              <div className="flex items-center gap-2">
+                <button
+                  type="submit"
+                  disabled={
+                    isResourceUploading ||
+                    !resourceTitle.trim() ||
+                    !resourceFile
+                  }
+                  className="flex-1 bg-[#1b5e20] text-white text-xs font-semibold py-2 rounded-lg disabled:opacity-60 transition-colors flex items-center justify-center gap-1.5"
+                >
+                  {isResourceUploading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />{" "}
+                      Uploading...
+                    </>
+                  ) : (
+                    "Attach resource"
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowResourceForm(false);
+                    setResourceTitle("");
+                    setResourceFile(null);
+                  }}
+                  className="px-3 py-2 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowResourceForm(true)}
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#1b5e20] transition-colors font-medium"
+            >
+              <Plus className="w-3.5 h-3.5" /> Attach resource
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+
+      {showQuizBuilder && (
+        <QuizBuilderModal
+          lessonId={lesson.id}
+          lessonTitle={lesson.title}
+          onClose={() => setShowQuizBuilder(false)}
+        />
+      )}
+      {showAssignmentBuilder && (
+        <AssignmentBuilderModal
+          lessonId={lesson.id}
+          lessonTitle={lesson.title}
+          onClose={() => setShowAssignmentBuilder(false)}
+        />
+      )}
+    </>
   );
 }
 
@@ -839,6 +915,8 @@ function ModuleCard({
 }) {
   const [expanded, setExpanded] = useState(true);
   const [lessons, setLessons] = useState<Lesson[]>(module.lessons);
+  const [showQuizBuilder, setShowQuizBuilder] = useState(false);
+  const [showAssignmentBuilder, setShowAssignmentBuilder] = useState(false);
 
   return (
     <div className="bg-[#f7faf7] border border-gray-200 rounded-xl overflow-hidden">
@@ -909,6 +987,8 @@ function ModuleCard({
           />
         </div>
       )}
+
+      
     </div>
   );
 }
