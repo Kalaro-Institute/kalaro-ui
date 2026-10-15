@@ -1,13 +1,87 @@
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
 import { useNavigate } from "react-router";
-import { Target, Eye, Heart, Award, Users,  } from "lucide-react";
+import { Target, Eye, Heart, Award, Users } from "lucide-react";
 
-const TEAM = [
-  { name: "Dr. Adebayo Mensah", role: "Founder & Lead Instructor", bio: "15+ years in HMO operations. Former Director at Hygeia HMO. Certified Health Insurance Professional.", avatar: "AM", color: "bg-green-700" },
-  { name: "Mrs. Ngozi Uchenna", role: "Head of Curriculum", bio: "Ex-Claims Director with Avon HMO. Specialist in healthcare policy and compliance.", avatar: "NU", color: "bg-blue-700" },
-  { name: "Mr. Emeka Okafor", role: "Provider Relations Expert", bio: "12 years managing provider networks across West Africa. Certified Health Insurance Professional.", avatar: "EO", color: "bg-purple-700" },
-  { name: "Barrister Funke Adeyemi", role: "Legal & Compliance Advisor", bio: "Healthcare law specialist. Advises multiple HMOs on international healthcare regulatory matters.", avatar: "FA", color: "bg-amber-700" },
+/* ── Faculty ────────────────────────────────────────────────────
+   The people who teach at Kalaro. Bios are kept accurate to each
+   person's real role and background. Photos are optional: when an
+   `img` is supplied it is shown, otherwise the card falls back to
+   a branded gradient monogram so the section still reads well. */
+
+type Faculty = {
+  name: string;
+  role: string;
+  /** Two-letter monogram used by the no-photo fallback. */
+  initials: string;
+  /** Gradient used for the fallback / photo frame accent. */
+  tone: string;
+  /** Optional portrait; add a file to src/imports and set this to use it. */
+  img?: string;
+  bio: string[];
+  tags: string[];
+};
+
+const FACULTY: Faculty[] = [
+  {
+    name: "Aro Adebusayo Loveth",
+    role: "Lead Trainer & Founder",
+    initials: "AL",
+    tone: "from-green-700 to-green-900",
+    bio: [
+      "Aro Adebusayo Loveth is a Registered Nurse Anaesthetist, Healthcare Administrator, Health Insurance (HMO) Operations Specialist, and Medical Virtual Assistant with over 7 years of experience in healthcare and 5 years working within hospital health insurance operations and administration.",
+      "She is the founder of a healthcare training initiative focused on bridging the knowledge gap in health insurance operations, hospital billing, claims management, and healthcare administration. Through her training programs, she equips healthcare professionals and non-medical graduates with practical skills to work in hospitals, health insurance companies, and remote healthcare support roles.",
+      "Her mission is to help individuals discover new career opportunities within healthcare beyond bedside practice, while also helping hospitals improve documentation, claims processing, and revenue management.",
+    ],
+    tags: ["HMO Operations", "Hospital Billing", "Claims Management", "Medical VA"],
+  },
+  {
+    name: "Ms. Olajumoke Oladunni",
+    role: "Medical VA · Senior Executive, Reliance Health",
+    initials: "OO",
+    tone: "from-emerald-600 to-teal-800",
+    bio: [
+      "Ms. Olajumoke Oladunni is a healthcare professional, writer, and health-tech leader passionate about solving global healthcare challenges through innovation. With a background in clinical nursing, she transitioned into roles that blend healthcare with technology to promote accessible and affordable care.",
+      "She is a Senior Executive at Reliance Health, where she leads claims operations and automation using data-driven processes. She also serves as a strategic advisor for two growing startups, Nexus Health (focused on telehealth) and Healthbrew Africa, which trains healthcare practitioners to acquire digital skills and transform their expertise into impactful solutions.",
+      "Olajumoke is the author of Nurses, AI, and Other Big Choices and regularly speaks on health-tech in managed care, scaling clinical skills into entrepreneurship, and advancing healthcare solutions in Africa.",
+    ],
+    tags: ["Health-Tech", "Claims Automation", "Managed Care", "Author"],
+  },
+  {
+    name: "Dr. L.O Okunowo",
+    role: "CEO, Lantos Hospital",
+    initials: "LO",
+    tone: "from-teal-700 to-green-900",
+    bio: [
+      "Dr. L.O Okunowo is a Fellow of the Medical College of Pathology with a subspecialty in Immunology, and a Doctor of Medicine.",
+      "He is a lecturer and trainer of medical students in the Chemical Pathology Department at Lagos State University College of Medicine, bringing deep clinical and academic rigor to Kalaro's healthcare curriculum.",
+    ],
+    tags: ["Pathology", "Immunology", "Medical Education"],
+  },
+  {
+    name: "Odiviya Daniel",
+    role: "Health Insurance & Managed Care Specialist",
+    initials: "OD",
+    tone: "from-green-800 to-[#071a08]",
+    bio: [
+      "Odiviya Daniel has over eight years of experience in hospital claims, medical billing, healthcare management, and hospital administration, building a strong reputation in Nigeria's health insurance and managed care sector. His professional expertise spans provider management, medical audit, provider onboarding, and the coordination of capacity-building training for healthcare stakeholders.",
+      "Throughout his career he has completed training including Seamless Access to Healthcare, Leadership Training, Workplace Occupational Health and Safety, Reducing Healthcare Costs through the Prevention of Medical Fraud and Abuse, and Forensic Medical Investigations — equipping him to combat fraud and improve healthcare accountability.",
+      "He is a Fellow of the Institute for Health Insurance and Managed Care of Nigeria (IHIMN) and is currently developing a digital platform to expand access to telemedicine services. Academically, he is a doctoral student at Lead City University, Ibadan, pursuing a PhD in Public Administration with a focus on Hospital Management, and works with one of Nigeria's leading Health Maintenance Organizations.",
+    ],
+    tags: ["Claims", "Medical Audit", "Fraud Prevention", "Telemedicine"],
+  },
+  {
+    name: "Ola Vincent",
+    role: "Remote Work · VA Tutor · Program Coordinator",
+    initials: "OV",
+    tone: "from-emerald-700 to-green-900",
+    bio: [
+      "Ola Vincent is a results-driven Lead Upwork and LinkedIn Remote Work recruiter and an experienced HR recruiter with over 6 years of hands-on talent acquisition expertise. Known for helping professionals break into the global remote workforce, he has coached job seekers and freelancers to build profitable careers on platforms like Upwork and LinkedIn.",
+      "Through strategic positioning, profile optimization, and high-converting proposal frameworks, Ola has helped individuals and businesses unlock international opportunities and collectively secure over $100,000 in remote earnings. His recruiting background gives him a unique advantage — he understands exactly what employers look for and how candidates can position themselves to win competitive roles.",
+      "Passionate about talent development, remote work, and career transformation, Ola is committed to bridging global opportunities with African talent, empowering professionals to move from local limitations to global impact.",
+    ],
+    tags: ["Remote Work", "Talent Acquisition", "Upwork & LinkedIn", "Career Coaching"],
+  },
 ];
 
 const VALUES = [
@@ -26,14 +100,66 @@ const MILESTONES = [
   { year: "2025", event: "Recognised as a leading global HMO training institute" },
 ];
 
-function TeamCard({ member }: { member: typeof TEAM[0] }) {
+/* Editorial profile row: portrait on one side, details on the other.
+   Alternates left/right per index so the section reads like a magazine
+   feature and gives each longer bio room to breathe. */
+function FacultyProfile({ member, flip }: { member: Faculty; flip: boolean }) {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-shadow text-center h-full flex flex-col">
-      <div className={`w-20 h-20 rounded-full ${member.color} text-white font-extrabold text-xl flex items-center justify-center mx-auto mb-4`}>{member.avatar}</div>
-      <h4 className="font-bold text-gray-900 mb-1">{member.name}</h4>
-      <p className="text-green-600 text-xs font-semibold mb-3">{member.role}</p>
-      <p className="text-gray-500 text-xs leading-relaxed flex-1">{member.bio}</p>
-    </div>
+    <article
+      className={`grid md:grid-cols-[minmax(0,320px)_1fr] gap-6 md:gap-10 items-center ${
+        flip ? "md:[&>figure]:order-2" : ""
+      }`}
+    >
+      <figure className="relative">
+        <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-xl ring-1 ring-black/5">
+          {member.img ? (
+            <ImageWithFallback
+              src={member.img}
+              alt={member.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div
+              className={`w-full h-full bg-gradient-to-br ${member.tone} flex items-center justify-center`}
+            >
+              <span className="text-white text-6xl font-extrabold tracking-tight drop-shadow-sm">
+                {member.initials}
+              </span>
+            </div>
+          )}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/45 to-transparent" />
+        </div>
+        {/* Decorative accent block behind the portrait */}
+        <div
+          className={`absolute -z-10 rounded-3xl bg-green-100 w-full h-full top-4 ${
+            flip ? "left-4" : "right-4"
+          } hidden md:block`}
+          aria-hidden="true"
+        />
+      </figure>
+
+      <div>
+        <h3 className="text-2xl font-extrabold text-gray-900 leading-tight">{member.name}</h3>
+        <p className="text-green-700 font-semibold text-sm mt-1 mb-4">{member.role}</p>
+        <div className="space-y-3">
+          {member.bio.map((para, i) => (
+            <p key={i} className="text-gray-600 text-sm leading-relaxed">
+              {para}
+            </p>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2 mt-5">
+          {member.tags.map((tag) => (
+            <span
+              key={tag}
+              className="text-[11px] font-semibold text-green-800 bg-green-50 border border-green-100 rounded-full px-3 py-1"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -122,31 +248,29 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team — background image */}
-      <section
-        className="py-14 sm:py-20 relative overflow-hidden"
-        style={{
-          backgroundImage: "url(https://images.unsplash.com/photo-1777703304166-d7713ec85de0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1920&q=80)",
-          backgroundSize: "cover", backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-white/95" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+      {/* Faculty — editorial profiles */}
+      <section className="py-14 sm:py-20 bg-[#f7faf7]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <p className="text-green-600 font-semibold text-xs uppercase tracking-widest mb-2">The Experts</p>
             <h2 className="text-3xl font-extrabold text-gray-900">Meet Our Instructors</h2>
-            <p className="text-gray-500 mt-3 max-w-xl mx-auto text-sm">Every instructor is a working professional with real HMO experience — not just academics.</p>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto text-sm">
+              Every instructor is a working professional with real HMO and healthcare experience — not just academics.
+            </p>
           </div>
 
-          {/* Mobile carousel */}
+          {/* Mobile carousel — one profile per swipe */}
           <div className="sm:hidden -mx-4 px-4 overflow-x-clip">
-            <MobileCarousel cardWidth="w-[72vw]">
-              {TEAM.map((member, i) => <TeamCard key={i} member={member} />)}
+            <MobileCarousel cardWidth="w-[82vw]">
+              {FACULTY.map((member, i) => <FacultyProfile key={i} member={member} flip={false} />)}
             </MobileCarousel>
           </div>
-          {/* Desktop grid */}
-          <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {TEAM.map((member, i) => <TeamCard key={i} member={member} />)}
+
+          {/* Desktop editorial rows */}
+          <div className="hidden sm:flex flex-col gap-14 sm:gap-16">
+            {FACULTY.map((member, i) => (
+              <FacultyProfile key={i} member={member} flip={i % 2 === 1} />
+            ))}
           </div>
         </div>
       </section>
@@ -195,7 +319,4 @@ export default function About() {
     </div>
   );
 }
-
-
-
 

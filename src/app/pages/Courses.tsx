@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { MobileCarousel } from "@/app/components/MobileCarousel";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
 import { CATALOG, totalLessons } from "@/app/data/courses";
 import {
@@ -20,7 +20,7 @@ const ALL_COURSES = CATALOG.map((c) => ({
   title: c.title,
   category: c.category,
   level: c.level,
-  duration: `${c.durationWeeks} Weeks`,
+  duration: c.durationWeeks === 1 ? "1 Week" : `${c.durationWeeks} Weeks`,
   lessons: totalLessons(c),
   priceUsd: c.priceUsd,
   priceNgn: c.priceNgn,
@@ -41,6 +41,7 @@ const CATEGORY_BADGE: Record<string, string> = {
   "Healthcare Administration": "bg-blue-100 text-blue-700",
   "Digital Skills": "bg-purple-100 text-purple-700",
   "Project Management": "bg-amber-100 text-amber-700",
+  "Continuous Professional Development": "bg-rose-100 text-rose-700",
 };
 
 function CourseCard({ course, slug }: { course: typeof ALL_COURSES[0]; slug: string }) {
@@ -99,9 +100,19 @@ function CourseCard({ course, slug }: { course: typeof ALL_COURSES[0]; slug: str
   );
 }
 export default function Courses() {
-  const [active, setActive] = useState("All");
+  /* The selected category lives in the URL (?category=...) so the
+     nav's "Continuous Professional Development" link lands on the
+     CPD pill - and pill clicks stay shareable. An unknown or
+     missing param falls back to All. */
+  const [searchParams, setSearchParams] = useSearchParams();
+  const paramCategory = searchParams.get("category");
+  const active =
+    paramCategory && CATEGORIES.includes(paramCategory) ? paramCategory : "All";
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+
+  const selectCategory = (cat: string) =>
+    setSearchParams(cat === "All" ? {} : { category: cat }, { replace: true });
 
   /* The catalogue is the only list of courses. */
   const filtered = ALL_COURSES.filter((c) => {
@@ -179,7 +190,7 @@ export default function Courses() {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActive(cat)}
+                onClick={() => selectCategory(cat)}
                 className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
                   active === cat
                     ? "bg-green-700 text-white shadow-md shadow-green-900/15"

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useNavigate, useParams, Link } from "react-router";
+import { useNavigate, useParams, useSearchParams, Link } from "react-router";
 import {
   ArrowLeft, CreditCard, Landmark, CheckCircle, Copy, Check,
   ShieldCheck, Clock, AlertCircle, Loader2, FileText,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getCourse, totalLessons } from "@/app/data/courses";
+import { getCourse, totalLessons, SELF_PACED, supportsSelfPaced, weeksLabel } from "@/app/data/courses";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 
@@ -28,6 +28,8 @@ export default function CourseCheckout() {
   const [submitting, setSubmitting] = useState(false);
 
   const course = slug ? getCourse(slug) : undefined;
+  const [searchParams] = useSearchParams();
+  const track = searchParams.get("track");
 
   if (!course) {
     return (
@@ -45,6 +47,15 @@ export default function CourseCheckout() {
       </div>
     );
   }
+
+  /* ?track=self-paced prices the self-paced track; anything else is
+     the full programme. */
+  const self = track === "self-paced" && supportsSelfPaced(course);
+  const priceNgn = self ? SELF_PACED.priceNgn : course.priceNgn;
+  const priceUsd = self ? SELF_PACED.priceUsd : course.priceUsd;
+  const lessons = self
+    ? SELF_PACED.modules.reduce((n, m) => n + m.lessons.length, 0)
+    : totalLessons(course);
 
   const copyAccount = async () => {
     try {
@@ -72,10 +83,10 @@ export default function CourseCheckout() {
         "/payments/paystack/initialize",
         {
           method: "POST",
-          body: { course_slug: course.slug },
+          body: { course_slug: course.slug, track: self ? "self-paced" : "full" },
         },
       );
-      window.location.href = data.authorization_url;
+      window.location.assign(data.authorization_url);
     } catch {
       toast.error(
         "Online payment is unavailable right now. Please use bank transfer or contact us.",
@@ -224,7 +235,7 @@ export default function CourseCheckout() {
                   <div className="flex justify-between gap-4">
                     <span className="text-gray-500">Amount</span>
                     <span className="font-bold text-green-700">
-                      {formatCoursePrice(course.priceNgn, course.priceUsd)}
+                      {formatCoursePrice(priceNgn, priceUsd)}
                     </span>
                   </div>
                 </div>
@@ -263,7 +274,7 @@ export default function CourseCheckout() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4">
                   <h3 className="text-white font-bold text-sm leading-tight">
-                    {course.title}
+                    {course.title}{self ? " (Self-paced)" : ""}
                   </h3>
                 </div>
               </div>
@@ -271,11 +282,11 @@ export default function CourseCheckout() {
                 <dl className="space-y-2.5 text-sm mb-5">
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Duration</dt>
-                    <dd className="font-semibold text-[#1a2332]">{course.durationWeeks} weeks</dd>
+                    <dd className="font-semibold text-[#1a2332]">{self ? "Self-paced" : weeksLabel(course.durationWeeks)}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Lessons</dt>
-                    <dd className="font-semibold text-[#1a2332]">{totalLessons(course)}</dd>
+                    <dd className="font-semibold text-[#1a2332]">{lessons}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Level</dt>
@@ -286,7 +297,7 @@ export default function CourseCheckout() {
                   <div className="flex justify-between items-baseline">
                     <span className="text-sm text-gray-500">Total</span>
                     <span className="text-2xl font-extrabold text-[#1a2332]">
-                      {formatCoursePrice(course.priceNgn, course.priceUsd)}
+                      {formatCoursePrice(priceNgn, priceUsd)}
                     </span>
                   </div>
                   <p className="text-[11px] text-gray-400 mt-1 text-right">One-time payment</p>

@@ -43,6 +43,59 @@ export type Course = {
    so Nigerian visitors see the exact naira fee and everyone else sees the USD equivalent. */
 export const NGN_PER_USD = 1550;
 
+/* Format a week count without "1 weeks". */
+export const weeksLabel = (n: number) => `${n} week${n === 1 ? "" : "s"}`;
+
+/* ── Self-paced track ───────────────────────────────────────────
+   Every full programme is offered in two tracks: the full
+   programme as written above, and a trimmed SELF-PACED track at a
+   flat fee. The self-paced format is deliberately identical
+   everywhere so the offer never drifts between courses:
+
+     - 3 modules (two video recordings + one knowledge-check quiz)
+     - streaming only - recordings cannot be downloaded
+     - NO certificate
+
+   CPD micro-courses (CPD_CATEGORY below) are already the short
+   format and are excluded via supportsSelfPaced().            */
+export const SELF_PACED = {
+  label: "Self-paced",
+  priceNgn: 25000,
+  priceUsd: 16,
+  modules: [
+    {
+      title: "Foundations",
+      lessons: ["Video recording 1 - stream only (downloads disabled)"],
+    },
+    {
+      title: "In Practice",
+      lessons: ["Video recording 2 - stream only (downloads disabled)"],
+    },
+    {
+      title: "Knowledge Check",
+      lessons: ["Course quiz"],
+    },
+  ],
+  includes: [
+    "3 modules of on-demand content",
+    "2 video recordings - streaming only, downloads disabled",
+    "1 knowledge-check quiz",
+    "Lifetime access to the recordings",
+  ],
+  expectations: [
+    "Work through three compact modules at your own pace",
+    "Watch two focused video recordings, streamed inside the platform",
+    "Close the track with a knowledge-check quiz",
+  ],
+};
+
+/* ── Continuous Professional Development (CPD) ────────────────────
+   Short professional-development courses priced flat in naira.
+   They live in the same CATALOG as the full programmes, so they
+   get real /course/<slug> pages, search, and their own category
+   pill for free. */
+export const CPD_CATEGORY = "Continuous Professional Development";
+
 const IMG = {
   insurance:
     "https://images.unsplash.com/photo-1576091160550-2173dba999ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
@@ -66,7 +119,9 @@ const IMG = {
     "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
 };
 
-export const CATALOG: Course[] = [
+/* Full programmes - the original catalogue entries. CPD courses are
+   appended below; CATALOG exports the two groups combined. */
+const PROGRAMMES: Course[] = [
   {
     slug: "health-insurance-hmo-operations",
     title: "Health Insurance & HMO Operations",
@@ -748,6 +803,510 @@ export const CATALOG: Course[] = [
     ],
   },
 ];
+
+/* ── CPD seed list ───────────────────────────────────────────────
+   Each seed carries only what varies per course; cpdCourse()
+   fills the shared shape (category, ₦5,000 fee, 1-week duration,
+   requirements, includes) and appends the knowledge-check quiz as
+   the third module, so every CPD course is 2 teaching modules +
+   1 quiz. */
+type CpdSeed = {
+  slug: string;
+  title: string;
+  level: Course["level"];
+  img: string;
+  summary: string;
+  expectations: string[];
+  modules: CourseModule[];
+  outcomes: string[];
+};
+
+const CPD_REQUIREMENTS = [
+  "No prerequisites - open to practising professionals",
+  "A phone or computer with internet access",
+];
+
+const CPD_INCLUDES = [
+  "1 week of on-demand access",
+  "Knowledge-check quiz",
+  "Certificate of completion",
+];
+
+const cpdCourse = (seed: CpdSeed): Course => ({
+  slug: seed.slug,
+  title: seed.title,
+  category: CPD_CATEGORY,
+  level: seed.level,
+  priceNgn: 5000,
+  priceUsd: 3,
+  durationWeeks: 1,
+  instructor: "Kalaro Training Faculty",
+  img: seed.img,
+  summary: seed.summary,
+  overview: `${seed.summary} Delivered entirely on demand, it condenses the topic into short lessons and a knowledge-check quiz you can finish in a few hours.`,
+  expectations: seed.expectations,
+  modules: [...seed.modules, { title: "Knowledge Check", lessons: ["Course quiz"] }],
+  outcomes: seed.outcomes,
+  requirements: CPD_REQUIREMENTS,
+  includes: CPD_INCLUDES,
+});
+
+const CPD_SEEDS: CpdSeed[] = [
+  {
+    slug: "patient-safety-medication-error-prevention",
+    title: "Patient Safety and Medication Error Prevention",
+    level: "Intermediate",
+    img: IMG.nursing,
+    summary:
+      "Build the habits that prevent harm - spot risks early, report near-misses and keep patients safe on every shift.",
+    expectations: [
+      "Recognise everyday hazards before they reach the patient",
+      "Apply the five rights to every medication round",
+      "Report and follow up near-misses properly",
+    ],
+    modules: [
+      {
+        title: "Foundations of Patient Safety",
+        lessons: ["Why patient safety fails", "Risk points in everyday practice", "Building a reporting culture"],
+      },
+      {
+        title: "Preventing Medication Errors",
+        lessons: ["The medication use chain", "High-alert drugs and common traps", "Double-checks, timing and escalation"],
+      },
+    ],
+    outcomes: [
+      "Prevent the commonest medication errors",
+      "Run a proper incident and near-miss report",
+      "Champion safety on your unit",
+    ],
+  },
+  {
+    slug: "infection-prevention-control-ppe",
+    title: "Infection Prevention and Control including Hygiene & PPE",
+    level: "Intermediate",
+    img: IMG.nursing,
+    summary:
+      "Stop transmission at its source - hand hygiene, transmission-based precautions and PPE that actually protects.",
+    expectations: [
+      "Break the chain of infection in your own practice",
+      "Use PPE correctly, every time",
+      "Apply transmission-based precautions with confidence",
+    ],
+    modules: [
+      {
+        title: "How Infection Spreads",
+        lessons: ["The chain of infection", "Healthcare-associated infections", "Hand hygiene that works"],
+      },
+      {
+        title: "PPE and Precautions",
+        lessons: ["Choosing and donning PPE correctly", "Transmission-based precautions", "Safe waste handling and decontamination"],
+      },
+    ],
+    outcomes: [
+      "Cut healthcare-associated infections",
+      "Use PPE and precautions correctly",
+      "Lead hygiene compliance on your ward",
+    ],
+  },
+  {
+    slug: "patient-management-palliative-care",
+    title: "Patient Management & Palliative Care",
+    level: "Intermediate",
+    img: IMG.hospital,
+    summary:
+      "Coordinate care beyond the cure - symptom control, dignified end-of-life care and real support for families.",
+    expectations: [
+      "Manage patients across the full care journey",
+      "Apply palliative principles for comfort and dignity",
+      "Support families through difficult decisions",
+    ],
+    modules: [
+      {
+        title: "Coordinating Patient Care",
+        lessons: ["Assessment and care planning", "Coordinating teams and referrals", "Escalation and handover"],
+      },
+      {
+        title: "Palliative Care Basics",
+        lessons: ["Symptom and pain control", "Communication at end of life", "Family support and bereavement"],
+      },
+    ],
+    outcomes: [
+      "Manage complex patients with confidence",
+      "Deliver compassionate palliative care",
+      "Communicate difficult news well",
+    ],
+  },
+  {
+    slug: "maternal-newborn-child-health-update",
+    title: "Maternal, Newborn and Child Health Update",
+    level: "Intermediate",
+    img: IMG.nursing,
+    summary:
+      "Current guidance across the continuum - antenatal care, safe delivery, postnatal support and newborn essentials.",
+    expectations: [
+      "Apply updated ANC and postnatal guidance",
+      "Recognise danger signs in mother and baby",
+      "Support newborn care in the first critical days",
+    ],
+    modules: [
+      {
+        title: "Maternal Health Updates",
+        lessons: ["Antenatal care contacts", "Warning signs in pregnancy and labour", "Postnatal care and follow-up"],
+      },
+      {
+        title: "Newborn & Child Health",
+        lessons: ["Newborn assessment and warmth", "Feeding and immunisation schedule", "Common newborn danger signs"],
+      },
+    ],
+    outcomes: [
+      "Deliver up-to-date maternal care",
+      "Act fast on maternal danger signs",
+      "Give newborns the best start",
+    ],
+  },
+  {
+    slug: "leadership-delegation-supervision",
+    title: "Leadership, Delegation and Supervision",
+    level: "Intermediate",
+    img: IMG.office,
+    summary:
+      "Move from peer to boss - delegate with confidence, supervise performance and lead a team that delivers.",
+    expectations: [
+      "Delegate tasks to the right person, clearly",
+      "Run useful supervision and feedback conversations",
+      "Handle underperformance early and fairly",
+    ],
+    modules: [
+      {
+        title: "Stepping into Leadership",
+        lessons: ["From peer to supervisor", "Styles of leadership that work", "Setting expectations"],
+      },
+      {
+        title: "Delegation & Supervision",
+        lessons: ["Delegating without micromanaging", "Supervision meetings that matter", "Giving and receiving feedback"],
+      },
+    ],
+    outcomes: [
+      "Delegate work with confidence",
+      "Supervise performance proactively",
+      "Build a team that delivers",
+    ],
+  },
+  {
+    slug: "nurse-wellbeing-stress-management",
+    title: "Nurse Wellbeing, Stress Management & Work-Life Balance",
+    level: "Beginner",
+    img: IMG.nursing,
+    summary:
+      "Protect your own oxygen first - recognise burnout early, manage stress and build boundaries that last.",
+    expectations: [
+      "Spot the early signs of burnout",
+      "Apply stress-management tools you can use on shift",
+      "Build sustainable work-life boundaries",
+    ],
+    modules: [
+      {
+        title: "Understanding Stress & Burnout",
+        lessons: ["How stress affects the body and mind", "Recognising burnout early", "Compassion fatigue in care work"],
+      },
+      {
+        title: "Sustainable Coping",
+        lessons: ["Practical reset techniques", "Boundaries and saying no", "Sleep, rest and recovery"],
+      },
+    ],
+    outcomes: [
+      "Manage stress before it manages you",
+      "Prevent burnout for yourself and colleagues",
+      "Protect a healthy work-life balance",
+    ],
+  },
+  {
+    slug: "communication-conflict-resolution",
+    title: "Communication, Conflict Resolution and Handling Difficult Families",
+    level: "Beginner",
+    img: IMG.hospital,
+    summary:
+      "Say hard things well - de-escalate conflict, deliver difficult news and work with distressed families.",
+    expectations: [
+      "De-escalate angry patients and relatives",
+      "Deliver difficult news with empathy",
+      "Use structured conversation frameworks",
+    ],
+    modules: [
+      {
+        title: "Communication Foundations",
+        lessons: ["Active listening", "Verbal and non-verbal cues", "Documenting conversations"],
+      },
+      {
+        title: "Conflict & Difficult Conversations",
+        lessons: ["De-escalation step by step", "Handling complaints and blame", "Working with distressed families"],
+      },
+    ],
+    outcomes: [
+      "Defuse conflict before it escalates",
+      "Handle complaints professionally",
+      "Build trust with difficult families",
+    ],
+  },
+  {
+    slug: "document-record-management",
+    title: "Document & Record Management",
+    level: "Beginner",
+    img: IMG.office,
+    summary:
+      "Keep records accurate, findable and compliant - filing systems, confidentiality and retention done right.",
+    expectations: [
+      "Apply record-keeping standards consistently",
+      "Design filing systems that actually work",
+      "Protect confidentiality through the record lifecycle",
+    ],
+    modules: [
+      {
+        title: "Records Done Right",
+        lessons: ["Principles of good record-keeping", "Accuracy, legibility and timeliness", "Common documentation failures"],
+      },
+      {
+        title: "Systems, Storage & Retention",
+        lessons: ["Paper and digital filing systems", "Confidentiality and access control", "Retention, archiving and destruction"],
+      },
+    ],
+    outcomes: [
+      "Keep compliant, reliable records",
+      "Find any record in seconds",
+      "Protect patient and client confidentiality",
+    ],
+  },
+  {
+    slug: "nursing-ethics-informed-consent",
+    title: "Nursing Ethics, Patient Rights and Informed Consent",
+    level: "Intermediate",
+    img: IMG.nursing,
+    summary:
+      "Practise inside the ethical line - autonomy, consent, confidentiality and the duties that define the profession.",
+    expectations: [
+      "Apply ethical principles to real dilemmas",
+      "Confirm valid informed consent",
+      "Protect patient rights and confidentiality",
+    ],
+    modules: [
+      {
+        title: "Ethics at the Bedside",
+        lessons: ["Core ethical principles", "Prioritisation and triage dilemmas", "Professional accountability"],
+      },
+      {
+        title: "Rights, Consent & Confidentiality",
+        lessons: ["What informed consent requires", "Capacity and surrogate decisions", "Confidentiality in practice"],
+      },
+    ],
+    outcomes: [
+      "Navigate ethical dilemmas with a framework",
+      "Obtain and document consent correctly",
+      "Safeguard patient rights daily",
+    ],
+  },
+  {
+    slug: "calendar-inbox-task-management",
+    title: "Calendar Inbox & Task Management",
+    level: "Beginner",
+    img: IMG.office,
+    summary:
+      "Run your day instead of reacting to it - calendar blocks, inbox zero and a task system that sticks.",
+    expectations: [
+      "Structure a realistic weekly calendar",
+      "Keep your inbox at zero",
+      "Run a task system you actually trust",
+    ],
+    modules: [
+      {
+        title: "Calendar & Time Blocking",
+        lessons: ["Blocking deep work", "Meetings and buffers", "Planning the week ahead"],
+      },
+      {
+        title: "Inbox and Tasks",
+        lessons: ["Processing email to inbox zero", "A task system that sticks", "Reviews and routines"],
+      },
+    ],
+    outcomes: ["Own your schedule", "Clear and keep a zero inbox", "Never drop a commitment again"],
+  },
+  {
+    slug: "client-onboarding-confidentiality-remote-work",
+    title: "Client Onboarding and Confidentiality in Remote Work",
+    level: "Beginner",
+    img: IMG.office,
+    summary:
+      "Start remote engagements right - onboarding checklists, NDAs and handling client data responsibly.",
+    expectations: [
+      "Onboard a new client smoothly and professionally",
+      "Use NDAs and confidentiality agreements correctly",
+      "Handle client data safely in remote settings",
+    ],
+    modules: [
+      {
+        title: "Onboarding a New Client",
+        lessons: ["The first-call framework", "Scopes, contracts and expectations", "Onboarding checklists that impress"],
+      },
+      {
+        title: "Confidentiality in Remote Work",
+        lessons: ["NDAs and data agreements", "Handling files and passwords safely", "What never to share"],
+      },
+    ],
+    outcomes: [
+      "Onboard clients like a pro",
+      "Protect client data by default",
+      "Set boundaries that keep engagements healthy",
+    ],
+  },
+  {
+    slug: "portfolio-pricing-invoicing",
+    title: "Building a Portfolio, Pricing and Invoicing for Freelancers",
+    level: "Beginner",
+    img: IMG.office,
+    summary:
+      "Package your proof, price your worth and get paid cleanly - the business side of freelancing.",
+    expectations: [
+      "Build a portfolio that wins work",
+      "Price your services with confidence",
+      "Invoice professionally and chase payments",
+    ],
+    modules: [
+      {
+        title: "Building Your Portfolio",
+        lessons: ["Case studies over claims", "Where to host your work", "Tailoring your portfolio to a niche"],
+      },
+      {
+        title: "Pricing & Invoicing",
+        lessons: ["Rate models and day rates", "Writing a clean invoice", "Deposits, terms and chasing late pay"],
+      },
+    ],
+    outcomes: [
+      "Present proof that converts",
+      "Price and quote with confidence",
+      "Get paid on time",
+    ],
+  },
+  {
+    slug: "niche-specialization-support",
+    title: "Niche Specialization for Healthcare, Admin and Customer Care Support",
+    level: "Beginner",
+    img: IMG.ai,
+    summary:
+      "Pick a lane and own it - choose a profitable niche and position yourself as the go-to specialist.",
+    expectations: [
+      "Match your strengths to a viable niche",
+      "Position yourself as a specialist, not a generalist",
+      "Package services your niche will buy",
+    ],
+    modules: [
+      {
+        title: "Finding Your Niche",
+        lessons: ["Skills, demand and fit", "Sizing the opportunity", "Testing a niche fast"],
+      },
+      {
+        title: "Positioning & Offer Design",
+        lessons: ["Your positioning statement", "Building a specialist offer", "Speaking your niche's language"],
+      },
+    ],
+    outcomes: [
+      "Choose a profitable niche",
+      "Position yourself as the expert",
+      "Build an offer your niche wants",
+    ],
+  },
+  {
+    slug: "claims-processing-fraud-detection",
+    title: "Claims Processing, Vetting and Fraud, Waste and Abuse Detection",
+    level: "Intermediate",
+    img: IMG.insurance,
+    summary:
+      "Process claims cleanly and catch what does not add up - vetting rules, red flags and FWA investigations.",
+    expectations: [
+      "Vet claims against coverage and policy rules",
+      "Spot the commonest fraud, waste and abuse red flags",
+      "Document and escalate suspicious claims",
+    ],
+    modules: [
+      {
+        title: "Claims Processing & Vetting",
+        lessons: ["The claims lifecycle", "Vetting rules and documentation", "Denials, queries and appeals"],
+      },
+      {
+        title: "Fraud, Waste & Abuse",
+        lessons: ["Types of FWA", "Red flags and patterns", "Investigation and reporting"],
+      },
+    ],
+    outcomes: [
+      "Process claims accurately and fast",
+      "Detect fraud, waste and abuse",
+      "Document defensible claim decisions",
+    ],
+  },
+  {
+    slug: "tariff-capitation-fee-for-service",
+    title: "Tariff, Capitation and Fee-for-Service Payment Modes",
+    level: "Intermediate",
+    img: IMG.insurance,
+    summary:
+      "Understand how healthcare actually gets paid for - tariffs, capitation maths and fee-for-service models.",
+    expectations: [
+      "Read and apply a tariff schedule",
+      "Calculate capitation risk and load",
+      "Compare payment models analytically",
+    ],
+    modules: [
+      {
+        title: "Payment Models Explained",
+        lessons: ["Fee-for-service basics", "Capitation and risk pools", "Bundle and DRG-style models"],
+      },
+      {
+        title: "Tariffs in Practice",
+        lessons: ["Reading a tariff schedule", "Prior authorisation and limits", "Reconciling paid vs billed"],
+      },
+    ],
+    outcomes: [
+      "Navigate the main payment models",
+      "Apply tariffs correctly",
+      "Judge when capitation beats fee-for-service",
+    ],
+  },
+  {
+    slug: "risk-management-underwriting-basics",
+    title: "Risk Management, Underwriting and Actuarial Basics",
+    level: "Intermediate",
+    img: IMG.insurance,
+    summary:
+      "See risk before you price it - underwriting fundamentals, risk controls and how actuaries keep the books honest.",
+    expectations: [
+      "Walk the risk management cycle",
+      "Assess applications for underwriting risk",
+      "Read basic actuarial outputs",
+    ],
+    modules: [
+      {
+        title: "Risk Management Essentials",
+        lessons: ["Identifying and scoring risk", "Controls, transfer and retention", "Risk registers in practice"],
+      },
+      {
+        title: "Underwriting & Actuarial Basics",
+        lessons: ["Underwriting inputs and decisions", "Pricing and experience rating", "How actuaries price risk"],
+      },
+    ],
+    outcomes: [
+      "Run a simple risk assessment",
+      "Make sound underwriting calls",
+      "Speak the language of pricing and risk",
+    ],
+  },
+];
+
+const CPD_COURSES: Course[] = CPD_SEEDS.map(cpdCourse);
+
+/* The public catalogue: full programmes first (so related-course
+   rails prefer them), then the CPD minis. */
+export const CATALOG: Course[] = [...PROGRAMMES, ...CPD_COURSES];
+
+/* Self-paced is offered on every full programme; the CPD minis are
+   already the short format, so they are full-programme only. */
+export const supportsSelfPaced = (course: Course) => course.category !== CPD_CATEGORY;
 
 /** Lookup helpers - the /course/:slug route resolves content by slug. */
 export const getCourse = (slug: string) => CATALOG.find((c) => c.slug === slug);

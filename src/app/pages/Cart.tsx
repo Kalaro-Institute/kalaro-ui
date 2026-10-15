@@ -7,7 +7,7 @@ import {
 import { toast } from "sonner";
 import { useCart, type CartItem } from "@/context/CartContext";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
-import { getCourse, NGN_PER_USD } from "@/app/data/courses";
+import { getCourse, NGN_PER_USD, SELF_PACED } from "@/app/data/courses";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 
 const BANK = {
@@ -41,9 +41,14 @@ export default function Cart() {
 
   /* Exact naira fee for a course line. Bags saved before the naira
      rollout carry no priceNgn - recover it from the catalogue so those
-     lines never fall back to a USD display. */
-  const lineNgn = (i: CartItem) =>
-    i.kind === "course" ? i.priceNgn ?? getCourse(i.slug)?.priceNgn : undefined;
+     lines never fall back to a USD display. Self-paced lines resolve
+     to the self-paced fee, never the full-programme figure. */
+  const lineNgn = (i: CartItem) => {
+    if (i.kind !== "course") return undefined;
+    if (i.priceNgn != null) return i.priceNgn;
+    if (i.variant === "self-paced") return SELF_PACED.priceNgn;
+    return getCourse(i.slug)?.priceNgn;
+  };
 
   /* Local totals for a set of lines: exact naira for course fees plus
      the converted value of USD-priced services/products. formatTotal
@@ -81,6 +86,7 @@ export default function Cart() {
               kind: i.kind,
               slug: i.slug,
               qty: i.qty,
+              ...(i.variant ? { variant: i.variant } : {}),
             })),
           },
         },

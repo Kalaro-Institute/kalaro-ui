@@ -2,8 +2,9 @@ import {
   BookOpen, Star, ShieldCheck,
   ClipboardCheck, ClipboardList, Bot, Rss, Video, Library, FileText,
   HelpCircle, Globe, Landmark,
-  Users, Monitor,
+  Users, Monitor, Stethoscope, Plane, MapPin,
 } from "lucide-react";
+import { CPD_CATEGORY } from "@/app/data/courses";
 export type NavSubItem = {
   label: string;
   to: string;
@@ -70,12 +71,6 @@ export const COURSES: NavDropdownItem[] = [
     desc: "Handle enquiries and complaints across chat, email and phone.",
   },
   {
-    icon: <Globe className="w-4 h-4" />,
-    label: "Flight & Hotel Bookings",
-    to: "/course/flight-hotel-bookings",
-    desc: "Search, price and confirm flights and hotel stays for clients.",
-  },
-  {
     icon: <Monitor className="w-4 h-4" />,
     label: "Website Development",
     to: "/course/website-development",
@@ -86,6 +81,12 @@ export const COURSES: NavDropdownItem[] = [
     label: "Project Management",
     to: "/course/project-management",
     desc: "Plan, schedule and deliver projects on time and on budget.",
+  },
+  {
+    icon: <Stethoscope className="w-4 h-4" />,
+    label: "Continuous Professional Development",
+    to: `/courses?category=${encodeURIComponent(CPD_CATEGORY)}`,
+    desc: "Short CPD courses for nurses and healthcare professionals.",
   },
 ];
 /* -- NCLEX ------------------------------------------------------ */
@@ -122,6 +123,12 @@ export const NCLEX_GROUPS: NavDropdownItem[] = [
       { label: "Professional Document Processing", to: "/nclex/services/document-processing" },
     ],
   },
+  {
+    icon: <MapPin className="w-4 h-4" />,
+    label: "Kenya NCLEX & Travel",
+    to: "/services/permanent-residency/services/kenya-travel-support",
+    desc: "Kenya NCLEX registration, exams and travel support",
+  },
 ];
 /* -- Resources -------------------------------------------------- */
 export const RESOURCES: NavDropdownItem[] = [
@@ -139,8 +146,13 @@ export const RESOURCES: NavDropdownItem[] = [
       { label: "Canada Study Visa Support", to: "/services/permanent-residency/services/canada-study-visa" },
       { label: "Canada Express Entry Support", to: "/services/permanent-residency/services/canada-express-entry" },
       { label: "International Payments", to: "/services/permanent-residency/services/international-payments" },
-      { label: "Kenya NCLEX & Travel Support", to: "/services/permanent-residency/services/kenya-travel-support" },
     ],
+  },
+  {
+    icon: <Plane className="w-4 h-4" />,
+    label: "Flight & Hotel Bookings",
+    to: "/course/flight-hotel-bookings",
+    desc: "Search, price and confirm flights and hotel stays for clients.",
   },
   {
     icon: <Landmark className="w-4 h-4" />,

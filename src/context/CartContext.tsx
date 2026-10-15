@@ -38,6 +38,10 @@ export type CartItem = {
   qty: number;
   /** Human label for what changes on purchase. */
   meta?: string;
+  /** Purchase track for courses (e.g. "self-paced"). Distinguishes a
+      self-paced enrolment from the full programme of the same slug
+      so both can sit in the bag at once. */
+  variant?: string;
 };
 
 type CartContextValue = {
@@ -49,14 +53,15 @@ type CartContextValue = {
   /** Sum of priceUsd * qty across every line. */
   count: number;
   subtotalUsd: number;
-  has: (kind: CartKind, slug: string) => boolean;
+  has: (kind: CartKind, slug: string, variant?: string) => boolean;
 };
 
 const STORAGE_KEY = "kalaro_cart_v1";
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const makeKey = (kind: CartKind, slug: string) => `${kind}:${slug}`;
+const makeKey = (kind: CartKind, slug: string, variant?: string) =>
+  `${kind}:${slug}${variant ? `:${variant}` : ""}`;
 
 function readStored(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -93,7 +98,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem = useCallback<CartContextValue["addItem"]>((item) => {
-    const key = makeKey(item.kind, item.slug);
+    const key = makeKey(item.kind, item.slug, item.variant);
     /* Courses and services are one-per-order; products can repeat. */
     const maxQty = item.kind === "product" ? 10 : 1;
 
@@ -130,8 +135,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clear = useCallback(() => setItems([]), []);
 
   const has = useCallback(
-    (kind: CartKind, slug: string) =>
-      items.some((i) => i.key === makeKey(kind, slug)),
+    (kind: CartKind, slug: string, variant?: string) =>
+      items.some((i) => i.key === makeKey(kind, slug, variant)),
     [items],
   );
 

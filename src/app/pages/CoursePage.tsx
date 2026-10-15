@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import {
   Clock, BookOpen, Play, Check, CheckCircle, AlertCircle,
@@ -6,7 +6,10 @@ import {
   ShoppingBag, ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getCourse, totalLessons, CATALOG } from "@/app/data/courses";
+import {
+  getCourse, totalLessons, CATALOG,
+  SELF_PACED, supportsSelfPaced, weeksLabel,
+} from "@/app/data/courses";
 import { useLocationPricing } from "@/app/hooks/useLocationPricing";
 import { useCart } from "@/context/CartContext";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
@@ -19,8 +22,16 @@ export default function CoursePage() {
   const { formatCoursePrice } = useLocationPricing();
   const { addItem, has } = useCart();
 
+  /* Selected track per slug so navigating between programmes never
+     bleeds one course's choice onto another. CPD courses never set
+     it - they have no self-paced option. */
+  const [tracks, setTracks] = useState<Record<string, "full" | "self">>({});
+  const track = (slug && tracks[slug]) || "full";
+  const selectTrack = (t: "full" | "self") => {
+    if (slug) setTracks((prev) => ({ ...prev, [slug]: t }));
+  };
+
   const course = slug ? getCourse(slug) : undefined;
-  const inCart = course ? has("course", course.slug) : false;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,7 +57,49 @@ export default function CoursePage() {
     );
   }
 
-  const lessons = totalLessons(course);
+  /* Track-aware facts: the self-paced track swaps price, modules,
+     includes, expectations and outcomes for its fixed format. */
+  const canSelfPace = supportsSelfPaced(course);
+  const self = canSelfPace && track === "self";
+  const priceNgn = self ? SELF_PACED.priceNgn : course.priceNgn;
+  const priceUsd = self ? SELF_PACED.priceUsd : course.priceUsd;
+  const modules = self ? SELF_PACED.modules : course.modules;
+  const includes = self ? SELF_PACED.includes : course.includes;
+  const expectations = self ? SELF_PACED.expectations : course.expectations;
+  const outcomes = self
+    ? [
+        `Understand the core ideas behind ${course.title}`,
+        "Replay the two recordings whenever you need a refresher",
+        "Confirm your understanding with the knowledge-check quiz",
+      ]
+    : course.outcomes;
+  const lessons = modules.reduce((n, m) => n + m.lessons.length, 0);
+  const inCart = has("course", course.slug, self ? "self-paced" : undefined);
+  const checkoutHref = self
+    ? `/checkout/${course.slug}?track=self-paced`
+    : `/checkout/${course.slug}`;
+
+  /* Segmented track picker, rendered in both enrol cards. */
+  const trackToggle = canSelfPace ? (
+    <div className="flex gap-1.5 p-1.5 bg-gray-100 rounded-full mb-4">
+      {([["full", "Full programme"], ["self", "Self-paced"]] as const).map(
+        ([t, label]) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => selectTrack(t)}
+            className={`flex-1 text-xs font-bold py-2 rounded-full transition-colors ${
+              track === t
+                ? "bg-[#1b5e20] text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {label}
+          </button>
+        ),
+      )}
+    </div>
+  ) : null;
 
   /* Related programmes: same category first, then the rest. */
   const related = [
@@ -97,7 +150,7 @@ export default function CoursePage() {
                 {course.summary}
               </p>
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-200">
-                <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-green-400" /> {course.durationWeeks} weeks</span>
+                <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-green-400" /> {self ? "Self-paced" : weeksLabel(course.durationWeeks)}</span>
                 <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4 text-green-400" /> {lessons} lessons</span>
                 <span className="flex items-center gap-1.5"><GraduationCap className="w-4 h-4 text-green-400" /> {course.level}</span>
                 <span className="flex items-center gap-1.5"><Award className="w-4 h-4 text-green-400" /> {course.instructor}</span>
@@ -106,13 +159,18 @@ export default function CoursePage() {
 
             {/* Hero enrol card */}
             <div className="w-full md:w-80 shrink-0 bg-white rounded-3xl p-6 shadow-2xl border border-white/60">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-1">Full programme</p>
-              <p className="text-4xl font-extrabold text-[#1a2332] mb-1">
-                {formatCoursePrice(course.priceNgn, course.priceUsd)}
+              {trackToggle}
+              <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-1">
+                {self ? SELF_PACED.label : "Full programme"}
               </p>
-              <p className="text-xs text-gray-500 mb-5">One-time payment &middot; Lifetime access</p>
+              <p className="text-4xl font-extrabold text-[#1a2332] mb-1">
+                {formatCoursePrice(priceNgn, priceUsd)}
+              </p>
+              <p className="text-xs text-gray-500 mb-5">
+                One-time payment &middot; {self ? "No certificate" : "Lifetime access"}
+              </p>
               <Link
-                to={`/checkout/${course.slug}`}
+                to={checkoutHref}
                 className="w-full bg-[#1b5e20] hover:bg-[#145218] text-white text-sm font-bold py-3.5 rounded-full transition-colors flex items-center justify-center gap-2 mb-3"
               >
                 Enrol now <ArrowRight className="w-4 h-4" />
@@ -122,13 +180,18 @@ export default function CoursePage() {
                   addItem({
                     kind: "course",
                     slug: course.slug,
-                    title: course.title,
-                    priceUsd: course.priceUsd,
-                    priceNgn: course.priceNgn,
+                    variant: self ? "self-paced" : undefined,
+                    title: self ? `${course.title} (Self-paced)` : course.title,
+                    priceUsd,
+                    priceNgn,
                     image: course.img,
-                    meta: `${course.durationWeeks} weeks · ${lessons} lessons`,
+                    meta: self
+                      ? "Self-paced · 2 video recordings + quiz"
+                      : `${weeksLabel(course.durationWeeks)} · ${lessons} lessons`,
                   });
-                  toast.success(`${course.title} added to your bag`);
+                  toast.success(
+                    `${course.title}${self ? " (Self-paced)" : ""} added to your bag`,
+                  );
                 }}
                 className={`w-full border-2 font-semibold text-sm py-3 rounded-full transition-colors flex items-center justify-center gap-2 ${
                   inCart
@@ -152,8 +215,14 @@ export default function CoursePage() {
                   <p className="text-[10px] font-semibold text-gray-500">Secure checkout</p>
                 </div>
                 <div className="text-center">
-                  <Award className="w-4 h-4 text-green-600 mx-auto mb-1" />
-                  <p className="text-[10px] font-semibold text-gray-500">Certificate</p>
+                  {self ? (
+                    <AlertCircle className="w-4 h-4 text-amber-600 mx-auto mb-1" />
+                  ) : (
+                    <Award className="w-4 h-4 text-green-600 mx-auto mb-1" />
+                  )}
+                  <p className="text-[10px] font-semibold text-gray-500">
+                    {self ? "No certificate" : "Certificate"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -176,10 +245,12 @@ export default function CoursePage() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1a2332] mb-4">What to expect</h2>
               <div className="w-12 h-1 bg-green-600 rounded-full mb-5" />
               <p className="text-gray-500 text-sm mb-5">
-                Concretely, here is what you will be doing as you work through the programme.
+                {self
+                  ? "Your track in three steps - two recordings, then the quiz."
+                  : "Concretely, here is what you will be doing as you work through the programme."}
               </p>
               <ul className="grid sm:grid-cols-2 gap-3">
-                {course.expectations.map((item) => (
+                {expectations.map((item) => (
                   <li
                     key={item}
                     className="flex items-start gap-2.5 bg-white border border-gray-100 rounded-2xl px-4 py-3.5 text-sm text-gray-700 shadow-sm hover:border-green-200 transition-colors"
@@ -196,10 +267,12 @@ export default function CoursePage() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1a2332] mb-4">Course outline</h2>
               <div className="w-12 h-1 bg-green-600 rounded-full mb-5" />
               <p className="text-gray-500 text-sm mb-6">
-                {course.modules.length} modules covering everything you need to practise the work.
+                {self
+                  ? `${modules.length} modules: two video recordings and a knowledge-check quiz - stream only, downloads disabled.`
+                  : `${modules.length} modules covering everything you need to practise the work.`}
               </p>
               <div className="space-y-4">
-                {course.modules.map((m, i) => (
+                {modules.map((m, i) => (
                   <div
                     key={m.title}
                     className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow"
@@ -235,7 +308,7 @@ export default function CoursePage() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1a2332] mb-4">What you will learn</h2>
               <div className="w-12 h-1 bg-green-600 rounded-full mb-5" />
               <ul className="grid sm:grid-cols-2 gap-3">
-                {course.outcomes.map((o, i) => (
+                {outcomes.map((o, i) => (
                   <li
                     key={o}
                     className="flex items-start gap-3 bg-gradient-to-br from-green-50 to-white border border-green-100 rounded-2xl px-5 py-4"
@@ -267,13 +340,18 @@ export default function CoursePage() {
             {/* Enrol card */}
             <aside className="lg:sticky lg:top-24 space-y-5">
               <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-lg">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-1">Full programme</p>
-                <p className="text-3xl font-extrabold text-[#1a2332] mb-1">
-                  {formatCoursePrice(course.priceNgn, course.priceUsd)}
+                {trackToggle}
+                <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-1">
+                  {self ? SELF_PACED.label : "Full programme"}
                 </p>
-                <p className="text-xs text-gray-500 mb-5">One-time payment &middot; Lifetime access</p>
+                <p className="text-3xl font-extrabold text-[#1a2332] mb-1">
+                  {formatCoursePrice(priceNgn, priceUsd)}
+                </p>
+                <p className="text-xs text-gray-500 mb-5">
+                  One-time payment &middot; {self ? "No certificate" : "Lifetime access"}
+                </p>
                 <Link
-                  to={`/checkout/${course.slug}`}
+                  to={checkoutHref}
                   className="w-full bg-[#1b5e20] hover:bg-[#145218] text-white text-sm font-bold py-3.5 rounded-full transition-colors flex items-center justify-center gap-2 mb-3"
                 >
                   Enrol now
@@ -284,13 +362,18 @@ export default function CoursePage() {
                     addItem({
                       kind: "course",
                       slug: course.slug,
-                      title: course.title,
-                      priceUsd: course.priceUsd,
-                      priceNgn: course.priceNgn,
+                      variant: self ? "self-paced" : undefined,
+                      title: self ? `${course.title} (Self-paced)` : course.title,
+                      priceUsd,
+                      priceNgn,
                       image: course.img,
-                      meta: `${course.durationWeeks} weeks · ${lessons} lessons`,
+                      meta: self
+                        ? "Self-paced · 2 video recordings + quiz"
+                        : `${weeksLabel(course.durationWeeks)} · ${lessons} lessons`,
                     });
-                    toast.success(`${course.title} added to your bag`);
+                    toast.success(
+                      `${course.title}${self ? " (Self-paced)" : ""} added to your bag`,
+                    );
                   }}
                   className={`w-full border-2 font-semibold text-sm py-3 rounded-full transition-colors flex items-center justify-center gap-2 mb-3 ${
                     inCart
@@ -322,13 +405,19 @@ export default function CoursePage() {
                   What&apos;s included
                 </p>
                 <ul className="space-y-3">
-                  {course.includes.map((inc) => (
+                  {includes.map((inc) => (
                     <li key={inc} className="flex items-start gap-2.5 text-sm text-gray-600">
                       <CheckCircle className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
                       {inc}
                     </li>
                   ))}
                 </ul>
+                {self && (
+                  <p className="mt-3 flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-px" />
+                    No certificate is issued on the self-paced track.
+                  </p>
+                )}
               </div>
 
               {/* Pay your way */}
@@ -365,7 +454,9 @@ export default function CoursePage() {
                   </div>
                 </div>
                 <p className="text-xs text-green-100/70 mt-4 leading-relaxed">
-                  Weekly live Q&amp;A sessions plus lifetime access to every lesson and template.
+                  {self
+                    ? "Lifetime access to your recordings and quiz - study on your own schedule."
+                    : "Weekly live Q&amp;A sessions plus lifetime access to every lesson and template."}
                 </p>
               </div>
             </aside>
@@ -423,13 +514,15 @@ export default function CoursePage() {
       {/* Mobile sticky enrol bar */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 px-4 py-3 flex items-center justify-between gap-4 shadow-[0_-6px_24px_rgba(0,0,0,0.08)]">
         <div className="min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Full programme</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+            {self ? SELF_PACED.label : "Full programme"}
+          </p>
           <p className="text-lg font-extrabold text-[#1a2332] leading-tight truncate">
-            {formatCoursePrice(course.priceNgn, course.priceUsd)}
+            {formatCoursePrice(priceNgn, priceUsd)}
           </p>
         </div>
         <Link
-          to={`/checkout/${course.slug}`}
+          to={checkoutHref}
           className="shrink-0 bg-[#1b5e20] hover:bg-[#145218] text-white text-sm font-bold px-6 py-3 rounded-full transition-colors flex items-center gap-2"
         >
           Enrol now <ArrowRight className="w-4 h-4" />
