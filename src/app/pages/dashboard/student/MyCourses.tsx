@@ -6,9 +6,11 @@ import {
   AlertCircle,
   ArrowRight,
   Clock,
+  Share2,
 } from "lucide-react";
 import { apiRequest } from "@/lib/api-client";
 import { CourseDetailModal } from "@/app/components/CourseDetailModal";
+import { ShareCardModal } from "@/app/components/ShareCardModal";
 import type { CourseCardData } from "@/app/components/CourseCard";
 
 interface Enrollment {
@@ -30,6 +32,7 @@ export default function MyCourses() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [shareCourseTitle, setShareCourseTitle] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -64,10 +67,8 @@ export default function MyCourses() {
           [],
         );
 
-        console.log("final matched:", matched);
         setEnrolledCourses(matched);
       } catch (err) {
-        console.error("load error:", err);
         setError(true);
       } finally {
         setIsLoading(false);
@@ -118,11 +119,13 @@ export default function MyCourses() {
           {enrolledCourses.map((course) => (
             <div
               key={course.id}
-              onClick={() => setSelectedSlug(course.slug)}
               className="bg-white border border-gray-100 rounded-2xl overflow-hidden cursor-pointer hover:border-[#1b5e20]/30 hover:shadow-md transition-all group"
             >
               {/* Cover */}
-              <div className="h-40 bg-[#e8f5e9] overflow-hidden relative">
+              <div
+                onClick={() => setSelectedSlug(course.slug)}
+                className="h-40 bg-[#e8f5e9] overflow-hidden relative"
+              >
                 {course.cover_image ? (
                   <img
                     src={course.cover_image}
@@ -137,10 +140,21 @@ export default function MyCourses() {
                 <div className="absolute top-3 left-3 bg-[#1b5e20] text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
                   Enrolled
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShareCourseTitle(course.title);
+                  }}
+                  className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#1b5e20] hover:bg-white transition-colors"
+                  aria-label="Share your enrollment"
+                  title="Share your enrollment"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                </button>
               </div>
 
               {/* Content */}
-              <div className="p-4">
+              <div onClick={() => setSelectedSlug(course.slug)} className="p-4">
                 <h3 className="text-sm font-bold text-[#1a2332] mb-1 leading-snug line-clamp-2 group-hover:text-[#1b5e20] transition-colors">
                   {course.title}
                 </h3>
@@ -177,6 +191,13 @@ export default function MyCourses() {
           slug={selectedSlug}
           onClose={() => setSelectedSlug(null)}
           isEnrolled
+        />
+      )}
+
+      {shareCourseTitle && (
+        <ShareCardModal
+          courseTitle={shareCourseTitle}
+          onClose={() => setShareCourseTitle(null)}
         />
       )}
     </div>

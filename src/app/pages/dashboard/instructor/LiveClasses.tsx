@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "@/lib/api-client";
 import type { ApiError } from "@/lib/api-client";
+import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 // ─── Types ───────────────────────────────────────────────────
@@ -73,6 +74,7 @@ function ScheduleSessionModal({
   const [durationMinutes, setDurationMinutes] = useState("60");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -277,6 +279,15 @@ export default function InstructorLiveClasses() {
   const [sessionsError, setSessionsError] = useState<string | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("google_connected") === "true") {
+      toast.success("Google Calendar connected.");
+      searchParams.delete("google_connected");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     apiRequest<Course[]>("/catalog/instructor/courses")

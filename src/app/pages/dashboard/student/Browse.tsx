@@ -5,6 +5,7 @@ import { CourseCard } from "@/app/components/CourseCard";
 import type { CourseCardData } from "@/app/components/CourseCard";
 import { toast } from "sonner";
 import { CourseDetailModal } from "@/app/components/CourseDetailModal";
+import { ShareCardModal } from "@/app/components/ShareCardModal";
 
 export default function BrowseCourses() {
   const [courses, setCourses] = useState<CourseCardData[]>([]);
@@ -12,8 +13,10 @@ export default function BrowseCourses() {
   const [error, setError] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [justEnrolledTitle, setJustEnrolledTitle] = useState<string | null>(
+    null,
+  );
 
-  
   const fetchCourses = () => {
     setIsLoading(true);
     apiRequest<CourseCardData[]>("/catalog/courses")
@@ -76,7 +79,6 @@ export default function BrowseCourses() {
           </p>
         </div>
       ) : (
-        // In Browse.tsx, update the grid:
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((course) => (
             <CourseCard
@@ -93,9 +95,22 @@ export default function BrowseCourses() {
           onClose={() => setSelectedSlug(null)}
           locked
           onEnrolled={() => {
+            // Grab the title before clearing selectedSlug, since the
+            // share card needs it after the detail modal closes.
+            const enrolledCourse = courses.find((c) => c.slug === selectedSlug);
             setSelectedSlug(null);
             fetchCourses();
+            if (enrolledCourse) {
+              setJustEnrolledTitle(enrolledCourse.title);
+            }
           }}
+        />
+      )}
+
+      {justEnrolledTitle && (
+        <ShareCardModal
+          courseTitle={justEnrolledTitle}
+          onClose={() => setJustEnrolledTitle(null)}
         />
       )}
     </div>
