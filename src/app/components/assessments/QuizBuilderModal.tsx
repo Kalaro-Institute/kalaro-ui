@@ -15,6 +15,7 @@ import {
 import { apiRequest } from "@/lib/api-client";
 import type { ApiError } from "@/lib/api-client";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/app/components/ConfirmDialog";
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -163,7 +164,6 @@ function QuestionCard({
 
   const updateChoice = (i: number, updated: Choice) => {
     const next = [...question.choices];
-    // For MCQ, only one choice can be correct
     if (updated.is_correct && question.type === "mcq") {
       next.forEach((c, j) => {
         next[j] = { ...c, is_correct: j === i };
@@ -196,14 +196,12 @@ function QuestionCard({
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-      {/* Question header */}
       <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
         <span className="text-xs font-bold text-gray-400 uppercase tracking-wide shrink-0">
           Q{index + 1}
         </span>
         <div className="flex-1" />
         <div className="flex items-center gap-1">
-          {/* Type toggle */}
           <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-0.5">
             <button
               type="button"
@@ -242,7 +240,6 @@ function QuestionCard({
               Short answer
             </button>
           </div>
-          {/* Points */}
           <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-1">
             <Award className="w-3 h-3 text-gray-400" />
             <input
@@ -260,7 +257,6 @@ function QuestionCard({
             />
             <span className="text-[11px] text-gray-400">pt</span>
           </div>
-          {/* Reorder */}
           <button
             type="button"
             onClick={onMoveUp}
@@ -292,7 +288,6 @@ function QuestionCard({
       </div>
 
       <div className="p-4 space-y-3">
-        {/* Question text */}
         <textarea
           rows={2}
           placeholder="Enter your question..."
@@ -301,7 +296,6 @@ function QuestionCard({
           className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-[#1b5e20] transition-colors resize-none"
         />
 
-        {/* MCQ choices */}
         {question.type === "mcq" && (
           <div className="space-y-2">
             <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
@@ -336,7 +330,6 @@ function QuestionCard({
           </div>
         )}
 
-        {/* Short answer hint */}
         {question.type === "short_answer" && (
           <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5">
             <p className="text-xs text-amber-700">
@@ -369,23 +362,23 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
   const [existingQuiz, setExistingQuiz] = useState<Quiz | null>(null);
   const [isLoadingQuiz, setIsLoadingQuiz] = useState(true);
 
-  // Settings
   const [title, setTitle] = useState("");
   const [timeLimitMinutes, setTimeLimitMinutes] = useState("");
   const [passPercent, setPassPercent] = useState("70");
   const [maxAttempts, setMaxAttempts] = useState("3");
 
-  // Questions
   const [questions, setQuestions] = useState<Question[]>([newQuestion(1)]);
+  const [removedQuestionIds, setRemovedQuestionIds] = useState<number[]>([]);
 
-  // Submission state
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [isSavingQuestions, setIsSavingQuestions] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [quizId, setQuizId] = useState<number | null>(null);
   const [step, setStep] = useState<"settings" | "questions">("settings");
 
-  // Load existing quiz if one exists
+  const [showDeleteQuizConfirm, setShowDeleteQuizConfirm] = useState(false);
+  const [isDeletingQuiz, setIsDeletingQuiz] = useState(false);
+
   useEffect(() => {
     apiRequest<Quiz>(`/assessments/lessons/${lessonId}/quiz`)
       .then((quiz) => {
@@ -424,18 +417,25 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
           : 0,
         pass_percent: Number(passPercent),
         max_attempts: Number(maxAttempts),
-        questions: [],
       };
 
-      const quiz = await apiRequest<Quiz>(
-        `/assessments/lessons/${lessonId}/quiz`,
-        { method: "POST", body: payload },
-      );
+      if (quizId) {
+        await apiRequest<Quiz>(`/assessments/quizzes/${quizId}`, {
+          method: "PATCH",
+          body: payload,
+        });
+        toast.success("Quiz settings updated.");
+      } else {
+        const quiz = await apiRequest<Quiz>(
+          `/assessments/lessons/${lessonId}/quiz`,
+          { method: "POST", body: { ...payload, questions: [] } },
+        );
+        setQuizId(quiz.id);
+        toast.success("Quiz created. Now add your questions.");
+      }
 
-      setQuizId(quiz.id);
       setSettingsSaved(true);
       setStep("questions");
-      toast.success("Quiz created. Now add your questions.");
     } catch (err) {
       const apiErr = err as ApiError;
       toast.error(apiErr.message ?? "Failed to save quiz settings.");
@@ -447,7 +447,6 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
   const handleSaveQuestions = async () => {
     if (!quizId) return;
 
-    // Validate
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
       if (!q.text.trim()) {
@@ -468,25 +467,42 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
 
     setIsSavingQuestions(true);
     try {
-      // Post each question sequentially
-      for (const question of questions) {
-        await apiRequest(`/assessments/quizzes/${quizId}/questions`, {
-          method: "POST",
-          body: {
-            text: question.text.trim(),
-            type: question.type,
-            order: question.order,
-            points: question.points,
-            choices:
-              question.type === "mcq"
-                ? question.choices.map((c) => ({
-                    text: c.text.trim(),
-                    is_correct: c.is_correct,
-                    order: c.order,
-                  }))
-                : [],
-          },
+      // Remove questions the instructor deleted from an existing quiz
+      for (const id of removedQuestionIds) {
+        await apiRequest(`/assessments/quiz-questions/${id}`, {
+          method: "DELETE",
         });
+      }
+      setRemovedQuestionIds([]);
+
+      // Update existing questions, create new ones
+      for (const question of questions) {
+        const body = {
+          text: question.text.trim(),
+          type: question.type,
+          order: question.order,
+          points: question.points,
+          choices:
+            question.type === "mcq"
+              ? question.choices.map((c) => ({
+                  text: c.text.trim(),
+                  is_correct: c.is_correct,
+                  order: c.order,
+                }))
+              : [],
+        };
+
+        if (question.id) {
+          await apiRequest(`/assessments/quiz-questions/${question.id}`, {
+            method: "PATCH",
+            body,
+          });
+        } else {
+          await apiRequest(`/assessments/quizzes/${quizId}/questions`, {
+            method: "POST",
+            body,
+          });
+        }
       }
 
       toast.success("Quiz saved successfully.");
@@ -499,6 +515,24 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
     }
   };
 
+  const handleDeleteQuiz = async () => {
+    if (!quizId) return;
+    setIsDeletingQuiz(true);
+    try {
+      await apiRequest(`/assessments/quizzes/${quizId}`, {
+        method: "DELETE",
+      });
+      toast.success("Quiz deleted.");
+      onClose();
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Failed to delete quiz.");
+    } finally {
+      setIsDeletingQuiz(false);
+      setShowDeleteQuizConfirm(false);
+    }
+  };
+
   const addQuestion = () => {
     setQuestions((prev) => [...prev, newQuestion(prev.length + 1)]);
   };
@@ -508,11 +542,15 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
   };
 
   const removeQuestion = (index: number) => {
-    setQuestions((prev) =>
-      prev
+    setQuestions((prev) => {
+      const removed = prev[index];
+      if (removed.id) {
+        setRemovedQuestionIds((ids) => [...ids, removed.id as number]);
+      }
+      return prev
         .filter((_, i) => i !== index)
-        .map((q, i) => ({ ...q, order: i + 1 })),
-    );
+        .map((q, i) => ({ ...q, order: i + 1 }));
+    });
   };
 
   const moveQuestion = (index: number, direction: "up" | "down") => {
@@ -544,13 +582,25 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
               {lessonTitle}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 shrink-0"
-            aria-label="Close"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            {quizId && (
+              <button
+                onClick={() => setShowDeleteQuizConfirm(true)}
+                className="p-2 rounded-lg hover:bg-red-50 transition-colors text-gray-400 hover:text-red-500"
+                aria-label="Delete quiz"
+                title="Delete this quiz"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-400"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {isLoadingQuiz ? (
@@ -596,7 +646,6 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
 
             {/* Scrollable content */}
             <div className="flex-1 overflow-y-auto px-6 py-5">
-              {/* Settings step */}
               {step === "settings" && (
                 <div className="space-y-4">
                   <div>
@@ -670,6 +719,8 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" /> Saving...
                       </>
+                    ) : quizId ? (
+                      "Save settings"
                     ) : (
                       "Save and add questions"
                     )}
@@ -677,10 +728,8 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
                 </div>
               )}
 
-              {/* Questions step */}
               {step === "questions" && (
                 <div className="space-y-4">
-                  {/* Summary bar */}
                   <div className="flex items-center justify-between bg-[#f7faf7] border border-gray-100 rounded-xl px-4 py-3">
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span>
@@ -703,10 +752,9 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
                     </button>
                   </div>
 
-                  {/* Questions */}
                   {questions.map((question, i) => (
                     <QuestionCard
-                      key={i}
+                      key={question.id ?? `new-${i}`}
                       question={question}
                       index={i}
                       total={questions.length}
@@ -728,7 +776,6 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
               )}
             </div>
 
-            {/* Footer */}
             {step === "questions" && (
               <div className="px-6 py-4 border-t border-gray-100 shrink-0 flex items-center justify-between">
                 <p className="text-xs text-gray-400">
@@ -755,6 +802,18 @@ export function QuizBuilderModal({ lessonId, lessonTitle, onClose }: Props) {
           </>
         )}
       </div>
+
+      {showDeleteQuizConfirm && (
+        <ConfirmDialog
+          title="Delete this quiz?"
+          message={`"${title}" and all ${questions.length} question${
+            questions.length !== 1 ? "s" : ""
+          } will be permanently removed. Any student attempts may be affected. This cannot be undone.`}
+          isConfirming={isDeletingQuiz}
+          onConfirm={handleDeleteQuiz}
+          onCancel={() => setShowDeleteQuizConfirm(false)}
+        />
+      )}
     </div>
   );
 }

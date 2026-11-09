@@ -15,12 +15,15 @@ import {
   Video,
   ArrowLeft,
   Send,
+  Pencil,
+  X,
 } from "lucide-react";
 import { apiRequest, apiUpload } from "@/lib/api-client";
 import type { ApiError } from "@/lib/api-client";
 import { toast } from "sonner";
 import { QuizBuilderModal } from "@/app/components/assessments/QuizBuilderModal";
 import { AssignmentBuilderModal } from "@/app/components/assessments/AssignmentBuilderModal";
+import { ConfirmDialog } from "@/app/components/ConfirmDialog";
 import { ClipboardList, BookMarked } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────
@@ -176,7 +179,6 @@ function CourseDetailsForm({
         });
       }
 
-      // Upload cover image if one was selected — optional, don't fail the whole save
       if (coverFile) {
         try {
           await uploadCover(course.id);
@@ -210,7 +212,6 @@ function CourseDetailsForm({
         </div>
       )}
 
-      {/* Cover image */}
       <div>
         <label className="block text-xs font-semibold text-gray-700 mb-1.5">
           Cover image{" "}
@@ -412,8 +413,17 @@ function CourseDetailsForm({
   );
 }
 
+// ─── Lesson row ─────────────────────────────────────────────
 
-function LessonRow({ lesson }: { lesson: Lesson }) {
+function LessonRow({
+  lesson,
+  onDeleted,
+  onUpdated,
+}: {
+  lesson: Lesson;
+  onDeleted: (lessonId: number) => void;
+  onUpdated: (lesson: Lesson) => void;
+}) {
   const [isVideoUploading, setIsVideoUploading] = useState(false);
   const [isResourceUploading, setIsResourceUploading] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
@@ -424,18 +434,85 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
   const [showQuizBuilder, setShowQuizBuilder] = useState(false);
   const [showAssignmentBuilder, setShowAssignmentBuilder] = useState(false);
 
+  const [title, setTitle] = useState(lesson.title);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [draftTitle, setDraftTitle] = useState(lesson.title);
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [resourceToDelete, setResourceToDelete] = useState<Resource | null>(
+    null,
+  );
+  const [isDeletingResource, setIsDeletingResource] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     apiRequest<Resource[]>(`/catalog/lessons/${lesson.id}/resources`)
       .then((data) => {
         if (!cancelled) setResources(data);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
   }, [lesson.id]);
+
+  const handleSaveTitle = async () => {
+    if (!draftTitle.trim() || draftTitle.trim() === title) {
+      setIsEditingTitle(false);
+      setDraftTitle(title);
+      return;
+    }
+    setIsSavingTitle(true);
+    try {
+      await apiRequest(`/catalog/lessons/${lesson.id}`, {
+        method: "PATCH",
+        body: { title: draftTitle.trim() },
+      });
+      setTitle(draftTitle.trim());
+      setIsEditingTitle(false);
+      onUpdated({ ...lesson, title: draftTitle.trim() });
+      toast.success("Lesson renamed.");
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Failed to rename lesson.");
+    } finally {
+      setIsSavingTitle(false);
+    }
+  };
+
+  const handleDeleteLesson = async () => {
+    setIsDeleting(true);
+    try {
+      await apiRequest(`/catalog/lessons/${lesson.id}`, { method: "DELETE" });
+      toast.success("Lesson deleted.");
+      onDeleted(lesson.id);
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Failed to delete lesson.");
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  const handleDeleteResource = async () => {
+    if (!resourceToDelete) return;
+    setIsDeletingResource(true);
+    try {
+      await apiRequest(
+        `/catalog/lessons/${lesson.id}/resources/${resourceToDelete.id}`,
+        { method: "DELETE" },
+      );
+      setResources((prev) => prev.filter((r) => r.id !== resourceToDelete.id));
+      toast.success("Resource removed.");
+      setResourceToDelete(null);
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Failed to remove resource.");
+    } finally {
+      setIsDeletingResource(false);
+    }
+  };
 
   const handleVideoUpload = async (file: File) => {
     setIsVideoUploading(true);
@@ -494,7 +571,7 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
     <>
       <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
         {/* Lesson header row */}
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-3 px-4 py-3 group">
           <GripVertical className="w-3.5 h-3.5 text-gray-300 shrink-0" />
           <div
             className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
@@ -509,15 +586,82 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
               }`}
             />
           </div>
-          <span className="text-sm text-[#1a2332] font-medium flex-1 truncate">
-            {lesson.title}
-          </span>
+
+          {isEditingTitle ? (
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <input
+                autoFocus
+                type="text"
+                value={draftTitle}
+                onChange={(e) => setDraftTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void handleSaveTitle();
+                  if (e.key === "Escape") {
+                    setIsEditingTitle(false);
+                    setDraftTitle(title);
+                  }
+                }}
+                className="flex-1 min-w-0 text-sm text-[#1a2332] border border-[#1b5e20]/40 rounded-lg px-2.5 py-1.5 outline-none focus:border-[#1b5e20]"
+              />
+              <button
+                type="button"
+                onClick={handleSaveTitle}
+                disabled={isSavingTitle}
+                className="p-1.5 rounded-lg bg-[#1b5e20] text-white hover:bg-[#145218] disabled:opacity-60 transition-colors shrink-0"
+                aria-label="Save lesson title"
+              >
+                {isSavingTitle ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Check className="w-3.5 h-3.5" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditingTitle(false);
+                  setDraftTitle(title);
+                }}
+                disabled={isSavingTitle}
+                className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-400 transition-colors shrink-0"
+                aria-label="Cancel"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <span className="text-sm text-[#1a2332] font-medium flex-1 truncate">
+              {title}
+            </span>
+          )}
+
+          {!isEditingTitle && (
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsEditingTitle(true)}
+                className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors text-gray-400 hover:text-[#1b5e20]"
+                aria-label="Rename lesson"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="p-1.5 rounded-lg hover:bg-red-50 transition-colors text-gray-400 hover:text-red-500"
+                aria-label="Delete lesson"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* Quiz button */}
           <button
             type="button"
             onClick={() => setShowQuizBuilder(true)}
             className="flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors shrink-0"
-            title="Add quiz to this lesson"
+            title="Add or edit quiz for this lesson"
           >
             <ClipboardList className="w-3 h-3" /> Quiz
           </button>
@@ -526,7 +670,7 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
             type="button"
             onClick={() => setShowAssignmentBuilder(true)}
             className="flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors shrink-0"
-            title="Add assignment to this lesson"
+            title="Add or edit assignment for this lesson"
           >
             <BookMarked className="w-3 h-3" /> Assignment
           </button>
@@ -580,7 +724,7 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
               {resources.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center gap-2 bg-gray-50 rounded-lg px-2.5 py-1.5"
+                  className="flex items-center gap-2 bg-gray-50 rounded-lg px-2.5 py-1.5 group/resource"
                 >
                   <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   <span className="text-xs text-gray-700 flex-1 truncate">
@@ -589,6 +733,14 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
                   <span className="text-[11px] text-gray-400 shrink-0">
                     {formatBytes(r.size_bytes)}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => setResourceToDelete(r)}
+                    className="p-1 rounded hover:bg-red-50 text-gray-300 hover:text-red-500 opacity-0 group-hover/resource:opacity-100 transition-all shrink-0"
+                    aria-label={`Remove ${r.title}`}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
                 </div>
               ))}
             </div>
@@ -683,21 +835,40 @@ function LessonRow({ lesson }: { lesson: Lesson }) {
       {showQuizBuilder && (
         <QuizBuilderModal
           lessonId={lesson.id}
-          lessonTitle={lesson.title}
+          lessonTitle={title}
           onClose={() => setShowQuizBuilder(false)}
         />
       )}
       {showAssignmentBuilder && (
         <AssignmentBuilderModal
           lessonId={lesson.id}
-          lessonTitle={lesson.title}
+          lessonTitle={title}
           onClose={() => setShowAssignmentBuilder(false)}
+        />
+      )}
+
+      {showDeleteConfirm && (
+        <ConfirmDialog
+          title="Delete this lesson?"
+          message={`"${title}" will be permanently removed, along with its video, resources, quiz and assignment if any. This cannot be undone.`}
+          isConfirming={isDeleting}
+          onConfirm={handleDeleteLesson}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
+
+      {resourceToDelete && (
+        <ConfirmDialog
+          title="Remove this resource?"
+          message={`"${resourceToDelete.title}" will be permanently removed from this lesson.`}
+          isConfirming={isDeletingResource}
+          onConfirm={handleDeleteResource}
+          onCancel={() => setResourceToDelete(null)}
         />
       )}
     </>
   );
 }
-
 
 function AddLessonForm({
   moduleId,
@@ -724,7 +895,6 @@ function AddLessonForm({
     setIsSubmitting(true);
 
     try {
-      // Step 1: create the lesson
       const lesson = await apiRequest<Lesson>(
         `/catalog/modules/${moduleId}/lessons`,
         {
@@ -740,7 +910,6 @@ function AddLessonForm({
         },
       );
 
-      // Step 2: if video, get presigned URL and upload
       if (contentType === "video" && videoFile) {
         try {
           const { upload_url } = await apiRequest<{ upload_url: string }>(
@@ -754,9 +923,9 @@ function AddLessonForm({
           });
           toast.success("Lesson and video added.");
         } catch {
-          // Lesson was created but video failed — still add the lesson
-          // so the instructor can retry the upload from the lesson row
-          toast.warning("Lesson created but video upload failed. You can retry from the lesson.");
+          toast.warning(
+            "Lesson created but video upload failed. You can retry from the lesson.",
+          );
         }
       } else {
         toast.success("Lesson added.");
@@ -781,7 +950,6 @@ function AddLessonForm({
       </p>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-3">
-        {/* Title and content type on same row */}
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -816,7 +984,6 @@ function AddLessonForm({
           </div>
         </div>
 
-        {/* Video picker — shows when video is selected */}
         {contentType === "video" && (
           <div>
             {videoFile ? (
@@ -860,7 +1027,6 @@ function AddLessonForm({
           </div>
         )}
 
-        {/* Text editor — shows when text is selected */}
         {contentType === "text" && (
           <textarea
             rows={5}
@@ -883,7 +1049,9 @@ function AddLessonForm({
           {isSubmitting ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              {contentType === "video" ? "Creating & uploading..." : "Adding lesson..."}
+              {contentType === "video"
+                ? "Creating & uploading..."
+                : "Adding lesson..."}
             </>
           ) : (
             <>
@@ -905,6 +1073,7 @@ function ModuleCard({
   total,
   onReorder,
   onLessonAdded,
+  onDeleted,
 }: {
   module: Module;
   index: number;
@@ -912,24 +1081,135 @@ function ModuleCard({
   courseId: number;
   onReorder: (moduleId: number, direction: "up" | "down") => void;
   onLessonAdded: (moduleId: number, lesson: Lesson) => void;
+  onDeleted: (moduleId: number) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [lessons, setLessons] = useState<Lesson[]>(module.lessons);
-  const [showQuizBuilder, setShowQuizBuilder] = useState(false);
-  const [showAssignmentBuilder, setShowAssignmentBuilder] = useState(false);
+
+  const [title, setTitle] = useState(module.title);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [draftTitle, setDraftTitle] = useState(module.title);
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleSaveTitle = async () => {
+    if (!draftTitle.trim() || draftTitle.trim() === title) {
+      setIsEditingTitle(false);
+      setDraftTitle(title);
+      return;
+    }
+    setIsSavingTitle(true);
+    try {
+      await apiRequest(`/catalog/modules/${module.id}`, {
+        method: "PATCH",
+        body: { title: draftTitle.trim() },
+      });
+      setTitle(draftTitle.trim());
+      setIsEditingTitle(false);
+      toast.success("Module renamed.");
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Failed to rename module.");
+    } finally {
+      setIsSavingTitle(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await apiRequest(`/catalog/modules/${module.id}`, { method: "DELETE" });
+      toast.success("Module deleted.");
+      onDeleted(module.id);
+    } catch (err) {
+      const apiErr = err as ApiError;
+      toast.error(apiErr.message ?? "Failed to delete module.");
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
 
   return (
     <div className="bg-[#f7faf7] border border-gray-200 rounded-xl overflow-hidden">
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex items-center gap-3 px-4 py-3 group">
         <GripVertical className="w-4 h-4 text-gray-300 shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-[#1a2332] truncate">
-            {module.title}
-          </p>
-          <p className="text-xs text-gray-400">
-            {lessons.length} lesson{lessons.length !== 1 ? "s" : ""}
-          </p>
+          {isEditingTitle ? (
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                type="text"
+                value={draftTitle}
+                onChange={(e) => setDraftTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void handleSaveTitle();
+                  if (e.key === "Escape") {
+                    setIsEditingTitle(false);
+                    setDraftTitle(title);
+                  }
+                }}
+                className="flex-1 min-w-0 text-sm font-semibold text-[#1a2332] border border-[#1b5e20]/40 rounded-lg px-2.5 py-1.5 outline-none focus:border-[#1b5e20]"
+              />
+              <button
+                type="button"
+                onClick={handleSaveTitle}
+                disabled={isSavingTitle}
+                className="p-1.5 rounded-lg bg-[#1b5e20] text-white hover:bg-[#145218] disabled:opacity-60 transition-colors shrink-0"
+                aria-label="Save module title"
+              >
+                {isSavingTitle ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Check className="w-3.5 h-3.5" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditingTitle(false);
+                  setDraftTitle(title);
+                }}
+                disabled={isSavingTitle}
+                className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-400 transition-colors shrink-0"
+                aria-label="Cancel"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-[#1a2332] truncate">
+                {title}
+              </p>
+              <p className="text-xs text-gray-400">
+                {lessons.length} lesson{lessons.length !== 1 ? "s" : ""}
+              </p>
+            </>
+          )}
         </div>
+
+        {!isEditingTitle && (
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+            <button
+              type="button"
+              onClick={() => setIsEditingTitle(true)}
+              className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors text-gray-400 hover:text-[#1b5e20]"
+              aria-label="Rename module"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="p-1.5 rounded-lg hover:bg-red-50 transition-colors text-gray-400 hover:text-red-500"
+              aria-label="Delete module"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -973,7 +1253,18 @@ function ModuleCard({
               </p>
             ) : (
               lessons.map((lesson) => (
-                <LessonRow key={lesson.id} lesson={lesson} />
+                <LessonRow
+                  key={lesson.id}
+                  lesson={lesson}
+                  onDeleted={(lessonId) =>
+                    setLessons((prev) => prev.filter((l) => l.id !== lessonId))
+                  }
+                  onUpdated={(updated) =>
+                    setLessons((prev) =>
+                      prev.map((l) => (l.id === updated.id ? updated : l)),
+                    )
+                  }
+                />
               ))
             )}
           </div>
@@ -988,7 +1279,17 @@ function ModuleCard({
         </div>
       )}
 
-      
+      {showDeleteConfirm && (
+        <ConfirmDialog
+          title="Delete this module?"
+          message={`"${title}" and all ${lessons.length} lesson${
+            lessons.length !== 1 ? "s" : ""
+          } inside it will be permanently removed. This cannot be undone.`}
+          isConfirming={isDeleting}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
     </div>
   );
 }
@@ -1072,18 +1373,36 @@ export default function CourseBuilder() {
 
   useEffect(() => {
     if (!courseId) return;
+
     apiRequest<Course[]>("/catalog/instructor/courses")
-      .then((courses) => {
-        const found = courses.find((c) => c.id === Number(courseId));
-        if (!found) {
+      .then(async (courses) => {
+        const summary = courses.find((c) => c.id === Number(courseId));
+        if (!summary) {
           toast.error("Course not found.");
+          setIsLoadingCourse(false);
           return;
         }
-        setCourse(found);
-        setModules(found.modules ?? []);
+
+      
+        try {
+          const full = await apiRequest<Course>(
+            `/catalog/courses/${summary.slug}`,
+          );
+          setCourse(full);
+          setModules(full.modules ?? []);
+        } catch {
+          toast.error("Failed to load course content.");
+          // Fall back to the summary so the course details tab still works
+          setCourse(summary);
+          setModules([]);
+        } finally {
+          setIsLoadingCourse(false);
+        }
       })
-      .catch(() => toast.error("Failed to load course."))
-      .finally(() => setIsLoadingCourse(false));
+      .catch(() => {
+        toast.error("Failed to load course.");
+        setIsLoadingCourse(false);
+      });
   }, [courseId]);
 
   const handleDetailsSaved = (savedCourse: Course) => {
@@ -1169,9 +1488,13 @@ export default function CourseBuilder() {
             className="flex items-center gap-2 bg-[#1b5e20] text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-[#145218] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
             {isPublishing ? (
-              <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> Publishing...
+              </>
             ) : (
-              <><Send className="w-4 h-4" /> Publish</>
+              <>
+                <Send className="w-4 h-4" /> Publish
+              </>
             )}
           </button>
         )}
@@ -1196,7 +1519,9 @@ export default function CourseBuilder() {
           Course details
         </button>
         <button
-          onClick={() => { if (course) setStep("modules"); }}
+          onClick={() => {
+            if (course) setStep("modules");
+          }}
           disabled={!course}
           className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-semibold rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
             step === "modules"
@@ -1228,7 +1553,9 @@ export default function CourseBuilder() {
               <p className="text-sm font-semibold text-gray-500 mb-1">
                 No modules yet
               </p>
-              <p className="text-xs text-gray-400">Add your first module below.</p>
+              <p className="text-xs text-gray-400">
+                Add your first module below.
+              </p>
             </div>
           ) : (
             modules.map((mod, i) => (
@@ -1248,6 +1575,9 @@ export default function CourseBuilder() {
                     ),
                   );
                 }}
+                onDeleted={(moduleId) =>
+                  setModules((prev) => prev.filter((m) => m.id !== moduleId))
+                }
               />
             ))
           )}
@@ -1268,9 +1598,13 @@ export default function CourseBuilder() {
                 className="flex items-center gap-2 bg-[#1b5e20] text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-[#145218] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {isPublishing ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Publishing...
+                  </>
                 ) : (
-                  <><Send className="w-4 h-4" /> Publish course</>
+                  <>
+                    <Send className="w-4 h-4" /> Publish course
+                  </>
                 )}
               </button>
             </div>

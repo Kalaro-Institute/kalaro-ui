@@ -12,6 +12,7 @@ import Community from "./pages/Community";
 import Contact from "./pages/Contact";
 import Careers from "./pages/Careers";
 import LiveClasses from "./pages/LiveClasses";
+import InstructorLiveClasses from "./pages/dashboard/instructor/LiveClasses";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -41,6 +42,7 @@ import Glossary from "./pages/Resources/Glossary";
 import Shop from "./pages/Shop";
 import ProductPage from "./pages/ProductPage";
 import Cart from "./pages/Cart";
+import { ShareCardModal } from "./components/ShareCardModal";
 
 /* Resolve the article body by slug; the page handles a missing post. */
 function BlogPostRoute() {
@@ -79,7 +81,10 @@ export const router = createBrowserRouter([
 
       /* International permanent residency hub */
       { path: "services/permanent-residency", Component: InternationalPr },
-      { path: "services/permanent-residency/services/:slug", Component: PrServiceRoute },
+      {
+        path: "services/permanent-residency/services/:slug",
+        Component: PrServiceRoute,
+      },
 
       /* Resources - real content pages, one per dropdown entry */
       { path: "resources/blog", Component: BlogIndex },
@@ -101,6 +106,17 @@ export const router = createBrowserRouter([
   { path: "/forgot-password", Component: ForgotPassword },
   { path: "/accept-invite", Component: AcceptInvite },
   { path: "/payment/callback", Component: PaystackCallback },
+  {
+    path: "/dev/share-card-test",
+    Component: () => (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <ShareCardModal
+          courseTitle="Medical Virtual Assistant Training"
+          onClose={() => {}}
+        />
+      </div>
+    ),
+  },
 
   {
     path: "/dashboard/student",
@@ -155,10 +171,7 @@ export const router = createBrowserRouter([
             path: "students",
             Component: () => <DashboardStub label="Students" />,
           },
-          {
-            path: "live-classes",
-            Component: () => <DashboardStub label="Live classes" />,
-          },
+          { path: "live-classes", Component: InstructorLiveClasses },
           {
             path: "grading",
             Component: () => <DashboardStub label="Grading" />,
